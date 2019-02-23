@@ -134,6 +134,14 @@ prompt \
              --hostname simple-chat
              --path /api"
 
+cf scale message-service -i 3
+cf create-service elephantsql turtle database
+while ! cf service database | grep status | grep 'create succeeded'; do
+    sleep 1
+done
+cf bind-service message-service database
+cf restart message-service
+
 prompt \
     "Hooray! The error is gone. The chat-app says there are no messages.
 

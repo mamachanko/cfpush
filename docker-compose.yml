@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+
+  message-service-db:
+    image: postgres:11.1-alpine
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: message-service
+      POSTGRES_USER: message-service
+      POSTGRES_PASSWORD: password

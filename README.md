@@ -21,7 +21,12 @@ architecture for a chat application. And you are urged not to take pointers for 
 But it serves the purpose of exploring Cloud Foundry and cloud-native computing.
 
 ## `message-service`
-todo
+
+Run with Postgres:
+```bash
+docker-compose up -d
+./run-backend.sh -Dspring.profiles.active=postgres
+```
 
 ## `chat-app`
 todo

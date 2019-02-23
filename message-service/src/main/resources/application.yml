@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+---
+spring:
+  profiles: postgres
+  datasource:
+    url: jdbc:postgresql://localhost:5432/message-service
+    username: message-service
+    password: password
+  jpa:
+    properties:
+      hibernate:
+        temp.use_jdbc_metadata_defaults: false
+    database: postgresql
+
