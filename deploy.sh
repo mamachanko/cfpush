@@ -1,7 +1,5 @@
 #!/usr/bin/env bash -ex
 
-# echo -n "Press any key to continue..." && read
-
 cf create-space simple-chat
 
 cf target -s simple-chat
@@ -17,6 +15,8 @@ cf scale \
     -m 64M \
     -k 128M \
     -f
+
+echo -n "Press any key to continue..." && read
 
 cf push \
     message-service \
