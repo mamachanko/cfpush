@@ -6,7 +6,7 @@ import {faComments} from '@fortawesome/free-solid-svg-icons';
 
 library.add(faComments);
 
-const Header = ({}) =>
+const Header = () =>
     <FontAwesomeIcon icon="comments"
                      className={"fa-4x"}
                      style={{margin: "32px 0px"}}/>;
@@ -23,12 +23,11 @@ const MessageList = ({messages = []}) => {
     }
 };
 
-const App = () => {
+const App = ({getMessages}) => {
     const [messages, setMessages] = useState([]);
 
     const loadMessages = () => {
-        fetch("/api/messages")
-            .then(response => response.json())
+        getMessages()
             .then(messages => {
                 setMessages(messages);
                 console.log("loaded messages");
