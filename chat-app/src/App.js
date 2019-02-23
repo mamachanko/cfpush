@@ -2,14 +2,38 @@ import React, {useState, useEffect} from 'react';
 import './App.css';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faComments, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
+import {faComments, faExclamationTriangle, faComment} from '@fortawesome/free-solid-svg-icons';
 
-library.add(faComments, faExclamationTriangle);
+library.add(faComments, faExclamationTriangle, faComment);
 
 const Header = () =>
     <FontAwesomeIcon icon="comments"
                      className={"fa-4x"}
                      style={{margin: "32px 0px"}}/>;
+
+const MessageInput = ({onSubmit}) => {
+    const [messageInput, setMessageInput] = useState("");
+
+    const onClick = () => {
+        if (messageInput === "") {
+            return
+        }
+        onSubmit(messageInput);
+        setMessageInput("");
+    };
+
+    return <div>
+        <input type={"text"}
+               placeholder={"what's up?"}
+               value={messageInput}
+               onChange={(event) => setMessageInput(event.target.value)}
+               autoFocus={true}/>
+        <button type="button"
+                onClick={onClick}>
+            <FontAwesomeIcon icon={"comment"}/>
+        </button>
+    </div>
+};
 
 const MessageList = ({messages = []}) => {
     if (messages.length === 0) {
@@ -32,7 +56,7 @@ const MessagesError = () => <div className={'MessagesError'}>
     </p>
 </div>;
 
-const App = ({getMessages}) => {
+const App = ({getMessages, postMessage}) => {
     const [messages, setMessages] = useState([]);
     const [isMessagesError, setIsMessagesError] = useState(false);
 
@@ -41,7 +65,6 @@ const App = ({getMessages}) => {
             .then(messages => {
                 setIsMessagesError(false);
                 setMessages(messages);
-                console.log("loaded messages");
             })
             .catch((error) => {
                 setIsMessagesError(true);
@@ -56,9 +79,11 @@ const App = ({getMessages}) => {
     }, []);
 
     const messageList = isMessagesError ? <MessagesError/> : <MessageList messages={messages}/>;
+
     return (
         <div className="App">
             <Header/>
+            <MessageInput onSubmit={postMessage}/>
             {messageList}
         </div>
     );
