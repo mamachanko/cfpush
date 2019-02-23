@@ -12,7 +12,7 @@ class Api {
                 if (response.ok) {
                     response.json();
                 } else {
-                    throw new Error('something went wrong');
+                    throw new Error(`failed to load messages: ${response.status} / ${response.statusText}`);
                 }
             });
     }

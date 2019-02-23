@@ -17,3 +17,8 @@ html, body {
   padding: 8px 0px;
   background-color: #EF626C;
 }
+
+.MessagesEmpty {
+  padding: 8px 0px;
+  background-color: #F6E8EA;
+}

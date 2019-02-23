@@ -2,9 +2,9 @@ import React, {useState, useEffect} from 'react';
 import './App.css';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faComments} from '@fortawesome/free-solid-svg-icons';
+import {faComments, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 
-library.add(faComments);
+library.add(faComments, faExclamationTriangle);
 
 const Header = () =>
     <FontAwesomeIcon icon="comments"
@@ -13,9 +13,7 @@ const Header = () =>
 
 const MessageList = ({messages = []}) => {
     if (messages.length === 0) {
-        return <div>
-            <p>[there are no messages]</p>
-        </div>
+        return <MessagesEmpty/>
     } else {
         return <div>
             {messages.map((message, index) => <p key={index}>{message.text}</p>)}
@@ -23,8 +21,15 @@ const MessageList = ({messages = []}) => {
     }
 };
 
+const MessagesEmpty = () => <div className={'MessagesEmpty'}>
+    <p>there are no messages</p>
+</div>;
+
 const MessagesError = () => <div className={'MessagesError'}>
-    <p>failed to get messages</p>
+    <p>
+        <FontAwesomeIcon icon="exclamation-triangle"/>
+        <span> failed to get messages</span>
+    </p>
 </div>;
 
 const App = ({getMessages}) => {
@@ -38,9 +43,9 @@ const App = ({getMessages}) => {
                 setMessages(messages);
                 console.log("loaded messages");
             })
-            .catch(() => {
+            .catch((error) => {
                 setIsMessagesError(true);
-                console.log("failed to load messages")
+                console.log(error);
             });
     };
 
