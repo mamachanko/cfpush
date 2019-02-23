@@ -3,24 +3,9 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import {Api} from "./api";
 
-
-class Api {
-    getMessages() {
-        return fetch("/api/messages")
-            .then(response => {
-                if (response.ok) {
-                    response.json();
-                } else {
-                    throw new Error(`failed to load messages: ${response.status} / ${response.statusText}`);
-                }
-            });
-    }
-}
-
-const api = new Api();
-
-ReactDOM.render(<App getMessages={api.getMessages}/>, document.getElementById('root'));
+ReactDOM.render(<App {...Api}/>, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
