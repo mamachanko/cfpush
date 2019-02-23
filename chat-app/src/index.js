@@ -8,7 +8,13 @@ import * as serviceWorker from './serviceWorker';
 class Api {
     getMessages() {
         return fetch("/api/messages")
-            .then(response => response.json());
+            .then(response => {
+                if (response.ok) {
+                    response.json();
+                } else {
+                    throw new Error('something went wrong');
+                }
+            });
     }
 }
 

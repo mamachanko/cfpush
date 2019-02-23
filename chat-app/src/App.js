@@ -23,14 +23,24 @@ const MessageList = ({messages = []}) => {
     }
 };
 
+const MessagesError = () => <div className={'MessagesError'}>
+    <p>failed to get messages</p>
+</div>;
+
 const App = ({getMessages}) => {
     const [messages, setMessages] = useState([]);
+    const [isMessagesError, setIsMessagesError] = useState(false);
 
     const loadMessages = () => {
         getMessages()
             .then(messages => {
+                setIsMessagesError(false);
                 setMessages(messages);
                 console.log("loaded messages");
+            })
+            .catch(() => {
+                setIsMessagesError(true);
+                console.log("failed to load messages")
             });
     };
 
@@ -40,10 +50,11 @@ const App = ({getMessages}) => {
         return () => clearTimeout(timer);
     }, []);
 
+    const messageList = isMessagesError ? <MessagesError/> : <MessageList messages={messages}/>;
     return (
         <div className="App">
             <Header/>
-            <MessageList messages={messages}/>
+            {messageList}
         </div>
     );
 };
