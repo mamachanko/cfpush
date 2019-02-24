@@ -48,6 +48,7 @@ The personas:
 ### As Clara ...
  * [x] when I visit the tutorial I get a brief idea what it's all about (https://asciinema.org/)
  * [ ] I understand the basic functionality of `chat-app` and `message-service` (calls, polling and endpoints)
+ * [ ] I know how to log into Cloud Foundry / _Pivotal Web Services_
  * [x] I learn how to deploy a frontend app
  * [x] I understand how to deploy a backend app
  * [x] I understand how to let the frontend consume the backend
