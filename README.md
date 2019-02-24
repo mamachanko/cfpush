@@ -116,7 +116,7 @@ Our personas:
 ### As Ash ...
  * [ ] I know that the chat application works because it is unit tested
  * [ ] I know the whole deployment works because I can run acceptance tests
- * [ ] I know that the tutorial will work for users who don't "own" `simple-chat.cfapps.io` and `message-service.cfapps.io`
+ * [x] I know that the tutorial will work for users who don't "own" `simple-chat.cfapps.io` and `message-service.cfapps.io`
  * [ ] I get feedback about the tutorial
  * [ ] I know this repository has the [right license](https://choosealicense.com)
  * [ ] I want to use `spring-data-rest` so that I don't have to worry about application logic too much
