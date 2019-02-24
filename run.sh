@@ -16,7 +16,7 @@ function prettyEcho() {
 }
 
 function ensureCfInstalled() {
-    if command cf > /dev/null 2>&1 ; then
+    if [[ ${DRY} == "true" ]] || command cf > /dev/null 2>&1 ; then
         : # noop
     else
         prettyEcho ""
@@ -33,7 +33,7 @@ function ensureCfInstalled() {
 }
 
 function ensureLoggedIn() {
-    if cf target > /dev/null 2>&1 ; then
+    if [[ ${DRY} == "true" ]] || cf target > /dev/null 2>&1 ; then
         : # noop
     else
         prettyEcho ""
@@ -56,12 +56,15 @@ function awaitUserOk() {
 }
 
 function welcome() {
+    clear
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_COLORS}"
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}    WELCOME TO AN INTERACTIVE CLOUD FOUNDRY TUTORIAL    ${RESET_COLORS}"
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_COLORS}"
 
     prettyEcho ""
-    prettyEcho "We will be exploring Cloud Foundry and cloud-native computing by deploying a simple chat application to Cloud Foundry. The app consists of a Javascript frontend and a Java backend."
+    prettyEcho "We will be exploring Cloud Foundry and cloud-native computing by deploying a simple chat application to Cloud Foundry."
+    prettyEcho ""
+    prettyEcho "The frontend is a Javascript React application and the backend is Java Spring Boot web application."
     prettyEcho ""
     prettyEcho "Are you ready? We can't wait. Let's go!"
     prettyEcho ""
@@ -89,7 +92,9 @@ function prompt() {
     prettyEcho "running ..."
     prettyEcho ""
 
-    eval ${COMMAND}
+    if [[ ${DRY} != "true" ]] ; then
+        eval ${COMMAND}
+    fi
 
     awaitUserOk "Done. Press enter to continue with the next step ..."
 }
@@ -111,17 +116,25 @@ prompt \
 prompt \
     "We must build our frontend and backend first before we deploy them.
 
-The backend is a Java Spring Boot application called 'message-service'. We will build it into a .jar file. The .jar file will be located in 'message-service/target'.
+The backend is a Java Spring Boot web application called 'message-service'. It exposes two endpoints:
 
-The frontend is a Javascript React application called 'chat-app'. We will build it into a bundle of static files. The bundle will be located in 'chat-app/build'." \
+    GET  /api/messages : returns list of messages
+    POST /api/messages : creates a new message
+
+If it does not have a database attached it will run with an in-memory database.
+We will build it into a .jar file. The .jar file will be located in 'message-service/target'.
+
+The frontend is a Javascript React application called 'chat-app'. It continuously polls the message-service for messages and allows to create new ones.
+
+We will build it into a bundle of static files. The bundle will be located in 'chat-app/build'." \
     "./scripts/build.sh"
 
 prompt \
     "Now our applications are ready for deployment. Let's start with the frontend.
 
-Like any Javascript application, the chat-app is a collection of static files. We will use the staticfile_buildpack for deployment.
+Like any Javascript application, the chat-app is just a collection of static files that we want to serve. Hence, we will use the \"staticfile_buildpack\" for running it.
 
-We want the chat-app to be reachable at 'https://simple-chat.cfapps.io', so we must set the hostname as well. Otherwise, it would default to the application name." \
+We want the chat-app to be reachable at 'https://simple-chat.cfapps.io', so we must set the hostname as well. Otherwise, the hostname would default to the application name." \
     "cf push
      chat-app
      -p chat-app/build
@@ -135,9 +148,7 @@ Let's inspect the app." \
     "cf app chat-app"
 
 prompt \
-    "You can see that 1 instance of the app is running.
-
-It gets 1GB of memory and 1GB of disk by default. That is more than we need for a staticfile app. Let's scale things down. Memory should be 64M and disk 128M.
+    "You can see that 1 instance of the app is running. It has the default 1GB of memory and 1GB of disk. That is more than we need for a staticfile app. Let's scale things down. Memory should be 64M and disk 128M.
 
 This is called vertical scaling. Whenever scaling an app vertically Cloud Foundry has to restart it. This involves downtime. For now we're ok with that, so we add '-f'." \
     "cf scale
@@ -147,11 +158,13 @@ This is called vertical scaling. Whenever scaling an app vertically Cloud Foundr
      -f"
 
 prompt \
-    "Go to the browser and open https://simple-chat.cfapps.io
+    "Now let's open the application at
 
-You should see that the app failed to load any messages. Oh dear!
+    https://simple-chat.cfapps.io
 
-But it makes sense because there's no backend running yet. Let's try to avert this misery and deploy our backend the 'message-service'." \
+You should see that the app failed to load any messages. Oh dear! That's because its backend isn't running yet. But our frontend is a good Cloud-citizen and handles issues with its downstream dependencies gracefully. That's an essential property of any cloud-native application.
+
+Let's avert this misery and deploy the message-service." \
     "cf push
      message-service
      -p message-service/target/messages-services-0.0.1-SNAPSHOT.jar"
@@ -168,12 +181,12 @@ In order to understand we must look at how traffic is currently routed." \
 
 prompt \
     "The frontend is served at simple-chat.cfapps.io
-The backend is served at message-service.cfapps.io
+The backend is served at  message-service.cfapps.io
 
-The frontend expects to reach the backend at simple-chat.cfapps.io/api
+But frontend expects to reach the backend at simple-chat.cfapps.io/api
 That's the problem!
 
-Cloud Foundry's path-based routing to the rescue. We have to map simple-chat.cfapps.io/api to the message-service." \
+Cloud Foundry's path-based routing to the rescue. Let's map the route 'simple-chat.cfapps.io/api' to the message-service." \
     "cf map-route
      message-service
      cfapps.io
@@ -199,32 +212,55 @@ Let's scale out to 3. Planet scale!" \
 prompt \
 "This is weird. As we're using the application and sending messages, they change all the time.
 
-Why is that? The problem is that the message-service is currently running with an in-memory database. That means each instance has its own state. And every time we post or get messages we hit another instance. Hence, the inconsistency.
+Why is that? As we haven't provided it with a database, the message-service is running with an in-memory database. That means each instance has its own state. And every time we post or get messages we hit another instance. Hence, the inconsistency.
 
-This is setup is violating the idea of stateless processes accordind to the twelve-factor app (https://12factor.net/processes).
+This setup is violating the idea of 'stateless processes' according to the twelve-factor app (https://12factor.net/processes).
 
-Since Cloud Foundry might relocate instances as it sees fit we might loose messages at any moment.
+Since Cloud Foundry might relocate instances in the cloud as it sees fit we might loose messages at any moment.
 
-We need a database. Let's ask Cloud Foundry to give us a Postgres." \
-"cf create-service elephantsql turtle database"
+We need a database. Let's browse the marketplace."\
+    "cf marketplace"
+
+prompt \
+"We can see there are plenty of services on offer, e.g.
+
+    * Redis
+    * Elasticsearch
+    * Sendgrid
+    * MongoDB
+    * app-autoscaler
+    * ...
+
+Every service is available with different plans. Some are free, some incur cost.
+
+Let's ask Cloud Foundry to give us a Postgres instance." \
+"cf create-service
+     elephantsql
+     turtle
+     database"
 
 prettyEcho ""
 prettyEcho "waiting for the Postgres database to be created ..."
 prettyEcho ""
-while ! cf service database | grep status | grep 'create succeeded'; do
-    echo . && sleep 1
-done
+
+if [[ ${DRY} != "true" ]]; then
+    while ! cf service database | grep status | grep 'create succeeded'; do
+        echo -n . && sleep 1
+    done
+fi
 
 prompt \
 "The Postgres instance is ready.
 
-Let's bind it to our message-service.
+We still need to \"bind\" it to our message-service.
 
-Cloud Foundry will inject a JDBC connection string into the environment of the message-service." \
+When we do that Cloud Foundry will inject the necessary data into the message-service's environment. In this case a JDBC connection string." \
 "cf bind-service message-service database"
 
 prompt \
-"Now in order for the database connection to be picked we have to restart the message-service.
+"But that's not all. We have to restart the message-service.
+
+Since we're using Spring Boot it will will automatically pick up the database.
 
 Caveat: In this case it is enough to just restart the application. In other cases we need to restage it for the changes to take effect (see https://docs.cloudfoundry.org/devguide/deploy-apps/start-restart-restage.html)." \
 "cf restart message-service"
@@ -232,7 +268,19 @@ Caveat: In this case it is enough to just restart the application. In other case
 prettyEcho ""
 prettyEcho "As the instances of the message-service have restarted they are all using the database as a backing service. They no longer carry state. We can scale the message-service to our heart's content and the user will not be impacted."
 prettyEcho ""
-prettyEcho "We're done for now. Stay tuned for updates to this tutorial."
+
+awaitUserOk
+
+prettyEcho ""
+prettyEcho "That's all for now. Stay tuned for updates to this tutorial."
+prettyEcho ""
+prettyEcho "Feel free to tear down the entire deployment with ./scripts/destroy.sh"
+prettyEcho ""
+prettyEcho "You're feedback is very important! Go to"
+prettyEcho ""
+prettyEcho "    github.com/mamachanko/interactive-cloud-foundry-tutorial"
+prettyEcho ""
+prettyEcho "add a star, open an issue or send a PR."
 prettyEcho ""
 prettyEcho "There's more: https://docs.cloudfoundry.org/#read-the-docs"
 prettyEcho ""

@@ -1,7 +1,9 @@
 #!/usr/bin/env bash -ex
 
+HOST=${1:-http://localhost:8080}
+
 curl \
-    --silent \
+    --verbose \
     --request GET \
-    --url "http://localhost:8080/api/messages" \
+    --url "${HOST}/api/messages" \
     | jq

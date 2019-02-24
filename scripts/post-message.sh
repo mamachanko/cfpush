@@ -1,12 +1,18 @@
 #!/usr/bin/env bash -ex
 
-RANDOM_TEXT=$(date | shasum | tr -cd '[[:alnum:]]')
-NOW=$(date +%s | cut -b1-13)
+HOST=${1:-http://localhost:8080}
+
+function randomMessage() {
+    RANDOM_TEXT=$(date | shasum | tr -cd '[[:alnum:]]')
+    TIMESTAMP_NOW=$(date +%s | cut -b1-13)
+
+    echo "{\"text\": \"${RANDOM_TEXT}\", \"timestamp\": \"${TIMESTAMP_NOW}\"}"
+}
 
 curl \
-    --silent \
+    --verbose \
     --request POST \
     --header "Content-Type: application/json" \
-    --data "{\"text\": \"${RANDOM_TEXT}\", \"timestamp\": \"${NOW}\"}" \
-    --url "http://localhost:8080/api/messages" \
+    --data "$(randomMessage)" \
+    --url "${HOST}/api/messages" \
     | jq
