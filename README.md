@@ -83,3 +83,5 @@ The personas:
  * [ ] I know the whole deployment works because I can run acceptance tests
  * [ ] I don't have to worry about the `simple-chat` hostname because all routes are random
  * [ ] I get feedback about the tutorial
+ * [ ] I want to use `spring-data-rest` so that I don't have to worry about application logic too much
+ * [ ] I want to use web sockets so that the example is less contrived
