@@ -24,7 +24,7 @@ function welcome() {
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_COLORS}"
 
     prettyEcho ""
-    prettyEcho "We will be exploring Cloud Foundry and cloud-native computing by deploying simple chat app to Cloud Foundry. The app consists of a Javascript frontend and a Java backend."
+    prettyEcho "We will be exploring Cloud Foundry and cloud-native computing by deploying a simple chat application to Cloud Foundry. The app consists of a Javascript frontend and a Java backend."
     prettyEcho ""
     prettyEcho "(this tutorial currently assumes to be run against run.pivotal.io)"
     prettyEcho ""
