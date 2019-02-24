@@ -6,6 +6,8 @@ Clone and run:
 The script will walk and talk you through the deployment of a simple (and admittdely very naive) chat application
 while exploring the perks and perils of cloud-native apps.
 
+[![asciicast](https://asciinema.org/a/P9Kf0jhDe30i2PxfWBJ59qe3d.svg)](https://asciinema.org/a/P9Kf0jhDe30i2PxfWBJ59qe3d)
+
 You can run the tutorial in non-interactive mode with:
 ```bash
 INTERACTIVE=false ./playbook.sh
@@ -44,7 +46,7 @@ The personas:
  * **Ash** wants to enable developers in using Cloud Foundry and is the maintainer of the tutorial 
 
 ### As Clara ...
- * [ ] when I visit the tutorial I get a brief idea what it's all about (https://asciinema.org/)
+ * [x] when I visit the tutorial I get a brief idea what it's all about (https://asciinema.org/)
  * [ ] I understand the basic functionality of `chat-app` and `message-service` (calls, polling and endpoints)
  * [x] I learn how to deploy a frontend app
  * [x] I understand how to deploy a backend app
