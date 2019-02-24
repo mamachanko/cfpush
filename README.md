@@ -6,7 +6,12 @@ Clone and run:
 The script will walk and talk you through the deployment of a simple (and admittdely very naive) chat application
 while exploring the perks and perils of cloud-native apps.
 
-If anything goes wrong during the tutorial just run
+You can run the tutorial in non-interactive mode with:
+```bash
+INTERACTIVE=false ./playbook.sh
+```
+
+If anything goes wrong during the tutorial just stop it, run:
 ```bash
 ./destroy.sh
 ```
