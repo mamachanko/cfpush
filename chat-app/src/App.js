@@ -52,7 +52,7 @@ const MessagesEmpty = () => <div className={'MessagesEmpty'}>
 const MessagesError = () => <div className={'MessagesError'}>
     <p>
         <FontAwesomeIcon icon="exclamation-triangle"/>
-        <span> failed to get messages</span>
+        <span> failed to load messages</span>
     </p>
 </div>;
 

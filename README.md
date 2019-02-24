@@ -19,16 +19,13 @@ If anything goes wrong during the tutorial just stop it, run:
 ```
 and start from scratch.
 
+You're feedback is very welcome. Feel free to raise an issue if anything should be unclear or you run into any problems.
+
 ## Prerequisites
 
 This tutorial currently assumes you're using [run.pivotal.io](https://run.pivotal.io). If you sign up you get 87$ of quota for free.
 
 You will need the `cf` cli. If you don't have it installed yet, go [here](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html).
-
-Finally, make sure you are logged in before starting the tutorial:
-```bash
-cf login -a api.run.pivotal.io
-```
 
 ## Object of study: "a (very) simple chat"
 The object of study is a simple chat application. It consists of a Javascript React frontend `chat-app` and Java Spring Boot backend `message-service`. The `chat-app`
@@ -63,11 +60,13 @@ Our personas:
  * [x] I understand how to deploy a backend app
  * [x] I understand how to let the frontend consume the backend
  * [x] I understand how to scale an app vertically
- * [ ] I understand how to scale an app horizontally
- * [ ] I understand how to the problems in stateful apps
- * [ ] I understand how to provision a database service
- * [ ] I understand how to bind the database instance to my backend
- * [ ] I understand how to run one-off management tasks
+ * [x] I understand how to scale an app horizontally
+ * [x] I understand how to the problems in stateful apps
+ * [x] I understand how to provision a database service
+ * [x] I understand how to bind the database instance to my backend
+ * [ ] I understand how to run one-off management tasks (e.g. truncate db)
+ * [ ] I understand how to do no-downtime deployments 
+ * [ ] I understand how to schedule one-off management tasks (e.g. db backup)
 
 ### As Chad ...
  * [x] I can see a placeholder of there are no messages
@@ -96,3 +95,4 @@ Our personas:
  * [ ] I get feedback about the tutorial
  * [ ] I want to use `spring-data-rest` so that I don't have to worry about application logic too much
  * [ ] I want to use web sockets so that the example is less contrived
+ * [ ] I don't have to worry about Clara's environment and can simply provider them with a docker image

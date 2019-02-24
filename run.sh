@@ -180,18 +180,57 @@ Cloud Foundry's path-based routing to the rescue. We have to map simple-chat.cfa
      --hostname simple-chat
      --path /api"
 
-cf scale message-service -i 3
-cf create-service elephantsql turtle database
-while ! cf service database | grep status | grep 'create succeeded'; do
-    sleep 1
-done
-cf bind-service message-service database
-cf restart message-service
+prompt \
+    "Hooray! The error is gone. The chat-app says there are no messages.
+
+It's time to take out your phone. Go to
+
+    https://simple-chat.cfapps.io
+
+and chat away!
+
+However, the more users there are the more load will our message-service have. At this moment we only have one instance of it running. We need more!
+
+Adding more instances is called horizontal scaling. This does not require a restart and is almost instantaneous.
+
+Let's scale out to 3. Planet scale!" \
+    "cf scale message-service -i 3"
+
+prompt \
+"This is weird. As we're using the application and sending messages, they change all the time.
+
+Why is that? The problem is that the message-service is currently running with an in-memory database. That means each instance has its own state. And every time we post or get messages we hit another instance. Hence, the inconsistency.
+
+This is setup is violating the idea of stateless processes accordind to the twelve-factor app (https://12factor.net/processes).
+
+Since Cloud Foundry might relocate instances as it sees fit we might loose messages at any moment.
+
+We need a database. Let's ask Cloud Foundry to give us a Postgres." \
+"cf create-service elephantsql turtle database"
 
 prettyEcho ""
-prettyEcho "Hooray! The error is gone. The chat-app says there are no messages."
+prettyEcho "waiting for the Postgres database to be created ..."
 prettyEcho ""
-prettyEcho "It's time to take out your phone. Go to https://simple-chat.cfapps.io and chat away!"
+while ! cf service database | grep status | grep 'create succeeded'; do
+    echo . && sleep 1
+done
+
+prompt \
+"The Postgres instance is ready.
+
+Let's bind it to our message-service.
+
+Cloud Foundry will inject a JDBC connection string into the environment of the message-service." \
+"cf bind-service message-service database"
+
+prompt \
+"Now in order for the database connection to be picked we have to restart the message-service.
+
+Caveat: In this case it is enough to just restart the application. In other cases we need to restage it for the changes to take effect (see https://docs.cloudfoundry.org/devguide/deploy-apps/start-restart-restage.html)." \
+"cf restart message-service"
+
+prettyEcho ""
+prettyEcho "As the instances of the message-service have restarted they are all using the database as a backing service. They no longer carry state. We can scale the message-service to our heart's content and the user will not be impacted."
 prettyEcho ""
 prettyEcho "We're done for now. Stay tuned for updates to this tutorial."
 prettyEcho ""
