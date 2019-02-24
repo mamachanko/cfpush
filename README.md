@@ -89,7 +89,7 @@ Our personas:
  * [ ] when I visit the page with my mobile device, it looks good
 
 ### As Ash ...
- * [ ] I know that the chat application because it is unit tested
+ * [ ] I know that the chat application works because it is unit tested
  * [ ] I know the whole deployment works because I can run acceptance tests
  * [ ] I know that the tutorial will work for users who don't "own" `simple-chat.cfapps.io` and `message-service.cfapps.io`
  * [ ] I get feedback about the tutorial
