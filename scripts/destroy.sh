@@ -1,3 +1,3 @@
-#!/usr/bin/env bash -ex
+#!/usr/bin/env bash -x
 
-cf delete-space simple-chat -f
+cf delete-space simple-chat -f || true

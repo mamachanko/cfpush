@@ -15,7 +15,7 @@ INTERACTIVE=false ./playbook.sh
 
 If anything goes wrong during the tutorial just stop it, run:
 ```bash
-./destroy.sh
+./scripts/destroy.sh
 ```
 and start from scratch.
 
