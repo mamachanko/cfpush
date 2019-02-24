@@ -6,7 +6,7 @@ Clone and run:
 The script will walk and talk you through the deployment of a simple (and admittdely very naive) chat application
 while exploring the perks and perils of cloud-native apps.
 
-[![asciicast](https://asciinema.org/a/P9Kf0jhDe30i2PxfWBJ59qe3d.svg)](https://asciinema.org/a/P9Kf0jhDe30i2PxfWBJ59qe3d)
+[![asciicast](https://asciinema.org/a/229675.svg)](https://asciinema.org/a/229675)
 
 You can run the tutorial in non-interactive mode with:
 ```bash
