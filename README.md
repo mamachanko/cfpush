@@ -49,7 +49,7 @@ todo
 
 ## Backlog
 
-The personas:
+Our personas:
  * **Clara** wants to learn about Cloud Foundry and is doing the tutorial
  * **Chad** wants to chat with people on the internet and is using the chat application
  * **Ash** wants to enable developers in using Cloud Foundry and is the maintainer of the tutorial 
@@ -92,7 +92,7 @@ The personas:
 ### As Ash ...
  * [ ] I know that the chat application because it is unit tested
  * [ ] I know the whole deployment works because I can run acceptance tests
- * [ ] I don't have to worry about the `simple-chat` hostname because all routes are random
+ * [ ] I know that the tutorial will work for users who don't "own" `simple-chat.cfapps.io` and `message-service.cfapps.io`
  * [ ] I get feedback about the tutorial
  * [ ] I want to use `spring-data-rest` so that I don't have to worry about application logic too much
  * [ ] I want to use web sockets so that the example is less contrived
