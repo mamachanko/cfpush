@@ -1,4 +1,4 @@
-# An interactive Cloud Foundry tutorial
+# An interactive Cloud Foundry tutorial in your terminal
 Clone and run:
 ```bash
 ./run.sh
