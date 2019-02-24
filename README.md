@@ -38,7 +38,7 @@ But it serves the purpose of exploring Cloud Foundry and cloud-native computing.
 Run with Postgres:
 ```bash
 docker-compose up -d
-./run-backend.sh -Dspring.profiles.active=postgres
+./scripts/run-backend.sh -Dspring.profiles.active=postgres
 ```
 
 ## `chat-app`
