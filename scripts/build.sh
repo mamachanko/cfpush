@@ -1,9 +1,11 @@
 #!/usr/bin/env bash -ex
 
-pushd message-service
+cd $(dirname $0)
+
+pushd ../message-service
     ./mvnw clean verify package
 popd
 
-pushd chat-app
+pushd ../chat-app
     yarn build
 popd

@@ -1,4 +1,8 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env bash
+
+set -e
+
+cd $(dirname $0)
 
 BLUE_ON_WHITE=`tput setab 7 && tput setaf 4`
 WHITE_ON_BLUE=`tput setab 4 && tput setaf 7`
@@ -9,6 +13,38 @@ function prettyEcho() {
     echo "$1" \
     | fold -w 80 -s \
     | sed "s/^\(.*\)$/${BLUE_ON_WHITE}    \1${UNTIL_EOL}${RESET_COLORS}/"
+}
+
+function ensureCfInstalled() {
+    if command cf > /dev/null 2>&1 ; then
+        : # noop
+    else
+        prettyEcho ""
+        prettyEcho "The \"cf\" cli seems to be missing."
+        prettyEcho ""
+        prettyEcho "Learn how to install it at:"
+        prettyEcho ""
+        prettyEcho "    https://docs.cloudfoundry.org/cf-cli/install-go-cli.html"
+        prettyEcho ""
+        prettyEcho "Once you've installed it, come back. We'll be getting a coffee in the meantime."
+        prettyEcho ""
+        exit 1
+    fi
+}
+
+function ensureLoggedIn() {
+    if cf target > /dev/null 2>&1 ; then
+        : # noop
+    else
+        prettyEcho ""
+        prettyEcho "You seem not to be logged in. Run:"
+        prettyEcho ""
+        prettyEcho "    $ cf login -a api.run.pivotal.io"
+        prettyEcho ""
+        prettyEcho "and come back. We'll be waiting for you."
+        prettyEcho ""
+        exit 1
+    fi
 }
 
 function awaitUserOk() {
@@ -61,6 +97,10 @@ function prompt() {
     awaitUserOk
 }
 
+ensureCfInstalled
+
+ensureLoggedIn
+
 welcome
 
 prompt \
@@ -77,7 +117,7 @@ prompt \
 The backend is a Java Spring Boot application called 'message-service'. We will build it into a .jar file. The .jar file will be located in 'message-service/target'.
 
 The frontend is a Javascript React application called 'chat-app'. We will build it into a bundle of static files. The bundle will be located in 'chat-app/build'." \
-    "./build.sh"
+    "./scripts/build.sh"
 
 prompt \
     "Now our applications are ready for deployment. Let's start with the frontend.

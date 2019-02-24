@@ -19,7 +19,16 @@ If anything goes wrong during the tutorial just stop it, run:
 ```
 and start from scratch.
 
-> disclaimer: this tutorial currently assumes you're using [run.pivotal.io](https://run.pivotal.io)
+## Prerequisites
+
+This tutorial currently assumes you're using [run.pivotal.io](https://run.pivotal.io). If you sign up you get 87$ of quota for free.
+
+You will need the `cf` cli. If you don't have it installed yet, go [here](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html).
+
+Finally, make sure you are logged in before starting the tutorial:
+```bash
+cf login -a api.run.pivotal.io
+```
 
 ## Object of study: "a (very) simple chat"
 The object of study is a simple chat application. It consists of a Javascript React frontend `chat-app` and Java Spring Boot backend `message-service`. The `chat-app`
@@ -48,7 +57,8 @@ The personas:
 ### As Clara ...
  * [x] when I visit the tutorial I get a brief idea what it's all about (https://asciinema.org/)
  * [ ] I understand the basic functionality of `chat-app` and `message-service` (calls, polling and endpoints)
- * [ ] I know how to log into Cloud Foundry / _Pivotal Web Services_
+ * [x] I know how to log into Cloud Foundry / _Pivotal Web Services_
+ * [x] when I am not logged in yet, the tutorial stops and tells me how to do that
  * [x] I learn how to deploy a frontend app
  * [x] I understand how to deploy a backend app
  * [x] I understand how to let the frontend consume the backend
@@ -57,6 +67,7 @@ The personas:
  * [ ] I understand how to the problems in stateful apps
  * [ ] I understand how to provision a database service
  * [ ] I understand how to bind the database instance to my backend
+ * [ ] I understand how to run one-off management tasks
 
 ### As Chad ...
  * [x] I can see a placeholder of there are no messages
