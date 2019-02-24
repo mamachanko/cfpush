@@ -49,7 +49,8 @@ function ensureLoggedIn() {
 
 function awaitUserOk() {
     if [[ ${INTERACTIVE} != "false" ]]; then
-        echo -n "${WHITE_ON_BLUE}Press enter to continue...${UNTIL_EOL}${RESET_COLORS}" && read
+        USER_PROMPTX=${1:-"Press enter to continue..."}
+        echo -n "${WHITE_ON_BLUE}    > ${USER_PROMPTX}${UNTIL_EOL}${RESET_COLORS}" && read
         clear
     fi
 }
@@ -62,16 +63,10 @@ function welcome() {
     prettyEcho ""
     prettyEcho "We will be exploring Cloud Foundry and cloud-native computing by deploying a simple chat application to Cloud Foundry. The app consists of a Javascript frontend and a Java backend."
     prettyEcho ""
-    prettyEcho "(this tutorial currently assumes to be run against run.pivotal.io)"
-    prettyEcho ""
-    prettyEcho "Make sure you're logged in."
-    prettyEcho ""
-    prettyEcho "Are you ready?"
-    prettyEcho ""
-    prettyEcho "Let's go!"
+    prettyEcho "Are you ready? We can't wait. Let's go!"
     prettyEcho ""
 
-    awaitUserOk
+    awaitUserOk "Press enter to start ..."
 }
 
 function prompt() {
@@ -86,15 +81,17 @@ function prompt() {
     prettyEcho "$ ${COMMAND}"
     prettyEcho ""
 
-    awaitUserOk
+    awaitUserOk "Press enter to run the command ..."
 
     prettyEcho ""
     prettyEcho "${COMMAND}"
     prettyEcho ""
+    prettyEcho "running ..."
+    prettyEcho ""
 
     eval ${COMMAND}
 
-    awaitUserOk
+    awaitUserOk "Done. Press enter to continue with the next step ..."
 }
 
 ensureCfInstalled
@@ -191,8 +188,12 @@ done
 cf bind-service message-service database
 cf restart message-service
 
-prompt \
-    "Hooray! The error is gone. The chat-app says there are no messages.
-
-It's time to take out your phone. Go to https://simple-chat.cfapps.io and chat away!" \
-    "echo \"we're done for now. stay tuned for more.\""
+prettyEcho ""
+prettyEcho "Hooray! The error is gone. The chat-app says there are no messages."
+prettyEcho ""
+prettyEcho "It's time to take out your phone. Go to https://simple-chat.cfapps.io and chat away!"
+prettyEcho ""
+prettyEcho "We're done for now. Stay tuned for updates to this tutorial."
+prettyEcho ""
+prettyEcho "There's more: https://docs.cloudfoundry.org/#read-the-docs"
+prettyEcho ""
