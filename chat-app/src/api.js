@@ -1,6 +1,10 @@
-export const Api = {
+export class Api {
 
-    getMessages: () => {
+    constructor(getTimestamp) {
+        this.getTimestamp = getTimestamp;
+    }
+
+    getMessages() {
         console.log("getting messages");
         return fetch("/api/messages")
             .then(response => {
@@ -12,10 +16,13 @@ export const Api = {
                     );
                 }
             });
-    },
+    }
 
-    postMessage: message => {
-        const body = JSON.stringify({text: message});
+    postMessage(message) {
+        const body = JSON.stringify({
+            text: message,
+            timestamp: this.getTimestamp()
+        });
         console.log(`posting message: ${body}`);
         return fetch("/api/messages", {
             method: "POST",

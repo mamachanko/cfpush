@@ -65,7 +65,7 @@ The personas:
  * [x] I can see an error if messages fail to load
  * [x] I can submit a message
  * [x] I can submit a message via my mobile device
- * [ ] I can see messages in order of submission
+ * [x] I can see messages in order of submission
  * [ ] I know the site is secure because it always uses https
  * [ ] I can submit a message by hitting the enter key
  * [ ] I can only see the n (20?) latest messages

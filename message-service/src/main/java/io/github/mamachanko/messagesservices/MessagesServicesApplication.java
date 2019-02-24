@@ -4,11 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -24,6 +29,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @SpringBootApplication
 public class MessagesServicesApplication {
@@ -40,15 +48,20 @@ class MessagesController {
 
     private MessageRepository messageRepository;
     private IdProvider idProvider;
+    private int pageSize;
 
-    public MessagesController(MessageRepository messageRepository, IdProvider idProvider) {
+    public MessagesController(MessageRepository messageRepository, IdProvider idProvider, @Qualifier("pageSize") int pageSize) {
         this.messageRepository = messageRepository;
         this.idProvider = idProvider;
+        this.pageSize = pageSize;
     }
 
     @GetMapping("/api/messages")
     List<Message> getMessages() {
-        return messageRepository.findAll();
+        PageRequest tenMostRecentMessages = PageRequest.of(0, pageSize, Sort.by("timestamp").descending());
+        return messageRepository.findAll(tenMostRecentMessages)
+                .get()
+                .collect(toList());
     }
 
     @PostMapping("/api/messages")
@@ -61,6 +74,15 @@ class MessagesController {
     }
 }
 
+@Configuration
+class Config {
+
+    @Bean
+    int pageSize () {
+        return 10;
+    }
+}
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -69,10 +91,11 @@ class Message {
     @Id
     private String id;
     private String text;
+    private Long timestamp;
 }
 
 @Repository
-interface MessageRepository extends CrudRepository<Message, String> {
+interface MessageRepository extends PagingAndSortingRepository<Message, String> {
 
     @Override
     List<Message> findAll();

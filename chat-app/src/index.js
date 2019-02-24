@@ -5,7 +5,13 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {Api} from "./api";
 
-ReactDOM.render(<App {...Api}/>, document.getElementById('root'));
+const now = () => Math.round(+new Date() / 1000);
+const api = new Api(now);
+
+const app = <App getMessages={() => api.getMessages()}
+                 postMessage={(message) => api.postMessage(message)}/>;
+
+ReactDOM.render(app, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
