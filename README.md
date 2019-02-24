@@ -1,4 +1,4 @@
-# A interactive Cloud Foundry tutorial
+# An interactive Cloud Foundry tutorial
 Clone and run:
 ```bash
 ./playbook.sh
