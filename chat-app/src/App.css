@@ -13,12 +13,17 @@ html, body {
   text-align: center;
 }
 
-.MessagesError {
+.MessageListError {
   padding: 8px 0px;
   background-color: #EF626C;
 }
 
-.MessagesEmpty {
+.MessageListEmpty {
   padding: 8px 0px;
   background-color: #F6E8EA;
+}
+
+.MessageInput {
+  padding: 8px 0px;
+  background-color: #84DCCF;
 }

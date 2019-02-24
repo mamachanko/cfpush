@@ -16,7 +16,7 @@ export default ({onSubmit}) => {
         setMessageInput("");
     };
 
-    return <div>
+    return <div className={"MessageInput"}>
         <input type={"text"}
                placeholder={"what's up?"}
                value={messageInput}
