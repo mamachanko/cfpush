@@ -17,7 +17,7 @@ You're feedback is very welcome. Feel free to raise an issue if anything should 
 
 ## Prerequisites
 
-This tutorial currently assumes you're using [run.pivotal.io](https://run.pivotal.io). If you sign up you get 87$ of quota for free.
+This tutorial currently assumes you're using [run.pivotal.io](https://run.pivotal.io). If you sign up you will get some free quota to play around with. (might as well spend it on this tutorial)
 
 You will need the `cf` cli. If you don't have it installed yet, go [here](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html).
 
@@ -27,7 +27,7 @@ The `chat-app` continuously polls `message-service` for messages and allows you 
 architecture for a chat application. And you are urged not to take pointers for production-ready application design. 
 But it serves the purpose of exploring Cloud Foundry and cloud-native computing.
 
-### `message-service`
+### the backend - `message-service`
 The backend is a Java Spring Boot web application. It exposes two endpoints:
 
     GET  /api/messages : returns list of messages
@@ -55,7 +55,7 @@ Utility scripts for testing and introspection:
 ./scripts/post-message.sh 'message-service.cfapps.io'
 ```
 
-### `chat-app`
+### the frontend - `chat-app`
 The frontend is a Javascript React application. 
 It continuously polls the `message-service` for messages and allows you to send new messages to it.
 It will tell you if it fails to reach the backend.
@@ -108,6 +108,13 @@ Our personas:
  * [x] I understand how to the problems in stateful apps
  * [x] I understand how to provision a database service
  * [x] I understand how to bind the database instance to my backend
+ * [ ] I can clearly distinguish the to-be-run command from the rest of the text
+ * [ ] I can tell which step number of the tutorial I am in
+ * [ ] I can tell which how steps are left of the tutorial
+ * [ ] when I am not yet logged in I can do that from within the tutorial and don't need to leave it
+ * [ ] when I get disrupted or feel like taking a break or need the terminal for something else right, I can stop and resume where I left off (might require checking the current commit hash if the tutorial has updated in the meantime)
+ * [ ] I can run the tutorial against any Cloud Foundry deployment, not just run.pivotal.io 
+ * [ ] when there's a newer version of tutorial available it will let me know and help me to update
  * [ ] when I have further questions I pointers to the docs at the right moment
  * [ ] I understand how to run one-off management tasks (e.g. truncate db)
  * [ ] I understand how to do no-downtime deployments 
@@ -127,19 +134,29 @@ Our personas:
  * [ ] I can only see the n (20?) latest messages
  * [ ] I can an indicator while messages are loading
  * [ ] I can see an error if my message fails to be sent
- * [ ] when I submit a message, messages are being reloaded
+ * [ ] when my message failed to send I can easily try again
  * [ ] when I load the site I get a username assigned
+ * [ ] I can change my username
  * [ ] my username survives page reloads
- * [ ] I can the time a message was submitted at
- * [ ] I can tell who submitted a message
+ * [ ] I can tell at which time a message was submitted at
+ * [ ] I can tell which user submitted a message
+ * [ ] I can see who's online
+ * [ ] I can see who's typing
+ * [ ] I can see who joined when
+ * [ ] I can see who left when
  * [ ] when I visit the page with my mobile device, it looks good
 
 ### As Ash ...
+ * [ ] I can manage this backlog from within a purpose-built tool (e.g. Pivotaltracker, GitHub issues, Trello, etc.)
+ * [ ] I can share a link to a snazzy page with tutees rather than the github repository (for now it's https://mamachanko.github.io/interactive-cloud-foundry-tutorial/ maybe get a custom domain)
+ * [ ] I can manage the content of the tutorial independent of its implementation (a simple solution might be splitting into `run.sh` and `lib.sh`)
+ * [ ] I can automatically update the asciicinema recording of the tutorial
  * [ ] I know that the chat application works because it is unit tested
  * [ ] I know the whole deployment works because I can run acceptance tests
  * [x] I know that the tutorial will work for users who don't "own" `simple-chat.cfapps.io` and `message-service.cfapps.io`
  * [ ] I get feedback about the tutorial
  * [ ] I know this repository has the [right license](https://choosealicense.com)
  * [ ] I want to use `spring-data-rest` so that I don't have to worry about application logic too much
- * [ ] I want to use web sockets so that the example is less contrived
+ * [ ] I want to use web sockets so that the example is less contrived (fe, ws handler, message store)
  * [ ] I don't have to worry about Clara's environment and can simply provider them with a docker image
+ * [ ] I wonder whether I need "releases" ? Maybe a changelog might be nice. (needs research)
