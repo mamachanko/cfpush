@@ -60,7 +60,7 @@ The frontend is a Javascript React application.
 It continuously polls the `message-service` for messages and allows you to send new messages to it.
 It will tell you if it fails to reach the backend.
 
-![chat-app](./chat-app.png =100x)
+![chat-app](chat-app.png?raw=true)
 
 ## Utilities
 
