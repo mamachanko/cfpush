@@ -121,7 +121,7 @@ Our personas:
  * [x] I can submit a message
  * [x] I can submit a message via my mobile device
  * [x] I can see messages in order of submission
- * [ ] I know the site is secure because it always uses https
+ * [x] I know the site is secure because it always uses https
  * [ ] I can submit a message by hitting the enter key
  * [ ] I can only see the n (20?) latest messages
  * [ ] I can an indicator while messages are loading

@@ -7,5 +7,7 @@ pushd ../message-service
 popd
 
 pushd ../chat-app
+    rm -rf build
     yarn build
+    cp Staticfile build
 popd
