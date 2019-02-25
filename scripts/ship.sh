@@ -3,7 +3,9 @@
 cd $(dirname $0)
 
 ./destroy.sh
+
 ./deploy.sh
 
-cd ..
 git push
+
+./destroy.sh

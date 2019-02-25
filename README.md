@@ -3,15 +3,9 @@ Clone and run:
 ```bash
 ./run.sh
 ```
-The script will walk and talk you through the deployment of a simple (and admittdely very naive) chat application
-while exploring the perks and perils of cloud-native apps.
+The script will walk and talk you through the deployment of a simple chat application to Cloud Foundry while exploring cloud-native apps.
 
 [![asciicast](https://asciinema.org/a/229675.svg)](https://asciinema.org/a/229675)
-
-You can run the tutorial in non-interactive mode with:
-```bash
-INTERACTIVE=false ./playbook.sh
-```
 
 If anything goes wrong during the tutorial just stop it, run:
 ```bash
@@ -33,7 +27,7 @@ The `chat-app` continuously polls `message-service` for messages and allows you 
 architecture for a chat application. And you are urged not to take pointers for production-ready application design. 
 But it serves the purpose of exploring Cloud Foundry and cloud-native computing.
 
-## `message-service`
+### `message-service`
 The backend is a Java Spring Boot web application. It exposes two endpoints:
 
     GET  /api/messages : returns list of messages
@@ -50,7 +44,7 @@ docker-compose up -d
 ./scripts/run-backend.sh -Dspring.profiles.active=postgres
 ```
 
-There are a utility scripts:
+Utility scripts for testing and introspection:
 ```bash
 # list messages
 ./scripts/get-messages.sh # defaults to localhost:8080
@@ -61,19 +55,45 @@ There are a utility scripts:
 ./scripts/post-message.sh 'message-service.cfapps.io'
 ```
 
-## `chat-app`
+### `chat-app`
 The frontend is a Javascript React application. 
 It continuously polls the `message-service` for messages and allows you to send new messages to it.
 It will tell you if it fails to reach the backend.
 
 ![chat-app](./chat-app.png =100x)
 
+## Utilities
+
+The tutorial comes in different flavours:
+```bash
+# vanilla. with prompts and real commands. it's the tutorial as it's meant to be run by the tutee.
+./run.sh
+
+# non-interactive. does not require user interaction. useful for automated testing of the tutorial.
+INTERACTIVE=false ./run.sh
+
+# pretend commands. when you want to rehearse giving the tutorial, improve the narrative or read proof.
+DRY=true ./run.sh
+```
+
+More utilities in `./scripts`:
+```bash
+# reset the tutorial by deleting the space
+./scripts/destroy.sh
+
+# build the apps
+./scripts/builds.sh
+
+# build the apps, run the tutorial in non-interactive mode and push the code
+./scripts/ship.sh
+```
+
 ## Backlog
 
 Our personas:
- * **Clara** wants to learn about Cloud Foundry and is doing the tutorial
+ * **Clara** wants to learn about Cloud Foundry and is the tutee
  * **Chad** wants to chat with people on the internet and is using the chat application
- * **Ash** wants to enable developers in using Cloud Foundry and is the maintainer of the tutorial 
+ * **Ash** wants to enable developers in using Cloud Foundry and is the maintainer and tutor
 
 ### As Clara ...
  * [x] when I visit the tutorial I get a brief idea what it's all about (https://asciinema.org/)
