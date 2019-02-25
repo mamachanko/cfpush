@@ -37,12 +37,14 @@ function ensureCfInstalled() {
     fi
 }
 
-function ensureLoggedIn() {
-    if [[ ${DRY} == "true" ]] || cf target > /dev/null 2>&1 ; then
+function ensureLoggedIntoPws() {
+    if [[ ${DRY} == "true" ]] \
+        || $(cf target > /dev/null 2>&1) \
+        || $(cf api | grep run.pivotal.io /dev/null 2>&1) ; then
         : # noop
     else
         prettyEcho ""
-        prettyEcho "You seem not to be logged in. Run:"
+        prettyEcho "You seem not to be logged into Pivotal Web Services. Run:"
         prettyEcho ""
         prettyEcho "    $ cf login -a api.run.pivotal.io"
         prettyEcho ""
@@ -116,7 +118,7 @@ function prompt() {
 
 ensureCfInstalled
 
-ensureLoggedIn
+ensureLoggedIntoPws
 
 welcome
 
