@@ -123,6 +123,7 @@ Our personas:
  * [x] I can see messages in order of submission
  * [x] I know the site is secure because it always uses https
  * [ ] I can submit a message by hitting the enter key
+ * [ ] I feel engaged by the apps material ui feel
  * [ ] I can only see the n (20?) latest messages
  * [ ] I can an indicator while messages are loading
  * [ ] I can see an error if my message fails to be sent
