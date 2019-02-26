@@ -123,28 +123,30 @@ ensureLoggedIntoPws
 welcome
 
 prompt \
-    "Let's create a new space for our apps." \
+    "First things first. We need somewhere to deploy our apps to.
+
+Let's create a new space for this tutorial." \
     "cf create-space interactive-cloud-foundry-tutorial" \
 
 prompt \
     "We have created a new space. But we still have to set it as our current target." \
     "cf target -s interactive-cloud-foundry-tutorial"
 
-#prompt \
-#    "We must build our frontend and backend first before we deploy them.
-#
-#The backend is a Java Spring Boot web application called 'message-service'. It exposes two endpoints:
-#
-#    GET  /api/messages : returns list of messages
-#    POST /api/messages : creates a new message
-#
-#If it does not have a database attached it will run with an in-memory database.
-#We will build it into a .jar file. The .jar file will be located in 'message-service/target'.
-#
-#The frontend is a Javascript React application called 'chat-app'. It continuously polls the message-service for messages and allows to create new ones.
-#
-#We will build it into a bundle of static files. The bundle will be located in 'chat-app/build'." \
-#    "./scripts/build.sh"
+prompt \
+    "We must build our frontend and backend first before we deploy them.
+
+The backend is a Java Spring Boot web application called 'message-service'. It exposes two endpoints:
+
+    GET  /api/messages : returns list of messages
+    POST /api/messages : creates a new message
+
+If it does not have a database attached it will run with an in-memory database.
+We will build it into a .jar file. The .jar file will be located in 'message-service/target'.
+
+The frontend is a Javascript React application called 'chat-app'. It continuously polls the message-service for messages and allows to create new ones.
+
+We will build it into a bundle of static files. The bundle will be located in 'chat-app/build'." \
+    "./scripts/build.sh"
 
 prompt \
     "Now our applications are ready for deployment. Let's start with the frontend.
@@ -158,8 +160,6 @@ We will let Cloud Foundry pick a random available route for us." \
      -b staticfile_buildpack
      --random-route"
 
-#CHAT_APP_URL=$(cf app chat-app | grep routes | sed "s/routes: *//")
-#CHAT_APP_HOSTNAME=$(echo ${CHAT_APP_URL} | cut -d '.' -f1)
 updateChatAppUrl
 
 prompt \
@@ -195,8 +195,6 @@ Let's avert this misery and deploy the message-service. Again, we let Cloud Foun
      -p message-service/target/messages-services-0.0.1-SNAPSHOT.jar
      --random-route"
 
-#MESSAGE_SERVICE_URL=$(cf app message-service | grep routes | sed "s/routes: *//")
-#MESSAGE_SERVICE_HOSTNAME=$(echo ${MESSAGE_SERVICE_URL} | cut -d '.' -f1)
 updateMessageServiceUrl
 
 prompt \
