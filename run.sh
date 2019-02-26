@@ -217,7 +217,7 @@ prompt \
     "The frontend is served at ${CHAT_APP_URL}
 The backend is served at  ${MESSAGE_SERVICE_URL}
 
-But frontend expects to reach the backend at ${CHAT_APP_URL}/api. Mind the '/api'. That's the problem!
+But the frontend expects to reach the backend at ${CHAT_APP_URL}/api. Mind the '/api'. That's the problem!
 
 Cloud Foundry's path-based routing to the rescue.
 
@@ -251,7 +251,7 @@ Why is that? As we haven't provided it with a database, the message-service is r
 
 This setup is violating the idea of 'stateless processes' according to the twelve-factor app (https://12factor.net/processes).
 
-Since Cloud Foundry might relocate instances in the cloud as it sees fit we might loose messages at any moment.
+Since Cloud Foundry might relocate instances in the cloud as it sees fit we might lose messages at any moment.
 
 We need a database. Let's browse the marketplace."\
     "cf marketplace"
@@ -311,7 +311,7 @@ prettyEcho "That's all for now. Stay tuned for updates to this tutorial."
 prettyEcho ""
 prettyEcho "Feel free to tear down the entire deployment with ./scripts/destroy.sh"
 prettyEcho ""
-prettyEcho "You're feedback is very important! Go to"
+prettyEcho "Your feedback is very important! Go to"
 prettyEcho ""
 prettyEcho "    github.com/mamachanko/interactive-cloud-foundry-tutorial"
 prettyEcho ""
