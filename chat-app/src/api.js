@@ -6,7 +6,7 @@ export class Api {
 
     getMessages() {
         console.log("getting messages");
-        return fetch("/api/messages")
+        return fetch("/api/messages?page=0&size=10&sort=timestamp,desc")
             .then(response => {
                 if (response.ok) {
                     return response.json();
@@ -19,10 +19,7 @@ export class Api {
     }
 
     postMessage(message) {
-        const body = JSON.stringify({
-            text: message,
-            timestamp: this.getTimestamp()
-        });
+        const body = JSON.stringify({text: message});
         console.log(`posting message: ${body}`);
         return fetch("/api/messages", {
             method: "POST",

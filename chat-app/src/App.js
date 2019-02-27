@@ -5,7 +5,8 @@ import MessageInput from './MessageInput';
 import MessageListContainer from './MessageListContainer';
 
 const useMessages = getMessages => {
-    const [messages, setMessages] = useState([]);
+    const initialMessages = {_embedded: {messages: []}};
+    const [messages, setMessages] = useState(initialMessages);
     const [isMessagesError, setIsMessagesError] = useState(false);
 
     const loadMessages = () => {

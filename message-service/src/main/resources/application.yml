@@ -1,4 +1,9 @@
 spring:
+  data:
+    rest:
+      basePath: /api
+      default-page-size: 10
+      max-page-size: 100
   jpa:
     hibernate:
       ddl-auto: update

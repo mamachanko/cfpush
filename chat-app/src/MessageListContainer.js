@@ -18,8 +18,8 @@ const MessagesError = () =>
         </p>
     </div>;
 
-const MessageList = ({messages = []}) => {
-    if (messages.length === 0) {
+const MessageList = ({messages = {_embedded: {messages: []}}}) => {
+    if (messages._embedded.messages.length === 0) {
         return <MessageListEmpty/>
     } else {
         const createMessageElement = (message, index) =>
@@ -28,7 +28,7 @@ const MessageList = ({messages = []}) => {
                 {message.text}
             </p>;
         return <div id="messageList">
-            {messages.map(createMessageElement)}
+            {messages._embedded.messages.map(createMessageElement)}
         </div>;
     }
 };
