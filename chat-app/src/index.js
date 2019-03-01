@@ -5,8 +5,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import {Api} from "./api";
 
-const now = () => Math.round(+new Date() / 1000);
-const api = new Api(now);
+const api = new Api();
 
 const app = <App getMessages={() => api.getMessages()}
                  postMessage={(message) => api.postMessage(message)}/>;

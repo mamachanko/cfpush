@@ -1,9 +1,5 @@
 export class Api {
 
-    constructor(getTimestamp) {
-        this.getTimestamp = getTimestamp;
-    }
-
     getMessages() {
         console.log("getting messages");
         return fetch("/api/messages?page=0&size=10&sort=timestamp,desc")
