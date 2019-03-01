@@ -8,6 +8,7 @@ popd
 
 pushd ../chat-app
     rm -rf build
+    CI=true yarn test
     yarn build
     cp Staticfile build
 popd
