@@ -14,7 +14,7 @@ const MessagesError = () =>
     <div className={'MessageListError'}>
         <p>
             <FontAwesomeIcon icon="exclamation-triangle"/>
-            <span> failed to load messages</span>
+            <span> failed to get messages</span>
         </p>
     </div>;
 
@@ -27,7 +27,7 @@ const MessageList = ({messages = {_embedded: {messages: []}}}) => {
                className={"message"}>
                 {message.text}
             </p>;
-        return <div id="messageList">
+        return <div className="messageList" data-testid="messageList">
             {messages._embedded.messages.map(createMessageElement)}
         </div>;
     }
