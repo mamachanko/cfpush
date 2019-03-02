@@ -3,10 +3,14 @@
 HOST=${1:-http://localhost:8080}
 
 function randomMessage() {
-    RANDOM_TEXT=$(date | shasum | tr -cd '[[:alnum:]]')
-    TIMESTAMP_NOW=$(date +%s | cut -b1-13)
+    RANDOM_TEXT=$(
+        cat /dev/random \
+            | head -n 3 \
+            | shasum \
+            | tr -cd '[[:alnum:]]'
+            )
 
-    echo "{\"text\": \"${RANDOM_TEXT}\", \"timestamp\": \"${TIMESTAMP_NOW}\"}"
+    echo "{\"text\": \"${RANDOM_TEXT}\"}"
 }
 
 curl \
