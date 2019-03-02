@@ -30,6 +30,8 @@ function push() {
 
 ensureClean
 
+./build.sh
+
 ./destroy.sh
 
 ./deploy.sh
