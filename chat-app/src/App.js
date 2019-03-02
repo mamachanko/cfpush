@@ -5,8 +5,7 @@ import MessageInput from './MessageInput';
 import MessageListContainer from './MessageListContainer';
 
 const useMessages = getMessages => {
-    const initialMessages = {_embedded: {messages: []}};
-    const [messages, setMessages] = useState(initialMessages);
+    const [messages, setMessages] = useState([]);
     const [isMessagesError, setIsMessagesError] = useState(false);
 
     const loadMessages = () => {
@@ -37,7 +36,7 @@ export default ({getMessages, postMessage}) => {
     return (
         <div className="App">
             <Header/>
-            <MessageInput onSubmit={postMessage}/>
+            <MessageInput postMessage={postMessage}/>
             <MessageListContainer messages={messages}
                                   isMessagesError={isMessagesError}/>
         </div>

@@ -11,7 +11,7 @@ export default ({postMessage}) => {
     const normalize = string => string.trim().replace(/\s\s+/g, ' ');
 
     const onClick = () => {
-        if (messageInput == undefined) return;
+        if (messageInput === undefined) return;
         if (normalize(messageInput) === "") return;
         postMessage(normalize(messageInput));
         setMessageInput("");

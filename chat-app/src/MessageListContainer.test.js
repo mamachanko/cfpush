@@ -10,7 +10,7 @@ describe('<MessageListContainer />', () => {
 
         it('shows a placeholder', () => {
             const {getByText} = render(
-                <MessageListContainer messages={{_embedded: {messages: []}}}/>
+                <MessageListContainer messages={[]}/>
             );
 
             getByText('there are no messages');
@@ -20,15 +20,11 @@ describe('<MessageListContainer />', () => {
 
     describe('when there are messages', () => {
 
-        const messages = {
-            _embedded: {
-                messages: [
-                    {text: 'latest-message'},
-                    {text: 'next-recent-message'},
-                    {text: 'oldest-message'}
-                ]
-            }
-        };
+        const messages = [
+            'latest-message',
+            'next-recent-message',
+            'oldest-message',
+        ];
 
         it('shows messages', () => {
             const {getByText} = render(

@@ -29,6 +29,7 @@
   ],
   "proxy": "http://localhost:8080",
   "devDependencies": {
+    "jest-fetch-mock": "^2.1.1",
     "react-testing-library": "^6.0.0"
   }
 }
