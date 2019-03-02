@@ -1,18 +1,17 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import {cleanup, render} from 'react-testing-library';
 import App from './App';
 
+beforeEach(cleanup);
+
 it('<App /> renders without crashing', () => {
-  const div = document.createElement('div');
 
-  const getMessages = () => new Promise(() => {});
-  const postMessage = () => {};
+    const getMessages = jest.fn().mockResolvedValue([]);
+    const postMessage = () => {
+    };
 
-  ReactDOM.render(
-      <App getMessages={getMessages}
-           postMessage={postMessage}/>,
-      div
-  );
+    const {getByText} = render(<App getMessages={getMessages}
+                                    postMessage={postMessage}/>);
 
-  ReactDOM.unmountComponentAtNode(div);
+    getByText(/there are no messages/);
 });
