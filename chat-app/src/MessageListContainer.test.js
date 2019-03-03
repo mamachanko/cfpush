@@ -1,63 +1,139 @@
 import React from 'react';
-import {render, cleanup} from 'react-testing-library';
+import {cleanup, render, waitForElement} from 'react-testing-library';
 import MessageListContainer from "./MessageListContainer";
 
 describe('<MessageListContainer />', () => {
 
-    afterEach(cleanup);
-
-    describe('when there are no messages', () => {
-
-        it('shows a placeholder', () => {
-            const {getByText} = render(
-                <MessageListContainer messages={[]}/>
-            );
-
-            getByText('there are no messages');
-        });
-
+    afterEach(() => {
+        cleanup();
     });
 
-    describe('when there are messages', () => {
+    describe('when just rendered', () => {
 
-        const messages = [
-            'latest-message',
-            'next-recent-message',
-            'oldest-message',
-        ];
+        it('says its loading messages', () => {
+            const getMessagesStub = jest.fn();
 
-        it('shows messages', () => {
-            const {getByText} = render(
-                <MessageListContainer messages={messages}/>
-            );
+            const {getByText} = render(<MessageListContainer getMessages={getMessagesStub}/>);
 
-            getByText(/latest-message/);
-            getByText(/next-recent-message/);
-            getByText(/oldest-message/);
+            getByText(/loading messages/i);
         });
 
-        it('shows messages in order', () => {
-            const {container} = render(
-                <MessageListContainer messages={messages}/>
-            );
+        describe('when starting to poll messages', () => {
 
-            const messageNodes = container.firstChild.childNodes;
-            expect(messageNodes).toHaveLength(3);
-            expect(messageNodes[0].textContent).toEqual('latest-message');
-            expect(messageNodes[1].textContent).toEqual('next-recent-message');
-            expect(messageNodes[2].textContent).toEqual('oldest-message');
+            describe('when there are no messages', () => {
+
+                it('shows a placeholder', async () => {
+                    const getMessagesStub = jest.fn().mockResolvedValue([]);
+
+                    const {getByText} = render(
+                        <MessageListContainer getMessages={getMessagesStub}/>
+                    );
+
+                    await waitForElement(() => getByText(/there are no messages/i));
+                });
+
+            });
+
+            describe('when there are messages', () => {
+
+                it('shows messages', async () => {
+                    const getMessagesStub = jest.fn()
+                        .mockResolvedValueOnce(['a', 'b', 'c']);
+
+                    jest.useFakeTimers();
+
+                    const {getByText} = render(
+                        <MessageListContainer getMessages={getMessagesStub}/>
+                    );
+
+                    jest.useRealTimers();
+
+                    await waitForElement(() => [
+                        getByText(/a/),
+                        getByText(/b/),
+                        getByText(/c/)
+                    ]);
+                });
+
+                it('shows messages in order', async () => {
+                    const getMessagesStub = jest.fn()
+                        .mockResolvedValueOnce([
+                            'latest-message',
+                            'next-recent-message',
+                            'oldest-message'
+                        ]);
+
+                    const {container, getByText} = render(
+                        <MessageListContainer getMessages={getMessagesStub}/>
+                    );
+
+                    jest.useRealTimers();
+                    await waitForElement(() => getByText(/message/));
+
+                    const messageNodes = container.firstChild.childNodes;
+                    expect(messageNodes).toHaveLength(3);
+                    expect(messageNodes[0].textContent).toEqual('latest-message');
+                    expect(messageNodes[1].textContent).toEqual('next-recent-message');
+                    expect(messageNodes[2].textContent).toEqual('oldest-message');
+                });
+
+                it('keeps polling for messages', async () => {
+                    const getMessagesStub = jest.fn()
+                        .mockResolvedValueOnce(['a', 'b', 'c'])
+                        .mockResolvedValueOnce(['x'])
+                        .mockResolvedValueOnce(['one', 'two']);
+
+                    jest.useFakeTimers();
+
+                    const {getByText} = render(
+                        <MessageListContainer getMessages={getMessagesStub}/>
+                    );
+
+                    jest.useRealTimers();
+
+                    await waitForElement(() => [
+                        getByText(/a/),
+                        getByText(/b/),
+                        getByText(/c/)
+                    ]);
+
+                    jest.useFakeTimers();
+                    jest.advanceTimersByTime(1000);
+                    jest.useRealTimers();
+
+                    await waitForElement(() => [
+                        getByText(/x/)
+                    ]);
+
+                    jest.useFakeTimers();
+                    jest.advanceTimersByTime(1000);
+                    jest.useRealTimers();
+
+                    await waitForElement(() => [
+                        getByText(/one/),
+                        getByText(/two/),
+                    ]);
+                });
+
+            });
+
+            describe('when getting messages fails', () => {
+
+                it('shows an error message', async () => {
+                    const getMessagesStub = jest.fn()
+                        .mockRejectedValueOnce(new Error('get-messages-test-error'));
+
+                    const {getByText} = render(
+                        <MessageListContainer getMessages={getMessagesStub}/>
+                    );
+
+                    jest.useRealTimers();
+                    await waitForElement(() => getByText(/failed to get messages/));
+                });
+            });
+
         });
-    });
 
-    describe('when getting messages fails', () => {
-
-        it('shows an error message', () => {
-            const {getByText} = render(
-                <MessageListContainer isMessagesError={true}/>
-            );
-
-            getByText(/failed to get messages/);
-        });
     });
 
 });
