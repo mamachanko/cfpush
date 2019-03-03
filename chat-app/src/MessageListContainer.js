@@ -15,15 +15,12 @@ const MessageListEmpty = () =>
         <p>there are no messages</p>
     </div>;
 
-const MessageList = ({messages = []}) => {
-    if (messages.length === 0) {
-        return <MessageListEmpty/>
-    } else {
-        return <div className="messageList">
+const MessageList = ({messages}) =>
+    (messages.length === 0) ?
+        <MessageListEmpty/> :
+        <div className="messageList">
             {messages.map((message, index) => <p key={index}>{message}</p>)}
         </div>;
-    }
-};
 
 const MessagesError = () =>
     <div className={'MessageListError'}>
@@ -33,8 +30,7 @@ const MessagesError = () =>
         </p>
     </div>;
 
-const MessageListContainer = ({getMessages}) => {
-
+const useMessages = getMessages => {
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
@@ -56,15 +52,14 @@ const MessageListContainer = ({getMessages}) => {
         return () => clearInterval(interval);
     }, []);
 
-    if (isLoading === true) {
-        return <MessageListLoading/>;
-
-    } else if (isError === true) {
-        return <MessagesError/>
-
-    } else {
-        return <MessageList messages={messages}/>;
-    }
+    return [messages, isLoading, isError];
 };
 
-export default MessageListContainer;
+export default ({getMessages}) => {
+    const [messages, isLoading, isError] = useMessages(getMessages);
+
+    if (isLoading === true) return <MessageListLoading/>;
+    if (isError === true) return <MessagesError/>;
+
+    return <MessageList messages={messages}/>;
+};
