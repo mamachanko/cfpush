@@ -12,10 +12,10 @@ WHITE_ON_BLUE=`tput setab 4 && tput setaf 7`
 UNTIL_EOL=`tput el`
 RESET_COLORS=`tput sgr0`
 
-CHAT_APP_URL="<if you see this the chat-app url wasn't parsed>"
-CHAT_APP_HOSTNAME="<if you see this the chat-app hostname wasn't parsed>"
-MESSAGE_SERVICE_URL="<if you see this the message-service url wasn't parsed>"
-MESSAGE_SERVICE_HOSTNAME="<if you see this the message-service hostname wasn't parsed>"
+CHAT_APP_URL="<if you see this the chat-app url wasn't parsed yet>"
+CHAT_APP_HOSTNAME="<if you see this the chat-app hostname wasn't parsed yet>"
+MESSAGE_SERVICE_URL="<if you see this the message-service url wasn't parsed yet>"
+MESSAGE_SERVICE_HOSTNAME="<if you see this the message-service hostname wasn't parsed yet>"
 
 function prettyEcho() {
     echo "$1" \
@@ -123,6 +123,29 @@ function prompt() {
     awaitUserOk "Done. Press enter to continue with the next step ..."
 }
 
+function smokeTestFrontend() {
+    curl \
+        --location \
+        --fail \
+        --request GET \
+        --url ${CHAT_APP_URL}
+}
+
+function smokeTestBackend() {
+    ./scripts/post-message.sh ${CHAT_APP_URL}
+    ./scripts/post-message.sh ${CHAT_APP_URL}
+    ./scripts/get-messages.sh ${CHAT_APP_URL}
+    ./scripts/get-messages.sh ${CHAT_APP_URL}
+}
+
+function runSmokeTests() {
+    if [[ ${DRY} == "false" && ${CI} != "false" ]]; then
+        smokeTestFrontend
+        smokeTestFrontend
+    fi
+}
+
+
 ensureCfInstalled
 
 ensureLoggedIntoPws
@@ -152,7 +175,7 @@ We will build it into a .jar file. The .jar file will be located in 'message-ser
 
 The frontend is a Javascript React application called 'chat-app'. It continuously polls the message-service for messages and allows to create new ones. It expects the message-service at URL under '/api'. We will build it into a bundle of static files. The bundle will be located in 'chat-app/build'.
 
-Let's build the apps." \
+Let's build the apps. This includes running their tests." \
     "./scripts/build.sh"
 
 prompt \
@@ -312,6 +335,8 @@ prettyEcho "As the instances of the message-service have restarted they are all 
 prettyEcho ""
 
 awaitUserOk
+
+runSmokeTests
 
 prettyEcho ""
 prettyEcho "That's all for now. Stay tuned for updates to this tutorial."

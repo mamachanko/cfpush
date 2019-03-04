@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -ex
+#!/usr/bin/env bash -euxo pipefail
 
 HOST=${1:-http://localhost:8080}
 
@@ -14,6 +14,7 @@ function randomMessage() {
 }
 
 curl \
+    --fail \
     --verbose \
     --request POST \
     --header "Content-Type: application/json" \
