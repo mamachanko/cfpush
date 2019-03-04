@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
-set -e
+#!/usr/bin/env bash -euo pipefail
 
 cd $(dirname $0)
 
