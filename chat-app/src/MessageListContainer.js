@@ -16,9 +16,9 @@ const MessageListEmpty = () =>
     </div>;
 
 const MessageList = ({messages}) =>
-    (messages.length === 0) ?
-        <MessageListEmpty/> :
-        <div className="messageList">
+    (messages.length === 0)
+        ? <MessageListEmpty/>
+        : <div className="messageList">
             {messages.map((message, index) => <p key={index}>{message}</p>)}
         </div>;
 
