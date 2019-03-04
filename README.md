@@ -7,13 +7,16 @@ The script will walk and talk you through the deployment of a simple chat applic
 
 [![asciicast](https://asciinema.org/a/229675.svg)](https://asciinema.org/a/229675)
 
-If anything goes wrong during the tutorial just stop it, run:
+![chat-app](chat-app.png?raw=true)
+
+If you want to start from scratch or recover from a failure:
 ```bash
 ./scripts/destroy.sh
 ```
-and start from scratch.
 
 You're feedback is very welcome. Feel free to raise an issue if anything should be unclear or you run into any problems.
+
+We manage our backlog [here](https://pivotaltracker.com/n/projects/2315492).
 
 ## Prerequisites
 
@@ -21,27 +24,34 @@ This tutorial currently assumes you're using [run.pivotal.io](https://run.pivota
 
 You will need the `cf` cli. If you don't have it installed yet, go [here](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html).
 
-## Object of study: "a (very) simple chat"
-The object of study is a simple chat application. The frontend is a Javascript React application, the `chat-app`. The backend is a Java Spring Boot web application, the `message-service`.
-The `chat-app` continuously polls `message-service` for messages and allows you to create new messages. This is not a great
-architecture for a chat application. And you are urged not to take pointers for production-ready application design. 
-But it serves the purpose of exploring Cloud Foundry and cloud-native computing.
+## Affordances
 
-### the backend - `message-service`
-The backend is a Java Spring Boot web application. It exposes two endpoints:
+The tutorial comes in different flavours:
+```bash
+# For the tutee. With prompts and real commands. It's the tutorial as it's meant to be run.
+./run.sh
 
-    GET  /api/messages : returns list of messages
-    POST /api/messages : creates a new message
+# For CI. non-interactive and with smoke tests.
+CI=true ./run.sh
 
-Run with an in-memory database:
+# For writing the tutorial. Pretend commands.
+DRY=true ./run.sh
+```
+
+Run the backend with an in-memory database:
 ```bash
 ./scripts/run-backend.sh
 ```
 
-Run with Postgres:
+Run the backend with Postgres:
 ```bash
 docker-compose up -d
 ./scripts/run-backend.sh -Dspring.profiles.active=postgres
+```
+
+Run the frontend:
+```bash
+./scripts/run-frontend.sh
 ```
 
 Utility scripts for testing and introspection:
@@ -53,27 +63,6 @@ Utility scripts for testing and introspection:
 # create a random message
 ./scripts/post-message.sh # defaults to localhost:8080
 ./scripts/post-message.sh 'message-service.cfapps.io'
-```
-
-### the frontend - `chat-app`
-The frontend is a Javascript React application. 
-It continuously polls the `message-service` for messages and allows you to send new messages to it.
-It will tell you if it fails to reach the backend.
-
-![chat-app](chat-app.png?raw=true)
-
-## Utilities
-
-The tutorial comes in different flavours:
-```bash
-# vanilla. with prompts and real commands. it's the tutorial as it's meant to be run by the tutee.
-./run.sh
-
-# non-interactive. does not require user interaction. useful for automated testing of the tutorial.
-INTERACTIVE=false ./run.sh
-
-# pretend commands. when you want to rehearse giving the tutorial, improve the narrative or read proof.
-DRY=true ./run.sh
 ```
 
 More utilities in `./scripts`:
@@ -88,6 +77,22 @@ More utilities in `./scripts`:
 ./scripts/ship.sh
 ```
 
-## Backlog
+## Object of study: "a (very) simple chat"
 
-[https://pivotaltracker.com/n/projects/2315492]()
+> TODO: this section should become redundant if properly explained within the tutorial 
+
+The object of study is a simple chat application. The frontend is a Javascript React application, the `chat-app`. The backend is a Java Spring Boot web application, the `message-service`.
+The `chat-app` continuously polls `message-service` for messages and allows you to create new messages. This is not a great
+architecture for a chat application. And you are urged not to take pointers for production-ready application design. 
+But it serves the purpose of exploring Cloud Foundry and cloud-native computing.
+
+### the backend - `message-service`
+The backend is a Java Spring Boot web application. It exposes two endpoints:
+
+    GET  /api/messages : returns list of messages
+    POST /api/messages : creates a new message
+
+### the frontend - `chat-app`
+The frontend is a Javascript React application. 
+It continuously polls the `message-service` for messages and allows you to send new messages to it.
+It will tell you if it fails to reach the backend.

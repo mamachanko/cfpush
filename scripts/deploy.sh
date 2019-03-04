@@ -2,4 +2,4 @@
 
 cd $(dirname $0)
 
-INTERACTIVE=false ../run.sh
+CI=true ../run.sh

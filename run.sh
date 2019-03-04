@@ -4,6 +4,9 @@ set -e
 
 cd $(dirname $0)
 
+CI=${CI:-false}
+DRY=${DRY:-false}
+
 BLUE_ON_WHITE=`tput setab 7 && tput setaf 4`
 WHITE_ON_BLUE=`tput setab 4 && tput setaf 7`
 UNTIL_EOL=`tput el`
@@ -21,7 +24,7 @@ function prettyEcho() {
 }
 
 function ensureCfInstalled() {
-    if [[ ${DRY} == "true" ]] || command cf > /dev/null 2>&1 ; then
+    if [[ ${DRY} != "false" ]] || command cf > /dev/null 2>&1 ; then
         : # noop
     else
         prettyEcho ""
@@ -38,7 +41,7 @@ function ensureCfInstalled() {
 }
 
 function ensureLoggedIntoPws() {
-    if [[ ${DRY} == "true" ]] \
+    if [[ ${DRY} != "false" ]] \
         || $(cf target > /dev/null 2>&1) \
         || $(cf api | grep run.pivotal.io /dev/null 2>&1) ; then
         : # noop
@@ -55,17 +58,21 @@ function ensureLoggedIntoPws() {
 }
 
 function updateChatAppUrl() {
-    CHAT_APP_URL=$(cf app chat-app | grep routes | sed "s/routes: *//")
-    CHAT_APP_HOSTNAME=$(echo ${CHAT_APP_URL} | cut -d '.' -f1)
+    if [[ ${DRY} == "false" ]]; then
+        CHAT_APP_URL=$(cf app chat-app | grep routes | sed "s/routes: *//")
+        CHAT_APP_HOSTNAME=$(echo ${CHAT_APP_URL} | cut -d '.' -f1)
+    fi
 }
 
 function updateMessageServiceUrl() {
-    MESSAGE_SERVICE_URL=$(cf app message-service | grep routes | sed "s/routes: *//")
-    MESSAGE_SERVICE_HOSTNAME=$(echo ${CHAT_APP_URL} | cut -d '.' -f1)
+    if [[ ${DRY} == "false" ]]; then
+        MESSAGE_SERVICE_URL=$(cf app message-service | grep routes | sed "s/routes: *//")
+        MESSAGE_SERVICE_HOSTNAME=$(echo ${CHAT_APP_URL} | cut -d '.' -f1)
+    fi
 }
 
 function awaitUserOk() {
-    if [[ ${INTERACTIVE} != "false" ]]; then
+    if [[ ${CI} == "false" ]]; then
         USER_PROMPTX=${1:-"Press enter to continue..."}
         echo -n "${WHITE_ON_BLUE}    > ${USER_PROMPTX}${UNTIL_EOL}${RESET_COLORS}" && read
         clear
@@ -109,7 +116,7 @@ function prompt() {
     prettyEcho "running ..."
     prettyEcho ""
 
-    if [[ ${DRY} != "true" ]] ; then
+    if [[ ${DRY} == "false" ]] ; then
         eval ${COMMAND}
     fi
 
@@ -278,7 +285,7 @@ prettyEcho ""
 prettyEcho "waiting for the Postgres database to be created ..."
 prettyEcho ""
 
-if [[ ${DRY} != "true" ]]; then
+if [[ ${DRY} == "false" ]]; then
     while ! cf service database | grep status | grep 'create succeeded'; do
         echo -n . && sleep 1
     done
@@ -318,4 +325,6 @@ prettyEcho ""
 prettyEcho "add a star, open an issue or send a PR."
 prettyEcho ""
 prettyEcho "There's more: https://docs.cloudfoundry.org/#read-the-docs"
+prettyEcho ""
+prettyEcho "Thank you!"
 prettyEcho ""
