@@ -4,9 +4,10 @@ import Header from "./Header";
 import MessageInput from './MessageInput';
 import MessageListContainer from './MessageListContainer';
 
-export default ({getMessages, postMessage}) =>
-    <div className="App">
-        <Header/>
-        <MessageInput postMessage={postMessage}/>
-        <MessageListContainer getMessages={getMessages}/>
-    </div>;
+export default ({getMessages, postMessage}) => [
+    <Header key={'header'}/>,
+    <MessageInput key={'message-input'}
+                  postMessage={postMessage}/>,
+    <MessageListContainer key={'message-list'}
+                          getMessages={getMessages}/>
+];

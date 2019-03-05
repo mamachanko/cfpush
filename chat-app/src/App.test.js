@@ -2,16 +2,25 @@ import React from 'react';
 import {cleanup, render, waitForElement} from 'react-testing-library';
 import App from './App';
 
-beforeEach(cleanup);
 
-it('<App /> renders without crashing', async () => {
+describe('<App />', () => {
 
-    const getMessages = jest.fn().mockResolvedValue([]);
-    const postMessage = () => {
-    };
+    beforeEach(cleanup);
 
-    const {getByText} = render(<App getMessages={getMessages}
-                                    postMessage={postMessage}/>);
+    it('shows empty messages and a title', async () => {
 
-    await waitForElement(() => getByText(/there are no messages/));
+        const getMessages = jest.fn().mockResolvedValue([]);
+        const postMessage = () => {
+        };
+
+        const {getByText} = render(<App getMessages={getMessages}
+                                        postMessage={postMessage}/>);
+
+        await waitForElement(() => [
+            getByText(/cloud foundry tutorial chat/i),
+            getByText(/there are no messages/)
+        ]);
+    });
+
 });
+

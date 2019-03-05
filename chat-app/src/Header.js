@@ -1,11 +1,20 @@
 import React from 'react';
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faComments} from '@fortawesome/free-solid-svg-icons';
-
-library.add(faComments);
+import AppBar from "@material-ui/core/AppBar";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
 
 export default () =>
-    <FontAwesomeIcon icon="comments"
-                     className={"fa-4x"}
-                     style={{margin: "32px 0px"}}/>;
+    <Paper elevation={1}
+           className={'header'}>
+        <AppBar position="static"
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '8px 4px'
+                }}>
+            <Typography variant="h6"
+                        color="inherit">
+                {'Cloud Foundry Tutorial Chat'}
+            </Typography>
+        </AppBar>
+    </Paper>;
