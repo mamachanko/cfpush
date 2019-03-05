@@ -13,7 +13,6 @@ RESET_COLORS=`tput sgr0`
 CHAT_APP_URL="<if you see this the chat-app url wasn't parsed yet>"
 CHAT_APP_HOSTNAME="<if you see this the chat-app hostname wasn't parsed yet>"
 MESSAGE_SERVICE_URL="<if you see this the message-service url wasn't parsed yet>"
-MESSAGE_SERVICE_HOSTNAME="<if you see this the message-service hostname wasn't parsed yet>"
 
 function prettyEcho() {
     echo "$1" \
@@ -55,7 +54,7 @@ function ensureLoggedIntoPws() {
     fi
 }
 
-function updateChatAppUrl() {
+function updateChatAppUrlAndHostname() {
     if [[ ${DRY} == "false" ]]; then
         CHAT_APP_URL=$(cf app chat-app | grep routes | sed "s/routes: *//")
         CHAT_APP_HOSTNAME=$(echo ${CHAT_APP_URL} | cut -d '.' -f1)
@@ -65,7 +64,6 @@ function updateChatAppUrl() {
 function updateMessageServiceUrl() {
     if [[ ${DRY} == "false" ]]; then
         MESSAGE_SERVICE_URL=$(cf app message-service | grep routes | sed "s/routes: *//")
-        MESSAGE_SERVICE_HOSTNAME=$(echo ${CHAT_APP_URL} | cut -d '.' -f1)
     fi
 }
 
@@ -188,7 +186,7 @@ We point the the cli at 'chat-app/build' and let Cloud Foundry pick a random ava
      -b staticfile_buildpack
      --random-route"
 
-updateChatAppUrl
+updateChatAppUrlAndHostname
 
 prompt \
     "Congratulations you have successfully deployed an application to Cloud Foundry!
