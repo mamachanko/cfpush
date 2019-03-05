@@ -1,12 +1,6 @@
-/*
-  pinkish-grey: F6E8EA
-  soft-red: EF626C
-  almost-black: 22181C
-  dark-grey: 312F2F
-  light-mint: 84DCCF
-*/
 html, body {
-  color: #22181C;
+  height: 100%;
+  margin: 0;
 }
 
 .App {

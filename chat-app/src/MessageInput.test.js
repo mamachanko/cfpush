@@ -12,8 +12,8 @@ describe('<MessageInput />', () => {
         postMessage = jest.fn();
         const {getByRole, getByPlaceholderText} = render(<MessageInput postMessage={postMessage}/>);
 
-        sendButton = getByRole('img');
-        messageInputField = getByPlaceholderText('what\'s up?');
+        sendButton = getByRole('button');
+        messageInputField = getByPlaceholderText(/what's up\?/i);
     });
 
     afterEach(cleanup);
