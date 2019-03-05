@@ -2,6 +2,14 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React, {useEffect, useState} from 'react';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
+import Paper from "@material-ui/core/Paper";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Avatar from "@material-ui/core/Avatar";
+import {green} from "@material-ui/core/colors";
+import ListItemText from "@material-ui/core/ListItemText";
+import List from "@material-ui/core/List";
+import MessageIcon from "@material-ui/icons/Message";
 
 library.add(faExclamationTriangle);
 
@@ -18,9 +26,18 @@ const MessageListEmpty = () =>
 const MessageList = ({messages}) =>
     (messages.length === 0)
         ? <MessageListEmpty/>
-        : <div className="messageList">
-            {messages.map((message, index) => <p key={index}>{message}</p>)}
-        </div>;
+        : <List data-testid={'message-list'}>
+            {messages.map((message, index) =>
+                <ListItem key={index}>
+                    <ListItemAvatar>
+                        <Avatar style={{backgroundColor: green[500]}}>
+                            <MessageIcon/>
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={message}/>
+                </ListItem>
+            )}
+        </List>;
 
 const MessagesError = () =>
     <div className={'MessageListError'}>
@@ -61,5 +78,7 @@ export default ({getMessages}) => {
     if (isLoading === true) return <MessageListLoading/>;
     if (isError === true) return <MessagesError/>;
 
-    return <MessageList messages={messages}/>;
+    return <Paper elevation={0} className={'content'}>
+        <MessageList messages={messages}/>
+    </Paper>;
 };

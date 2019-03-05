@@ -63,14 +63,14 @@ describe('<MessageListContainer />', () => {
                             'oldest-message'
                         ]);
 
-                    const {container, getByText} = render(
+                    const {getByText, getByTestId} = render(
                         <MessageListContainer getMessages={getMessagesStub}/>
                     );
 
                     jest.useRealTimers();
                     await waitForElement(() => getByText(/message/));
 
-                    const messageNodes = container.firstChild.childNodes;
+                    const messageNodes = getByTestId('message-list').childNodes;
                     expect(messageNodes).toHaveLength(3);
                     expect(messageNodes[0].textContent).toEqual('latest-message');
                     expect(messageNodes[1].textContent).toEqual('next-recent-message');
