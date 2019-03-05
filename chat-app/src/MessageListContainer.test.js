@@ -72,9 +72,9 @@ describe('<MessageListContainer />', () => {
 
                     const messageNodes = getByTestId('message-list').childNodes;
                     expect(messageNodes).toHaveLength(3);
-                    expect(messageNodes[0].textContent).toEqual('latest-message');
+                    expect(messageNodes[0].textContent).toEqual('oldest-message');
                     expect(messageNodes[1].textContent).toEqual('next-recent-message');
-                    expect(messageNodes[2].textContent).toEqual('oldest-message');
+                    expect(messageNodes[2].textContent).toEqual('latest-message');
                 });
 
                 it('keeps polling for messages', async () => {

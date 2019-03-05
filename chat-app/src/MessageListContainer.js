@@ -27,7 +27,7 @@ const MessageList = ({messages}) =>
     (messages.length === 0)
         ? <MessageListEmpty/>
         : <List data-testid={'message-list'}>
-            {messages.map((message, index) =>
+            {messages.reverse().map((message, index) =>
                 <ListItem key={index}>
                     <ListItemAvatar>
                         <Avatar style={{backgroundColor: green[500]}}>

@@ -6,8 +6,8 @@ import MessageListContainer from './MessageListContainer';
 
 export default ({getMessages, postMessage}) => [
     <Header key={'header'}/>,
-    <MessageInput key={'message-input'}
-                  postMessage={postMessage}/>,
     <MessageListContainer key={'message-list'}
-                          getMessages={getMessages}/>
+                          getMessages={getMessages}/>,
+    <MessageInput key={'message-input'}
+                  postMessage={postMessage}/>
 ];

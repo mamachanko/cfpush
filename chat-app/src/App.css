@@ -3,21 +3,18 @@ html, body {
   margin: 0;
 }
 
-.App {
-  text-align: center;
+#root {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.MessageListError {
-  padding: 8px 0px;
-  background-color: #EF626C;
+.header, .footer {
+  background: silver;
 }
 
-.MessageListEmpty {
-  padding: 8px 0px;
-  background-color: #F6E8EA;
-}
-
-.MessageInput {
-  padding: 8px 0px;
-  background-color: #84DCCF;
+.content {
+  flex: 1;
+  overflow: auto;
+  background: pink;
 }
