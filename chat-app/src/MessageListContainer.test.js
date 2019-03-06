@@ -4,6 +4,12 @@ import MessageListContainer from "./MessageListContainer";
 
 describe('<MessageListContainer />', () => {
 
+    beforeAll(() => {
+        if (!HTMLElement.prototype.scrollIntoView) {
+            HTMLElement.prototype.scrollIntoView = () => {}
+        }
+    })
+
     afterEach(() => {
         cleanup();
     });

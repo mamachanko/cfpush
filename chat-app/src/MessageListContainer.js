@@ -1,5 +1,5 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import Paper from "@material-ui/core/Paper";
@@ -23,21 +23,39 @@ const MessageListEmpty = () =>
         <p>there are no messages</p>
     </div>;
 
-const MessageList = ({messages}) =>
-    (messages.length === 0)
+const MessageList = ({messages}) => {
+
+    const listBottom = useRef(null);
+
+    useEffect(() => {
+        if (listBottom.current != null) {
+            listBottom.current.scrollIntoView({behavior: 'smooth'});
+        }
+    }, [listBottom]);
+
+    return (messages.length === 0)
         ? <MessageListEmpty/>
-        : <List data-testid={'message-list'}>
-            {messages.reverse().map((message, index) =>
-                <ListItem key={index}>
-                    <ListItemAvatar>
-                        <Avatar style={{backgroundColor: green[500]}}>
-                            <MessageIcon/>
-                        </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={message}/>
-                </ListItem>
-            )}
-        </List>;
+        : <>
+            <List data-testid={'message-list'}>
+                {messages.reverse().map((message, index) =>
+                    <ListItem key={index}>
+                        <ListItemAvatar>
+                            <Avatar style={{backgroundColor: green[500]}}>
+                                <MessageIcon/>
+                            </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={message}
+                                      style={{wordBreak: 'break-word'}}/>
+                    </ListItem>
+                )}
+            </List>
+            <div style={{float: "left", clear: "both"}}
+                 ref={element => {
+                     listBottom.current = element;
+                 }}>
+            </div>
+        </>;
+};
 
 const MessagesError = () =>
     <div className={'MessageListError'}>
