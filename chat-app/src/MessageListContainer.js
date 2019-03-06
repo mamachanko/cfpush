@@ -23,16 +23,23 @@ const MessageListEmpty = () =>
         <p>there are no messages</p>
     </div>;
 
-const MessageList = ({messages}) => {
-
-    const listBottom = useRef(null);
+const ScrollIntoView = () => {
+    const target = useRef(null);
 
     useEffect(() => {
-        if (listBottom.current != null) {
-            listBottom.current.scrollIntoView({behavior: 'smooth'});
+        if (target.current != null) {
+            target.current.scrollIntoView({behavior: 'smooth'});
         }
-    }, [listBottom]);
+    }, [target]);
 
+    return <div style={{float: "left", clear: "both"}}
+         ref={element => {
+             target.current = element;
+         }}>
+    </div>
+};
+
+const MessageList = ({messages}) => {
     return (messages.length === 0)
         ? <MessageListEmpty/>
         : <>
@@ -49,11 +56,7 @@ const MessageList = ({messages}) => {
                     </ListItem>
                 )}
             </List>
-            <div style={{float: "left", clear: "both"}}
-                 ref={element => {
-                     listBottom.current = element;
-                 }}>
-            </div>
+            <ScrollIntoView />
         </>;
 };
 
