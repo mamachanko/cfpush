@@ -2,7 +2,6 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React, {useEffect, useRef, useState} from 'react';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
-import Paper from "@material-ui/core/Paper";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
@@ -10,16 +9,22 @@ import {green} from "@material-ui/core/colors";
 import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import MessageIcon from "@material-ui/icons/Message";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 library.add(faExclamationTriangle);
 
 const MessageListLoading = () =>
-    <div className={'MessageListLoading'}>
-        <p>loading messages</p>
+    <div style={{
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }}>
+        <CircularProgress role="alert" ariaBusy="true"/>
     </div>;
 
 const MessageListEmpty = () =>
-    <div className={'MessageListEmpty'}>
+    <div>
         <p>there are no messages</p>
     </div>;
 
@@ -33,9 +38,9 @@ const ScrollIntoView = () => {
     }, [target]);
 
     return <div style={{float: "left", clear: "both"}}
-         ref={element => {
-             target.current = element;
-         }}>
+                ref={element => {
+                    target.current = element;
+                }}>
     </div>
 };
 
@@ -56,7 +61,7 @@ const MessageList = ({messages}) => {
                     </ListItem>
                 )}
             </List>
-            <ScrollIntoView />
+            <ScrollIntoView/>
         </>;
 };
 
@@ -98,8 +103,5 @@ export default ({getMessages}) => {
 
     if (isLoading === true) return <MessageListLoading/>;
     if (isError === true) return <MessagesError/>;
-
-    return <Paper elevation={0} className={'content'}>
-        <MessageList messages={messages}/>
-    </Paper>;
+    return <MessageList messages={messages}/>;
 };

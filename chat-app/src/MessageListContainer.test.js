@@ -19,9 +19,9 @@ describe('<MessageListContainer />', () => {
         it('says its loading messages', () => {
             const getMessagesStub = jest.fn();
 
-            const {getByText} = render(<MessageListContainer getMessages={getMessagesStub}/>);
+            const {getByRole} = render(<MessageListContainer getMessages={getMessagesStub}/>);
 
-            getByText(/loading messages/i);
+            getByRole('alert');
         });
 
         describe('when starting to poll messages', () => {

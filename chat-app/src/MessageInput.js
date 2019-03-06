@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
@@ -17,34 +16,32 @@ export default ({postMessage}) => {
         setMessageInput("");
     };
 
-    return <Paper elevation={1} className={'footer'}>
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '2px 4px',
-                margin: '12px'
-            }}>
-                <InputBase style={{
-                               flex: 1,
-                               marginLeft: 8
-                           }}
-                           placeholder={"What's up?"}
-                           value={messageInput}
-                           onChange={(event) => setMessageInput(event.target.value)}
-                           autoFocus
-                />
-                <Divider style={{
-                    width: 1,
-                    height: 28,
-                    margin: 4
-                }}/>
-                <IconButton color={"primary"}
-                            variant={"fab"}
-                            style={{padding: 10}}
-                            role={'button'}
-                            onClick={onClick}>
-                    <SendIcon/>
-                </IconButton>
-            </div>
-    </Paper>;
+    return <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        padding: '2px 4px',
+        margin: '12px'
+    }}>
+        <InputBase style={{
+            flex: 1,
+            marginLeft: 8
+        }}
+                   placeholder={"What's up?"}
+                   value={messageInput}
+                   onChange={(event) => setMessageInput(event.target.value)}
+                   autoFocus
+        />
+        <Divider style={{
+            width: 1,
+            height: 28,
+            margin: 4
+        }}/>
+        <IconButton color={"primary"}
+                    variant={"fab"}
+                    style={{padding: 10}}
+                    role={'button'}
+                    onClick={onClick}>
+            <SendIcon/>
+        </IconButton>
+    </div>;
 };
