@@ -18,7 +18,7 @@ describe('<App />', () => {
 
         await waitForElement(() => [
             getByText(/cloud foundry tutorial chat/i),
-            getByText(/there are no messages/)
+            getByText(/there are no messages/i)
         ]);
     });
 

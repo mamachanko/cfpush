@@ -10,6 +10,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import List from "@material-ui/core/List";
 import MessageIcon from "@material-ui/icons/Message";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import Typography from "@material-ui/core/Typography";
 
 library.add(faExclamationTriangle);
 
@@ -24,8 +25,18 @@ const MessageListLoading = () =>
     </div>;
 
 const MessageListEmpty = () =>
-    <div>
-        <p>there are no messages</p>
+    <div style={{
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'center'
+    }}>
+        <Typography variant="h6"
+                    color="inherit">
+            {'There are no messages'}
+        </Typography>
+        <p>{'... so quiet'}</p>
     </div>;
 
 const ScrollIntoView = () => {
