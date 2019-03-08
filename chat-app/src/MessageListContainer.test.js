@@ -134,7 +134,7 @@ describe('<MessageListContainer />', () => {
                     );
 
                     jest.useRealTimers();
-                    await waitForElement(() => getByText(/failed to get messages/));
+                    await waitForElement(() => getByText(/failed to get messages/i));
                 });
             });
 

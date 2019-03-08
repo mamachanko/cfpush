@@ -1,7 +1,4 @@
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import React, {useEffect, useRef, useState} from 'react';
-import {library} from '@fortawesome/fontawesome-svg-core';
-import {faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 import ListItem from "@material-ui/core/ListItem";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Avatar from "@material-ui/core/Avatar";
@@ -11,8 +8,8 @@ import List from "@material-ui/core/List";
 import MessageIcon from "@material-ui/icons/Message";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
+import Snackbar from "@material-ui/core/Snackbar";
 
-library.add(faExclamationTriangle);
 
 const MessageListLoading = () =>
     <div style={{
@@ -21,7 +18,7 @@ const MessageListLoading = () =>
         alignItems: 'center',
         justifyContent: 'center'
     }}>
-        <CircularProgress role="alert" ariaBusy="true"/>
+        <CircularProgress role="alert" aria-busy={true}/>
     </div>;
 
 const MessageListEmpty = () =>
@@ -77,12 +74,18 @@ const MessageList = ({messages}) => {
 };
 
 const MessagesError = () =>
-    <div className={'MessageListError'}>
-        <p>
-            <FontAwesomeIcon icon="exclamation-triangle"/>
-            <span> failed to get messages</span>
-        </p>
-    </div>;
+    <>
+        <MessageListLoading/>
+        <Snackbar open={true}
+                  style={{paddingBottom: '74px'}}
+                  autoHideDuration={2000}
+                  ContentProps={{'aria-describedby': 'message-id'}}
+                  anchorOrigin={{horizontal: 'center', vertical: 'bottom'}}
+                  message={
+                      <span id="message-id">Failed to get messages. Weird.</span>
+                  }
+        />
+    </>;
 
 const useMessages = getMessages => {
     const [messages, setMessages] = useState([]);
