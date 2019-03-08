@@ -1,1 +1,311 @@
-This is cfpush.cloud. Welcome!
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>cfpush.cloud️</title>
+
+    <meta charset="utf-8">
+    <meta name="author" content="mamachanko">
+    <meta name="description" content="an interactive cloud foundry tutorial in your terminal">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/skeleton.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="icon" type="image/png" href="images/favicon.png">
+
+    <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+
+    <style>
+        code,
+        h1 {
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .invisible {
+            display: none;
+        }
+
+        .terminal-window {
+            position: relative;
+            border-radius: 0.3em;
+
+            user-select: none;
+
+            -webkit-box-shadow: 0 0 20px 0px rgba(119, 119, 119, 0.38);
+            box-shadow: 0 0 20px 0px rgba(119, 119, 119, 0.38);
+
+            background: rgb(53, 53, 53);
+            height: 10em;
+        }
+
+        .terminal-window-header {
+            border-top-left-radius: .3em;
+            border-top-right-radius: .3em;
+
+            position: relative;
+            left: 0;
+            width: 100%;
+            height: 2.4em;
+            top: 0;
+            background: rgb(44, 44, 44);
+        }
+
+        .terminal-window-header>.window-control {
+            position: absolute;
+            width: 0.8em;
+            height: 0.8em;
+            border-radius: 0.4em;
+            top: 0.7em;
+        }
+
+        .terminal-window-header>.window-control:nth-child(1) {
+            left: 0.5em;
+            background: salmon;
+        }
+
+        .terminal-window-header>.window-control:nth-child(2) {
+            left: 1.8em;
+            background: rgb(246, 196, 82);
+        }
+
+        .terminal-window-header>.window-control:nth-child(3) {
+            left: 3.1em;
+            background: rgb(101, 201, 84);
+        }
+
+        .terminal-screen {
+            margin: 1em;
+        }
+
+        .terminal-prompt {
+            content: '';
+        }
+
+        .terminal-prompt:before {
+            content: '$';
+            color: #58eba4;
+            position: relative;
+            font-weight: 800;
+        }
+
+        .terminal-lines {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .line {
+            color: #fff;
+            font-family: "Roboto Mono";
+            font-size: 1.3em;
+        }
+
+        .stdout {
+            margin-left: .2em;
+            margin-top: .6em;
+            font-size: 1.6em;
+        }
+
+        .cursor:after {
+            content: '';
+            width: 8px;
+            height: 1em;
+            margin-top: 6px;
+            margin-left: 8px;
+            position: absolute;
+
+            background-color: #58eba4;
+            animation: blink .75s step-end infinite
+        }
+
+        .mint {
+            color: rgb(0, 181, 163);
+        }
+
+        .copy-to-clipboard {
+            z-index: 1;
+            position: absolute;
+            top: 72%;
+            bottom: 0;
+            right: 0;
+            color: #fff;
+            background-color: #cccccc;
+            padding: 8px 14px;
+            border-bottom-right-radius: .3em;
+        }
+
+        @keyframes blink {
+
+            from,
+            to {
+                background-color: transparent;
+            }
+
+            50% {
+                background-color: #58eba4;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="one-half column" style="margin-top: 15%">
+
+                <h1>cfpush.cloud</h1>
+
+                <p class="tagline">An interactive Cloud Foundry tutorial in your terminal</p>
+
+                <div class="terminal-window" id="demo-terminal">
+                    <div class="terminal-window-header">
+                        <span class="window-control close-window"></span>
+                        <span class="window-control minimize-window"></span>
+                        <span class="window-control maximize-window"></span>
+                    </div>
+                    <div class="terminal-screen">
+                        <div class="terminal-lines">
+                            <div class="line terminal-prompt cursor" id="command">
+                            </div>
+                            <div class="line stdout invisible" id="command-output">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="copy-to-clipboard" data-clipboard-target="#command" title="Copy command to clipboard">
+                        <i class="far fa-copy"></i>
+                    </div>
+                </div>
+                <script type="application/javascript">
+                    const commandText = "curl cfpush.cloud | sh";
+                    const commandOutputText = "💻 ----------> ☁️      😃";
+
+                    var command = document.getElementById("command");
+                    var commandOutput = document.getElementById("command-output");
+                    
+
+                    function typewrite(txt, i, div, typingSpeed, then) {
+                        if (i < txt.length) {
+                            div.innerHTML += txt.charAt(i);
+                            setTimeout(function () {
+                                typewrite(txt, i + 1, div, typingSpeed, then)
+                            }, typingSpeed);
+                        } else {
+                            then();
+                        }
+                    }
+
+                    function show(element) {
+                        element.classList.remove("invisible");
+                    }
+
+                    function commandAnimation() {
+                        setTimeout(function () {
+                            show(command);
+
+                            typewrite(commandText, 0, command, 125, function () {
+                                command.classList.remove("cursor");
+
+                                setTimeout(function () {
+                                    show(commandOutput);
+
+                                    typewrite(commandOutputText, 0, commandOutput, 200, function () {
+                                        setTimeout(resetCommandAnimation, 5000);
+                                    })
+                                }, 1000);
+                            });
+                        }, 500);
+                    }
+
+                    function clear(div) {
+                        div.innerHTML = " ";
+                    }
+
+                    function resetCommandAnimation() {
+
+                        setTimeout(function () {
+                            commandOutput.classList.add("invisible");
+                            command.classList.add("invisible");
+                            command.classList.add("cursor");
+
+                            clear(command);
+                            clear(commandOutput);
+
+                            commandAnimation();
+
+                        }, 500);
+                    }
+
+
+                    setTimeout(function () {
+                        commandAnimation()
+                    }, 1000);
+
+                    const clipboard = new ClipboardJS('.copy-to-clipboard', {
+                        text: function (trigger) {
+                            return commandText;
+                        }
+                    });
+
+                    clipboard.on('success', function (e) {
+                        console.info('Copied to clipboard:', e.text);
+                        e.clearSelection();
+                    });
+
+                    clipboard.on('error', function (e) {
+                        console.info('Failed to copy to clipboard');
+                    });
+                </script>
+
+                <p>
+                    Learn about Cloud Foundry and cloud native application by deploying a real chat application in
+                    minutes.
+                    The tutorial will walk and talk you through all the necessary steps and commands.
+                    You won't need to type or copy any commands, simply step through the tutorial.
+                    Have a look at the application you will be deploying here: <a
+                        href="https://chat.cfpush.cloud">chat.cfpush.cloud</a>.
+                </p>
+
+                <script id="asciicast-229675" src="https://asciinema.org/a/229675.js" async></script>
+
+                <p>For a verified experience we recommend to use the above command as an entry point. But you can of
+                    course just clone the <a
+                        href="https://github.com/mamachanko/interactive-cloud-foundry-tutorial">repository</a>, install
+                    dependencies and run the tutorial but for a ... experience we recommend to you use the
+                    above-mentioned entrypoint.</p>
+
+                <p>This tutorial currently assumes that you have Docker installed and a <a
+                        href="https://run.pivotal.io" />Pivotal Web Services account</a>. You can sign up and get free
+                    quota.</p>
+
+                <p>built with ❤️ by <a
+                        href="https://github.com/mamachanko/interactive-cloud-foundry-tutorial">mamachanko</a></p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+<!-- 
+
+#######################################################################
+#######################################################################
+
+Are you seeing this? 
+
+If your in your terminal make sure you're User-Agent matches "curl/*"
+and try again. 
+
+If you need more help, feel free to open an issue here:
+
+https://github.com/mamachanko/interactive-cloud-foundry-tutorial/issues
+
+#######################################################################
+#######################################################################
+
+ -->
