@@ -9,14 +9,15 @@ export default ({postMessage}) => {
 
     const normalize = string => string.trim().replace(/\s\s+/g, ' ');
 
-    const onClick = () => {
+    const onSubmit = event => {
         if (messageInput === undefined) return;
         if (normalize(messageInput) === "") return;
         postMessage(normalize(messageInput));
         setMessageInput("");
+        event.preventDefault();
     };
 
-    return <div style={{
+    return <form onSubmit={onSubmit} style={{
         display: 'flex',
         alignItems: 'center',
         padding: '2px 4px',
@@ -38,10 +39,10 @@ export default ({postMessage}) => {
         }}/>
         <IconButton color={"primary"}
                     variant={"fab"}
+                    type={"submit"}
                     style={{padding: 10}}
-                    role={'button'}
-                    onClick={onClick}>
+                    role={'button'}>
             <SendIcon/>
         </IconButton>
-    </div>;
+    </form>;
 };

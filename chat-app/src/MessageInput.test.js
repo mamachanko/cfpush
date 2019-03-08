@@ -30,7 +30,7 @@ describe('<MessageInput />', () => {
             fireEvent.change(messageInputField, {target: {value: typedMessage}});
         });
 
-        describe('when clicking the send button', () => {
+        describe('when sending the message', () => {
 
             beforeEach(() => {
                 fireEvent.click(sendButton);
