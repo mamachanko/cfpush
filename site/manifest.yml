@@ -1,6 +1,6 @@
 ---
 applications:
-- name: site
+- name: cfpush-site
   memory: 64m
   disk_quota: 128m
   stack: cflinuxfs3

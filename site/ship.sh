@@ -1,6 +1,4 @@
-#!/usr/bin/env bash -ex
-
-cf target -s development -o cfpush-cloud
+#!/usr/bin/env bash -euxo pipefail
 
 cf push
 
