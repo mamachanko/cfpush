@@ -9,26 +9,42 @@ import MessageIcon from "@material-ui/icons/Message";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import Snackbar from "@material-ui/core/Snackbar";
+import withStyles from "@material-ui/core/styles/withStyles";
 
-
-const MessageListLoading = () =>
-    <div style={{
+const styles = () => ({
+    loading: {
         height: '100%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
-    }}>
-        <CircularProgress role="alert" aria-busy={true}/>
-    </div>;
-
-const MessageListEmpty = () =>
-    <div style={{
+        justifyContent: 'center',
+    },
+    empty: {
         height: '100%',
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'column',
-        justifyContent: 'center'
-    }}>
+        justifyContent: 'center',
+    },
+    error: {
+        paddingBottom: '74px',
+    },
+    messageAvatar: {
+        backgroundColor: green[500]
+    },
+    messageText: {
+        wordBreak: 'break-word'
+    }
+});
+
+
+const MessageListLoading = ({classes}) =>
+    <div className={classes.loading}>
+        <CircularProgress role="alert"
+                          aria-busy={true}/>
+    </div>;
+
+const MessageListEmpty = ({classes}) =>
+    <div className={classes.empty}>
         <Typography variant="h6"
                     color="inherit">
             {'There are no messages'}
@@ -36,7 +52,7 @@ const MessageListEmpty = () =>
         <p>{'... so quiet'}</p>
     </div>;
 
-const ScrollIntoView = () => {
+const ScrollIntoView = ({classes}) => {
     const target = useRef(null);
 
     useEffect(() => {
@@ -45,39 +61,39 @@ const ScrollIntoView = () => {
         }
     }, [target]);
 
-    return <div style={{float: "left", clear: "both"}}
+    return <div className={classes.scrollIntoView}
                 ref={element => {
                     target.current = element;
                 }}>
     </div>
 };
 
-const MessageList = ({messages}) => {
+const MessageList = ({messages, classes}) => {
     return (messages.length === 0)
-        ? <MessageListEmpty/>
+        ? <MessageListEmpty classes={classes}/>
         : <>
             <List data-testid={'message-list'}>
                 {messages.reverse().map((message, index) =>
                     <ListItem key={index}>
                         <ListItemAvatar>
-                            <Avatar style={{backgroundColor: green[500]}}>
+                            <Avatar className={classes.messageAvatar}>
                                 <MessageIcon/>
                             </Avatar>
                         </ListItemAvatar>
                         <ListItemText primary={message}
-                                      style={{wordBreak: 'break-word'}}/>
+                                      className={classes.messageText}/>
                     </ListItem>
                 )}
             </List>
-            <ScrollIntoView/>
+            <ScrollIntoView classes={classes}/>
         </>;
 };
 
-const MessagesError = () =>
+const MessagesError = ({classes}) =>
     <>
-        <MessageListLoading/>
+        <MessageListLoading classes={classes}/>
         <Snackbar open={true}
-                  style={{paddingBottom: '74px'}}
+                  className={classes.error}
                   autoHideDuration={2000}
                   ContentProps={{'aria-describedby': 'message-id'}}
                   anchorOrigin={{horizontal: 'center', vertical: 'bottom'}}
@@ -112,10 +128,12 @@ const useMessages = getMessages => {
     return [messages, isLoading, isError];
 };
 
-export default ({getMessages}) => {
+const MessageListContainer = ({getMessages, classes}) => {
     const [messages, isLoading, isError] = useMessages(getMessages);
 
-    if (isLoading === true) return <MessageListLoading/>;
-    if (isError === true) return <MessagesError/>;
-    return <MessageList messages={messages}/>;
+    if (isLoading === true) return <MessageListLoading classes={classes}/>;
+    if (isError === true) return <MessagesError classes={classes}/>;
+    return <MessageList messages={messages} classes={classes}/>;
 };
+
+export default withStyles(styles)(MessageListContainer);
