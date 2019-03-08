@@ -12,11 +12,13 @@ export default ({getMessages, postMessage}) => [
            className={'header'}>
         <Header key={'header'}/>
     </Paper>,
-    <Paper elevation={0} className={'content'}>
+    <Paper elevation={0}
+           className={'content'}>
         <MessageListContainer key={'message-list'}
                               getMessages={getMessages}/>
     </Paper>,
-    <Paper elevation={1} className={'footer'}>
+    <Paper elevation={1}
+           className={'footer'}>
         <MessageInput key={'message-input'}
                       postMessage={postMessage}/>
     </Paper>
