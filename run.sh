@@ -8,16 +8,22 @@ DRY=${DRY:-false}
 BLUE_ON_WHITE=`tput setab 7 && tput setaf 4`
 WHITE_ON_BLUE=`tput setab 4 && tput setaf 7`
 UNTIL_EOL=`tput el`
-RESET_COLORS=`tput sgr0`
+UNDERLINE=`tput smul`
+RESET_UNDERLINE=`tput rmul`
+RESET_STYLES=`tput sgr0`
 
-CHAT_APP_URL="<if you see this the chat-app url wasn't parsed yet>"
-CHAT_APP_HOSTNAME="<if you see this the chat-app hostname wasn't parsed yet>"
-MESSAGE_SERVICE_URL="<if you see this the message-service url wasn't parsed yet>"
+CHAT_APP_URL="<if_you_see_this_the_chat-app_url_was_not_parsed_yet>"
+CHAT_APP_HOSTNAME="<if_you_see_this_the_chat-app_hostname_was_not_parsed_yet>"
+MESSAGE_SERVICE_URL="<if_you_see_this_the_message-service_url_was_not_parsed_yet>"
 
 function prettyEcho() {
     echo "$1" \
     | fold -w 80 -s \
-    | sed "s/^\(.*\)$/${BLUE_ON_WHITE}    \1${UNTIL_EOL}${RESET_COLORS}/"
+    | sed "s/^\(.*\)$/${BLUE_ON_WHITE}    \1${UNTIL_EOL}${RESET_STYLES}/"
+}
+
+function underline() {
+    echo "${UNDERLINE}$1${RESET_UNDERLINE}"
 }
 
 function ensureCfInstalled() {
@@ -70,16 +76,16 @@ function updateMessageServiceUrl() {
 function awaitUserOk() {
     if [[ ${CI} == "false" ]]; then
         USER_PROMPTX=${1:-"Press enter to continue..."}
-        echo -n "${WHITE_ON_BLUE}    > ${USER_PROMPTX}${UNTIL_EOL}${RESET_COLORS}" && read
+        echo -n "${WHITE_ON_BLUE}    > ${USER_PROMPTX}${UNTIL_EOL}${RESET_STYLES}" && read
         clear
     fi
 }
 
 function welcome() {
     clear
-    echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_COLORS}"
-    echo "${WHITE_ON_BLUE}${UNTIL_EOL}    WELCOME TO AN INTERACTIVE CLOUD FOUNDRY TUTORIAL    ${RESET_COLORS}"
-    echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_COLORS}"
+    echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
+    echo "${WHITE_ON_BLUE}${UNTIL_EOL}    WELCOME TO AN INTERACTIVE CLOUD FOUNDRY TUTORIAL    ${RESET_STYLES}"
+    echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
 
     prettyEcho ""
     prettyEcho "We will be exploring Cloud Foundry and cloud-native computing by deploying a simple chat application to Cloud Foundry."
@@ -193,7 +199,7 @@ prompt \
 
 The chat-app is served at
 
-    https://${CHAT_APP_URL}
+    $(underline https://${CHAT_APP_URL})
 
 But first, let's inspect the app." \
     "cf app chat-app"
@@ -211,7 +217,7 @@ This is called vertical scaling. Whenever scaling an app vertically Cloud Foundr
 prompt \
     "Now let's open the application at
 
-    https://${CHAT_APP_URL}
+    $(underline https://${CHAT_APP_URL})
 
 You should see that the app failed to load any messages. Oh dear! That's because its backend isn't running yet. But our frontend is a good Cloud-citizen and handles issues with its downstream dependencies gracefully. That's an essential property of any cloud-native application.
 
@@ -226,11 +232,11 @@ updateMessageServiceUrl
 prompt \
     "The message-service is deployed and served at
 
-    https://${MESSAGE_SERVICE_URL}.
+    $(underline https://${MESSAGE_SERVICE_URL})
 
 We have both the frontend and the backend deployed now. However, when we visit
 
-    https://${CHAT_APP_URL}
+    $(underline https://${CHAT_APP_URL})
 
 it still fails to load any messages. See for yourself.
 
@@ -240,14 +246,15 @@ In order to understand we must look at how traffic is currently routed." \
     "cf routes"
 
 prompt \
-    "The frontend is served at ${CHAT_APP_URL}
-The backend is served at  ${MESSAGE_SERVICE_URL}
+    "The frontend is served at $(underline ${CHAT_APP_URL})
+The backend is served at  $(underline ${MESSAGE_SERVICE_URL})
 
-But the frontend expects to reach the backend at ${CHAT_APP_URL}/api. Mind the '/api'. That's the problem!
+But the frontend expects to reach the backend at $(underline ${CHAT_APP_URL}/api).
+Mind the path $(underline "/api"). That's the problem!
 
 Cloud Foundry's path-based routing to the rescue.
 
-Let's map the route '${CHAT_APP_URL}/api' to the message-service." \
+Let's map the route $(underline ${CHAT_APP_URL}/api) to the message-service." \
     "cf map-route
      message-service
      cfapps.io
@@ -259,7 +266,7 @@ prompt \
 
 It's time to take out your phone. Go to
 
-    https://${CHAT_APP_URL}
+    $(underline https://${CHAT_APP_URL})
 
 and chat away!
 
@@ -275,7 +282,7 @@ prompt \
 
 Why is that? As we haven't provided it with a database, the message-service is running with an in-memory database. That means each instance has its own state. And every time we post or get messages we hit another instance. Hence, the inconsistency.
 
-This setup is violating the idea of 'stateless processes' according to the twelve-factor app (https://12factor.net/processes).
+This setup is violating the idea of 'stateless processes' according to the twelve-factor app ($(underline "https://12factor.net/processes").
 
 Since Cloud Foundry might relocate instances in the cloud as it sees fit we might lose messages at any moment.
 
@@ -323,7 +330,7 @@ prompt \
 
 Since we're using Spring Boot it will will automatically pick up the database.
 
-Caveat: In this case it is enough to just restart the application. In other cases we need to restage it for the changes to take effect (see https://docs.cloudfoundry.org/devguide/deploy-apps/start-restart-restage.html)." \
+Caveat: In this case it is enough to just restart the application. In other cases we need to restage it for the changes to take effect (see $(underline "https://docs.cloudfoundry.org/devguide/deploy-apps/start-restart-restage.html")." \
 "cf restart message-service"
 
 prettyEcho ""
@@ -335,17 +342,17 @@ awaitUserOk
 runSmokeTests
 
 prettyEcho ""
-prettyEcho "That's all for now. Stay tuned for updates to this tutorial."
+prettyEcho "That's all for now."
 prettyEcho ""
-prettyEcho "Feel free to tear down the entire deployment with ./scripts/destroy.sh"
+prettyEcho "You can tear down the entire deployment with ./scripts/destroy.sh"
 prettyEcho ""
-prettyEcho "Your feedback is very important! Go to"
+prettyEcho "Your feedback is valued. Go to"
 prettyEcho ""
-prettyEcho "    github.com/mamachanko/interactive-cloud-foundry-tutorial"
+prettyEcho "    $(underline "github.com/mamachanko/interactive-cloud-foundry-tutorial")"
 prettyEcho ""
-prettyEcho "add a star, open an issue or send a PR."
+prettyEcho "open an issue, send a PR or add a star."
 prettyEcho ""
-prettyEcho "There's more: https://docs.cloudfoundry.org/#read-the-docs"
+prettyEcho "There's more: $(underline "https://docs.cloudfoundry.org/#read-the-docs")"
 prettyEcho ""
 prettyEcho "Thank you!"
 prettyEcho ""
