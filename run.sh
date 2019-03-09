@@ -9,6 +9,7 @@ BLUE_ON_WHITE=`tput setab 7 && tput setaf 4`
 WHITE_ON_BLUE=`tput setab 4 && tput setaf 7`
 UNTIL_EOL=`tput el`
 UNDERLINE=`tput smul`
+BOLD=`tput bold`
 RESET_UNDERLINE=`tput rmul`
 RESET_STYLES=`tput sgr0`
 
@@ -27,7 +28,7 @@ function underline() {
 }
 
 function bold() {
-    echo "$(tput bold)$1${RESET_STYLES}${BLUE_ON_WHITE}"
+    echo "${BOLD}$1${RESET_STYLES}${BLUE_ON_WHITE}"
 }
 
 
@@ -80,17 +81,16 @@ function updateMessageServiceUrl() {
 
 function awaitUserOk() {
     if [[ ${CI} == "false" ]]; then
-        USER_PROMPTX=${1:-"Press enter to proceed"}
-        echo -n "${WHITE_ON_BLUE}    > ${USER_PROMPTX}${UNTIL_EOL}${RESET_STYLES}" && read
+        USER_PROMPTX=${1:-"Press enter"}
+        echo -n "${WHITE_ON_BLUE}    ️${USER_PROMPTX}${UNTIL_EOL}${RESET_STYLES}" && read
         clear
     fi
 }
 
-
 function welcome() {
     clear
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
-    echo "${WHITE_ON_BLUE}${UNTIL_EOL}    Welcome to $(bold cfpush)${RESET_STYLES}"
+    echo "${WHITE_ON_BLUE}${UNTIL_EOL}    Welcome to ${BOLD}cfpush${RESET_STYLES}${WHITE_ON_BLUE} 💻 ----> ☁️${RESET_STYLES}"
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}    An interactive Cloud Foundry tutorial in your terminal${RESET_STYLES}"
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
@@ -98,12 +98,10 @@ function welcome() {
     prettyEcho ""
     prettyEcho "We will be exploring $(bold "Cloud Foundry") and cloud-native computing by deploying a real chat application to Cloud Foundry."
     prettyEcho ""
-    prettyEcho "💻 ----------> ☁"
-    prettyEcho ""
     prettyEcho "Are you ready? We can't wait. Let's go!"
     prettyEcho ""
 
-    awaitUserOk "Press enter to start"
+    awaitUserOk "▶️  <enter>"
 }
 
 function prompt() {
@@ -115,22 +113,24 @@ function prompt() {
     prettyEcho ""
     prettyEcho "Command:"
     prettyEcho ""
-    prettyEcho "$ ${COMMAND}"
+    prettyEcho "👉🏽 ${COMMAND}"
     prettyEcho ""
 
-    awaitUserOk "Press enter to run the command"
+    awaitUserOk "🏃🏾 <enter>"
 
     prettyEcho ""
-    prettyEcho "${COMMAND}"
-    prettyEcho ""
-    prettyEcho "running ..."
+    prettyEcho "⏳ ${COMMAND}"
     prettyEcho ""
 
     if [[ ${DRY} == "false" ]] ; then
         eval ${COMMAND}
     fi
 
-    awaitUserOk "Done. Press enter to proceed"
+    prettyEcho ""
+    prettyEcho "✅ ${COMMAND}"
+    prettyEcho ""
+
+    awaitUserOk "➡️  <enter>"
 }
 
 function smokeTestFrontend() {
