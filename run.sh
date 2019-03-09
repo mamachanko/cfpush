@@ -90,7 +90,7 @@ function awaitUserOk() {
 function welcome() {
     clear
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
-    echo "${WHITE_ON_BLUE}${UNTIL_EOL}    welcome to $(bold cfpush)${RESET_STYLES}"
+    echo "${WHITE_ON_BLUE}${UNTIL_EOL}    Welcome to $(bold cfpush)${RESET_STYLES}"
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}    An interactive Cloud Foundry tutorial in your terminal${RESET_STYLES}"
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
