@@ -26,6 +26,11 @@ function underline() {
     echo "${UNDERLINE}$1${RESET_UNDERLINE}"
 }
 
+function bold() {
+    echo "$(tput bold)$1${RESET_STYLES}${BLUE_ON_WHITE}"
+}
+
+
 function ensureCfInstalled() {
     if [[ ${DRY} != "false" ]] || command cf > /dev/null 2>&1 ; then
         : # noop
@@ -81,16 +86,19 @@ function awaitUserOk() {
     fi
 }
 
+
 function welcome() {
     clear
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
-    echo "${WHITE_ON_BLUE}${UNTIL_EOL}    WELCOME TO AN INTERACTIVE CLOUD FOUNDRY TUTORIAL    ${RESET_STYLES}"
+    echo "${WHITE_ON_BLUE}${UNTIL_EOL}    welcome to $(bold cfpush)${RESET_STYLES}"
+    echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
+    echo "${WHITE_ON_BLUE}${UNTIL_EOL}    An interactive Cloud Foundry tutorial in your terminal${RESET_STYLES}"
     echo "${WHITE_ON_BLUE}${UNTIL_EOL}${RESET_STYLES}"
 
     prettyEcho ""
-    prettyEcho "We will be exploring Cloud Foundry and cloud-native computing by deploying a simple chat application to Cloud Foundry."
+    prettyEcho "We will be exploring $(bold "Cloud Foundry") and cloud-native computing by deploying a real chat application to Cloud Foundry."
     prettyEcho ""
-    prettyEcho "The frontend is a Javascript React application and the backend is Java Spring Boot web application."
+    prettyEcho "💻 ----------> ☁"
     prettyEcho ""
     prettyEcho "Are you ready? We can't wait. Let's go!"
     prettyEcho ""
@@ -167,15 +175,15 @@ prompt \
 prompt \
     "We must build our frontend and backend first before we can deploy them.
 
-The backend is a Java Spring Boot web application called 'message-service'. It exposes two endpoints:
+The backend is a Java Spring Boot web application called $(bold "message-service"). It exposes two endpoints:
 
-    GET  /api/messages : returns list of messages
-    POST /api/messages : creates a new message
+    GET  $(underline "/api/messages") : returns list of messages
+    POST $(underline "/api/messages") : creates a new message
 
 If it does not have a database attached it will run with an in-memory database.
-We will build it into a .jar file. The .jar file will be located in 'message-service/target'.
+We will build it into a .jar file. The .jar file will be located in $(underline "./message-service/target").
 
-The frontend is a Javascript React application called 'chat-app'. It continuously polls the message-service for messages and allows to create new ones. It expects the message-service at URL under '/api'. We will build it into a bundle of static files. The bundle will be located in 'chat-app/build'.
+The frontend is a Javascript React application called $(bold "chat-app"). It continuously polls the $(bold "message-service") for messages and allows to create new ones. It expects the $(bold "message-service") at URL under $(underline "/api")'. We will build it into a bundle of static files. The bundle will be located in $(underline "./chat-app/build").
 
 Let's build the apps. This includes running their tests." \
     "./scripts/build.sh"
@@ -183,9 +191,9 @@ Let's build the apps. This includes running their tests." \
 prompt \
     "Now our applications are ready for deployment. Let's start with the frontend.
 
-Like any Javascript application, the chat-app is just a collection of static files that we want to serve. Hence, we will use the \"staticfile_buildpack\" for running it.
+Like any Javascript application, the $(bold "chat-app") is just a collection of static files that we want to serve. Hence, we will use the \"staticfile_buildpack\" for running it.
 
-We point the the cli at 'chat-app/build' and let Cloud Foundry pick a random available route for us." \
+We point the the cli at $(underline "./chat-app/build") and let Cloud Foundry pick a random available route for us." \
     "cf push
      chat-app
      -p chat-app/build
@@ -197,7 +205,7 @@ updateChatAppUrlAndHostname
 prompt \
     "Congratulations you have successfully deployed an application to Cloud Foundry!
 
-The chat-app is served at
+The $(bold "chat-app") is served at
 
     $(underline https://${CHAT_APP_URL})
 
@@ -221,7 +229,7 @@ prompt \
 
 You should see that the app failed to load any messages. Oh dear! That's because its backend isn't running yet. But our frontend is a good Cloud-citizen and handles issues with its downstream dependencies gracefully. That's an essential property of any cloud-native application.
 
-Let's avert this misery and deploy the message-service. Again, we let Cloud Foundry pick a random available route for us and point the cli at the message-service JAR." \
+Let's avert this misery and deploy the $(bold "message-service"). Again, we let Cloud Foundry pick a random available route for us and point the cli at the $(bold "message-service") JAR." \
     "cf push
      message-service
      -p message-service/target/messages-services-0.0.1-SNAPSHOT.jar
@@ -230,7 +238,7 @@ Let's avert this misery and deploy the message-service. Again, we let Cloud Foun
 updateMessageServiceUrl
 
 prompt \
-    "The message-service is deployed and served at
+    "The $(bold "message-service") is deployed and served at
 
     $(underline https://${MESSAGE_SERVICE_URL})
 
@@ -254,7 +262,7 @@ Mind the path $(underline "/api"). That's the problem!
 
 Cloud Foundry's path-based routing to the rescue.
 
-Let's map the route $(underline ${CHAT_APP_URL}/api) to the message-service." \
+Let's map the route $(underline ${CHAT_APP_URL}/api) to the $(bold "message-service")." \
     "cf map-route
      message-service
      cfapps.io
@@ -262,7 +270,7 @@ Let's map the route $(underline ${CHAT_APP_URL}/api) to the message-service." \
      --path /api"
 
 prompt \
-    "Hooray! The error is gone. The chat-app says there are no messages.
+    "Hooray! The error is gone. The $(bold "chat-app") says there are no messages.
 
 It's time to take out your phone. Go to
 
@@ -270,7 +278,7 @@ It's time to take out your phone. Go to
 
 and chat away!
 
-However, the more users there are the more load will our message-service have. At this moment we only have one instance of it running. We need more!
+However, the more users there are the more load will our $(bold "message-service") have. At this moment we only have one instance of it running. We need more!
 
 Adding more instances is called horizontal scaling. This does not require a restart and is almost instantaneous.
 
@@ -280,9 +288,9 @@ Let's scale out to 3. Planet scale!" \
 prompt \
 "This is weird. As we're using the application and sending messages, they change all the time.
 
-Why is that? As we haven't provided it with a database, the message-service is running with an in-memory database. That means each instance has its own state. And every time we post or get messages we hit another instance. Hence, the inconsistency.
+Why is that? As we haven't provided it with a database, the $(bold "message-service") is running with an in-memory database. That means each instance has its own state. And every time we post or get messages we hit another instance. Hence, the inconsistency.
 
-This setup is violating the idea of 'stateless processes' according to the twelve-factor app ($(underline "https://12factor.net/processes").
+This setup is violating the idea of 'stateless processes' according to the twelve-factor app ($(underline "https://12factor.net/processes")).
 
 Since Cloud Foundry might relocate instances in the cloud as it sees fit we might lose messages at any moment.
 
@@ -320,21 +328,21 @@ fi
 prompt \
 "The Postgres instance is ready.
 
-We still need to \"bind\" it to our message-service.
+We still need to connect it to the $(bold "message-service"). In Cloud Foundry terms this called binding.
 
-When we do that Cloud Foundry will inject the necessary data into the message-service's environment. In this case it's a JDBC connection string." \
+When we bind a service to an app Cloud Foundry will provide all the necessary information to the app as environment variables. In this case it will provide a JDBC connection string to the $(bold "message-service")." \
 "cf bind-service message-service database"
 
 prompt \
-"But that's not all. We have to restart the message-service.
+"But that's not all. We have to restart the $(bold "message-service").
 
 Since we're using Spring Boot it will will automatically pick up the database.
 
-Caveat: In this case it is enough to just restart the application. In other cases we need to restage it for the changes to take effect (see $(underline "https://docs.cloudfoundry.org/devguide/deploy-apps/start-restart-restage.html")." \
+Caveat: In this case it is enough to just restart the application. In other cases we need to restage it for the changes to take effect (see $(underline "https://docs.cloudfoundry.org/devguide/deploy-apps/start-restart-restage.html"))." \
 "cf restart message-service"
 
 prettyEcho ""
-prettyEcho "As the instances of the message-service have restarted they are all using the database as a backing service. They no longer carry state. We can scale the message-service to our heart's content and the user will not be impacted."
+prettyEcho "As the instances of the $(bold "message-service") have restarted they are all using the database as a backing service. They no longer carry state. We can scale the message-service to our heart's content and the user will not be impacted."
 prettyEcho ""
 
 awaitUserOk
