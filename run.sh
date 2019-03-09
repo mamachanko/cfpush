@@ -80,7 +80,7 @@ function updateMessageServiceUrl() {
 
 function awaitUserOk() {
     if [[ ${CI} == "false" ]]; then
-        USER_PROMPTX=${1:-"Press enter to continue..."}
+        USER_PROMPTX=${1:-"Press enter to proceed"}
         echo -n "${WHITE_ON_BLUE}    > ${USER_PROMPTX}${UNTIL_EOL}${RESET_STYLES}" && read
         clear
     fi
@@ -103,7 +103,7 @@ function welcome() {
     prettyEcho "Are you ready? We can't wait. Let's go!"
     prettyEcho ""
 
-    awaitUserOk "Press enter to start ..."
+    awaitUserOk "Press enter to start"
 }
 
 function prompt() {
@@ -118,7 +118,7 @@ function prompt() {
     prettyEcho "$ ${COMMAND}"
     prettyEcho ""
 
-    awaitUserOk "Press enter to run the command ..."
+    awaitUserOk "Press enter to run the command"
 
     prettyEcho ""
     prettyEcho "${COMMAND}"
@@ -130,7 +130,7 @@ function prompt() {
         eval ${COMMAND}
     fi
 
-    awaitUserOk "Done. Press enter to continue with the next step ..."
+    awaitUserOk "Done. Press enter to proceed"
 }
 
 function smokeTestFrontend() {
