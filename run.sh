@@ -101,7 +101,7 @@ function welcome() {
     prettyEcho "Are you ready? We can't wait. Let's go!"
     prettyEcho ""
 
-    awaitUserOk "▶️  <enter>"
+    awaitUserOk "<enter> to ▶️  "
 }
 
 function prompt() {
@@ -116,7 +116,7 @@ function prompt() {
     prettyEcho "👉🏽 ${COMMAND}"
     prettyEcho ""
 
-    awaitUserOk "🏃🏾 <enter>"
+    awaitUserOk "<enter> to 🏃🏾"
 
     prettyEcho ""
     prettyEcho "⏳ ${COMMAND}"
@@ -127,10 +127,10 @@ function prompt() {
     fi
 
     prettyEcho ""
-    prettyEcho "✅ ${COMMAND}"
+    prettyEcho "✔️ ${COMMAND}"
     prettyEcho ""
 
-    awaitUserOk "➡️  <enter>"
+    awaitUserOk "<enter> to ➡️ "
 }
 
 function smokeTestFrontend() {
@@ -183,7 +183,7 @@ The backend is a Java Spring Boot web application called $(bold "message-service
 If it does not have a database attached it will run with an in-memory database.
 We will build it into a .jar file. The .jar file will be located in $(underline "./message-service/target").
 
-The frontend is a Javascript React application called $(bold "chat-app"). It continuously polls the $(bold "message-service") for messages and allows to create new ones. It expects the $(bold "message-service") at URL under $(underline "/api")'. We will build it into a bundle of static files. The bundle will be located in $(underline "./chat-app/build").
+The frontend is a Javascript React application called $(bold "chat-app"). It continuously polls the $(bold "message-service") for messages and allows to create new ones. It expects the $(bold "message-service") at URL under $(underline "/api"). We will build it into a bundle of static files. The bundle will be located in $(underline "./chat-app/build").
 
 Let's build the apps. This includes running their tests." \
     "./scripts/build.sh"
