@@ -8,4 +8,4 @@ cd $(dirname $0)
 
 ./build-chat-app.sh
 
-./build-docker.sh
+./build-tutorial.sh
