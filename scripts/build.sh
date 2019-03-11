@@ -4,7 +4,7 @@ set -ex
 
 cd $(dirname $0)
 
-./build-backend.sh
+./build-message-service.sh
 
 ./build-frontend.sh
 
