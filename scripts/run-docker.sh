@@ -21,4 +21,4 @@ docker \
     --volume $(pwd)/tutorial.sh:/cfpush/tutorial.sh \
     --volume $(pwd)/scripts:/cfpush/scripts \
     cfpush \
-    sh tutorial.sh
+    bash tutorial.sh
