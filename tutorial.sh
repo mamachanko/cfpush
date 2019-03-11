@@ -57,17 +57,7 @@ function attemptLogIntoPWS() {
     fi
 
     if [[ -z ${CF_USERNAME+"username"} || -z ${CF_PASSWORD+"password"} || -z ${CF_ORG+"org"} || -z ${CF_SPACE+"space"} ]]; then
-        prettyEcho ""
-        prettyEcho "To log into Pivotal Web Services, please provide these environment variables"
-        prettyEcho ""
-        prettyEcho "    CF_USERNAME - your username"
-        prettyEcho "    CF_PASSWORD - your password"
-        prettyEcho "    CF_ORG - the name of an organization"
-        prettyEcho "    CF_SPACE - a space we can target for login. the tutorial will use a new space though."
-        prettyEcho ""
-        prettyEcho "and come back. We'll be waiting for you."
-        prettyEcho ""
-        exit 1
+        return
     else
         cf login \
             -a api.run.pivotal.io \
@@ -78,29 +68,10 @@ function attemptLogIntoPWS() {
     fi
 }
 
-function isLoggedIntoPWS()
-{
+function isLoggedIntoPWS() {
     [[ ${DRY} != "false" ]] \
         || $(cf target > /dev/null 2>&1) \
         || $(cf api | grep run.pivotal.io /dev/null 2>&1)
-}
-
-function ensureLoggedIntoPws() {
-
-    attemptLogIntoPWS
-
-    if isLoggedIntoPWS ; then
-        : # noop
-    else
-        prettyEcho ""
-        prettyEcho "You seem not to be logged into Pivotal Web Services. Run:"
-        prettyEcho ""
-        prettyEcho "    $ cf login -a api.run.pivotal.io"
-        prettyEcho ""
-        prettyEcho "and come back. We'll be waiting for you."
-        prettyEcho ""
-        exit 1
-    fi
 }
 
 function updateChatAppUrlAndHostname() {
@@ -195,9 +166,18 @@ function runSmokeTests() {
 
 ensureCfInstalled
 
-ensureLoggedIntoPws
-
 welcome
+
+attemptLogIntoPWS
+
+if isLoggedIntoPWS ; then
+    : # noop
+else
+    prompt \
+    "Let's login?" \
+    "cf login -a api.run.pivotal.io"
+fi
+
 
 prompt \
     "First things first. We need somewhere to deploy our apps to.
