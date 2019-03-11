@@ -45,7 +45,7 @@ Run the backend with an in-memory database:
 
 Run the backend with Postgres:
 ```bash
-docker-compose up -d
+docker-compose --file message-service/docker-compose.yml up -d 
 ./scripts/run-backend.sh -Dspring.profiles.active=postgres
 ```
 

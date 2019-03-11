@@ -4,9 +4,6 @@ set -euxo pipefail
 
 cd $(dirname $0)
 
-cd ../chat-app
-rm -rf build
-yarn
-CI=true yarn test
-yarn build
-cp Staticfile build
+cd ../message-service
+
+./mvnw clean verify package

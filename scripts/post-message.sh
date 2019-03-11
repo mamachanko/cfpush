@@ -1,4 +1,6 @@
-#!/usr/bin/env bash -euxo pipefail
+#!/usr/bin/env bash
+
+set -euxo pipefail
 
 HOST=${1:-http://localhost:8080}
 
@@ -6,7 +8,7 @@ function randomMessage() {
     RANDOM_TEXT=$(
         cat /dev/random \
             | head -n 3 \
-            | shasum \
+            | sha1sum \
             | tr -cd '[[:alnum:]]'
             )
 

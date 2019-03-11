@@ -4,8 +4,10 @@ set -euxo pipefail
 
 cd $(dirname $0)
 
-docker \
-    build \
-    .. \
-    --file ../docker/Dockerfile \
-    --tag cfpush:latest
+cd ../chat-app
+
+rm -rf build
+yarn
+CI=true yarn test
+yarn build
+cp Staticfile build

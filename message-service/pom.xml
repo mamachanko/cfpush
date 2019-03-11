@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>io.github.mamachanko</groupId>
-	<artifactId>messages-services</artifactId>
+	<artifactId>message-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>messages-services</name>
+	<name>message-service</name>
 	<description>A service that stores and serves messages</description>
 
 	<properties>
@@ -61,6 +61,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>message-service</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

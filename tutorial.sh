@@ -57,25 +57,40 @@ function attemptLogIntoPWS() {
     fi
 
     if [[ ${CF_USERNAME+u} && ${CF_PASSWORD+p} && ${CF_ORG+o} && ${CF_SPACE+s} ]]; then
+        echo logging in
         cf login \
             -a api.run.pivotal.io \
             -u ${CF_USERNAME} \
             -p ${CF_PASSWORD} \
             -o ${CF_ORG} \
-            -s ${CF_SPACE} \
-        > /dev/null 2>&1
+            -s ${CF_SPACE}
+    else
+        prettyEcho ""
+        prettyEcho "To log into Pivotal Web Services, please provide these environment variables"
+        prettyEcho ""
+        prettyEcho "    CF_USERNAME - your username"
+        prettyEcho "    CF_PASSWORD - your password"
+        prettyEcho "    CF_ORG - the name of an organization"
+        prettyEcho "    CF_SPACE - a space we can target for login. the tutorial will use a new space though."
+        prettyEcho ""
+        prettyEcho "and come back. We'll be waiting for you."
+        prettyEcho ""
+        exit 1
     fi
+}
+
+function isLoggedIntoPWS()
+{
+    [[ ${DRY} != "false" ]] \
+        || $(cf target > /dev/null 2>&1) \
+        || $(cf api | grep run.pivotal.io /dev/null 2>&1)
 }
 
 function ensureLoggedIntoPws() {
 
     attemptLogIntoPWS
 
-    # isLoggedIntoPWS?
-
-    if [[ ${DRY} != "false" ]] \
-        || $(cf target > /dev/null 2>&1) \
-        || $(cf api | grep run.pivotal.io /dev/null 2>&1) ; then
+    if isLoggedIntoPWS ; then
         : # noop
     else
         prettyEcho ""
@@ -158,9 +173,9 @@ function prompt() {
 
 function smokeTestFrontend() {
     curl \
-        --quiet \
-        --location \
         --fail \
+        --silent \
+        --location \
         --request GET \
         --url ${CHAT_APP_URL}
 }
@@ -179,7 +194,6 @@ function runSmokeTests() {
     fi
 }
 
-
 ensureCfInstalled
 
 ensureLoggedIntoPws
@@ -196,28 +210,14 @@ prompt \
     "We have created a new space. But we still have to set it as our current target." \
     "cf target -s interactive-cloud-foundry-tutorial"
 
-#prompt \
-#    "We must build our frontend and backend first before we can deploy them.
-#
-#The backend is a Java Spring Boot web application called $(bold "message-service"). It exposes two endpoints:
-#
-#    GET  $(underline "/api/messages") : returns list of messages
-#    POST $(underline "/api/messages") : creates a new message
-#
-#If it does not have a database attached it will run with an in-memory database.
-#We will build it into a .jar file. The .jar file will be located in $(underline "./message-service/target").
-#
-#The frontend is a Javascript React application called $(bold "chat-app"). It continuously polls the $(bold "message-service") for messages and allows to create new ones. It expects the $(bold "message-service") at URL under $(underline "/api"). We will build it into a bundle of static files. The bundle will be located in $(underline "./chat-app/build").
-#
-#Let's build the apps. This includes running their tests." \
-#    "./scripts/build.sh"
-
 prompt \
-    "Now our applications are ready for deployment. Let's start with the frontend.
+    "We are ready for deployment. Let's start with the frontend, the $(bold "chat-app").
 
-Like any Javascript application, the $(bold "chat-app") is just a collection of static files that we want to serve. Hence, we will use the \"staticfile_buildpack\" for running it.
+It is a Javascript React application that continuously polls a $(bold "message-service") for messages and allows to send new ones. It expects the $(bold "message-service") on its own host at $(underline "/api").
 
-We point the the cli at $(underline "./chat-app/build") and let Cloud Foundry pick a random available route for us." \
+And like any Javascript browser application, the $(bold "chat-app") is a collection of static files, a \"bundle\". The bundle is located in $(underline "./chat-app/build"). Since we simply want to serve static files, we will use the \"staticfile_buildpack\" for running the app.
+
+We push the app by pointing the cli at $(underline "./chat-app/build"), selecting the buildpack and letting Cloud Foundry pick a random available route for us." \
     "cf push
      chat-app
      -p chat-app/build
@@ -233,7 +233,7 @@ The $(bold "chat-app") is served at
 
     $(underline https://${CHAT_APP_URL})
 
-But first, let's inspect the app." \
+Before we start to use it, let's inspect the app." \
     "cf app chat-app"
 
 prompt \
@@ -251,9 +251,17 @@ prompt \
 
     $(underline https://${CHAT_APP_URL})
 
-You should see that the app failed to load any messages. Oh dear! That's because its backend isn't running yet. But our frontend is a good Cloud-citizen and handles issues with its downstream dependencies gracefully. That's an essential property of any cloud-native application.
+You should see that the app \"failed to load any messages\". Oh dear! That's because its backend isn't running yet. But our frontend is a good Cloud-citizen and handles issues with its downstream dependencies gracefully. That's an essential property of any cloud-native application.
 
-Let's avert this misery and deploy the $(bold "message-service"). Again, we let Cloud Foundry pick a random available route for us and point the cli at the $(bold "message-service") JAR." \
+Let's avert this misery and deploy the $(bold "message-service"). It's a Java Spring Boot web application that exposes two endpoints:
+
+    GET  $(underline "/api/messages") : returns the list of messages
+    POST $(underline "/api/messages") : creates a new message
+
+If it does not have a database attached it will run with an in-memory database.
+It is packaged into a JAR file located at $(underline "./message-service/target/message-service.jar").
+
+Again, we push by letting Cloud Foundry pick a random available route for us and pointing at the $(bold "message-service") JAR." \
     "cf push
      message-service
      -p message-service/target/message-service.jar
@@ -376,7 +384,7 @@ runSmokeTests
 prettyEcho ""
 prettyEcho "That's all for now."
 prettyEcho ""
-prettyEcho "To save quota you can tear down the entire deployment with $(underline ./scripts/destroy.sh.)."
+prettyEcho "To save quota you can tear down the entire deployment with $(underline ./scripts/destroy.sh)"
 prettyEcho ""
 prettyEcho "Your feedback is valued. Go to"
 prettyEcho ""

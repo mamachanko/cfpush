@@ -1,14 +1,11 @@
-#!/usr/bin/env bash -ex
+#!/usr/bin/env bash
+
+set -ex
 
 cd $(dirname $0)
 
-pushd ../message-service
-    ./mvnw clean verify package
-popd
+./build-backend.sh
 
-pushd ../chat-app
-    rm -rf build
-    CI=true yarn test
-    yarn build
-    cp Staticfile build
-popd
+./build-frontend.sh
+
+./build-docker.sh
