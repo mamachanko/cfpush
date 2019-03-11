@@ -16,8 +16,7 @@ RUN mkdir -p /usr/local/bin && \
     cf --version && \
     rm -f /tmp/cf-cli.tgz
 
-COPY message-service/target/message-service.jar /cfpush/message-service/target/message-service.jar
-COPY chat-app/build /cfpush/chat-app/build
+COPY builds/ /cfpush/builds
 COPY scripts/post-message.sh /cfpush/scripts/post-message.sh
 COPY scripts/get-messages.sh /cfpush/scripts/get-messages.sh
 COPY tutorial.sh /cfpush/tutorial.sh

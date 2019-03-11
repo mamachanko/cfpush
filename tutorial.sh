@@ -194,12 +194,12 @@ prompt \
 
 It is a Javascript React application that continuously polls a $(bold "message-service") for messages and allows to send new ones. It expects the $(bold "message-service") on its own host at $(underline "/api").
 
-And like any Javascript browser application, the $(bold "chat-app") is a collection of static files, a \"bundle\". The bundle is located in $(underline "./chat-app/build"). Since we simply want to serve static files, we will use the \"staticfile_buildpack\" for running the app.
+And like any Javascript browser application, the $(bold "chat-app") is a collection of static files, a \"bundle\". We zipped our bundle into a zipfile located at $(underline "./builds/chat-app.zip"). Since we simply want to serve static files, we will use the \"staticfile_buildpack\" for running the app.
 
-We push the app by pointing the cli at $(underline "./chat-app/build"), selecting the buildpack and letting Cloud Foundry pick a random available route for us." \
+We push the app by pointing the cli at $(underline "./builds/chat-app.zip"), selecting the buildpack and letting Cloud Foundry pick a random available route for us." \
     "cf push
      chat-app
-     -p chat-app/build
+     -p builds/chat-app.zip
      -b staticfile_buildpack
      --random-route"
 
@@ -238,12 +238,12 @@ Let's avert this misery and deploy the $(bold "message-service"). It's a Java Sp
     POST $(underline "/api/messages") : creates a new message
 
 If it does not have a database attached it will run with an in-memory database.
-It is packaged into a JAR file located at $(underline "./message-service/target/message-service.jar").
+It is packaged into a JAR file located at $(underline "./builds/message-service").
 
 Again, we push by letting Cloud Foundry pick a random available route for us and pointing at the $(bold "message-service") JAR." \
     "cf push
      message-service
-     -p message-service/target/message-service.jar
+     -p builds/message-service.jar
      --random-route"
 
 updateMessageServiceUrl
