@@ -360,18 +360,20 @@ awaitUserOk
 
 runSmokeTests
 
-prettyEcho ""
-prettyEcho "That's all for now."
-prettyEcho ""
-prettyEcho "To save quota you can tear down the entire deployment with $(underline ./scripts/destroy.sh)"
-prettyEcho ""
-prettyEcho "Your feedback is valued. Go to"
-prettyEcho ""
-prettyEcho "    $(underline "github.com/mamachanko/interactive-cloud-foundry-tutorial")"
-prettyEcho ""
-prettyEcho "open an issue, send a PR or add a star."
-prettyEcho ""
-prettyEcho "There's more: $(underline "https://docs.cloudfoundry.org/#read-the-docs")"
-prettyEcho ""
-prettyEcho "Thank you!"
-prettyEcho ""
+prompt \
+"Once you're finished playing with the $(bold chat-app), let's clean up. If we don't want incur further cost against our PWS quota, we should decommission all apps and services.
+
+The easiest way to do that is to delete the entire space." \
+"cf delete-space interactive-cloud-foundry-tutorial -f"
+
+prompt \
+"That's all for now. Expect updates to this tutorial. Thank you for coming this far!
+
+Your feedback is valued. Give the repository a star, open an issue or send a PR.
+
+$(underline "github.com/mamachanko/interactive-cloud-foundry-tutorial")
+
+There's more: $(underline "https://docs.cloudfoundry.org/#read-the-docs")
+
+Bye bye! Let's log you out." \
+"cf logout"

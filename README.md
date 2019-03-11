@@ -11,7 +11,7 @@ The script will walk and talk you through the deployment of a simple chat applic
 
 If you want to start from scratch or recover from a failure:
 ```bash
-./scripts/destroy.sh
+./scripts/clean-tutorial.sh
 ```
 
 You're feedback is very welcome. Feel free to raise an issue if anything should be unclear or you run into any problems.
@@ -68,7 +68,7 @@ Utility scripts for testing and introspection:
 More utilities in `./scripts`:
 ```bash
 # reset the tutorial by deleting the space
-./scripts/destroy.sh
+./scripts/clean-tutorial.sh
 
 # build the apps
 ./scripts/builds.sh
