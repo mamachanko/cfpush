@@ -6,6 +6,6 @@ cd $(dirname $0)
 
 ./build-message-service.sh
 
-./build-frontend.sh
+./build-chat-app.sh
 
 ./build-docker.sh
