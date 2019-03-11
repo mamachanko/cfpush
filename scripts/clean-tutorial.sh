@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-set -x
+set -euxo pipefail
 
 cf delete-space interactive-cloud-foundry-tutorial -f || true
