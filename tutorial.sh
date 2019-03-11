@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -eo pipefail
 
 cd $(dirname $0)
 
@@ -56,15 +56,7 @@ function attemptLogIntoPWS() {
         return
     fi
 
-    if [[ ${CF_USERNAME+u} && ${CF_PASSWORD+p} && ${CF_ORG+o} && ${CF_SPACE+s} ]]; then
-        echo logging in
-        cf login \
-            -a api.run.pivotal.io \
-            -u ${CF_USERNAME} \
-            -p ${CF_PASSWORD} \
-            -o ${CF_ORG} \
-            -s ${CF_SPACE}
-    else
+    if [[ -z ${CF_USERNAME+"username"} || -z ${CF_PASSWORD+"password"} || -z ${CF_ORG+"org"} || -z ${CF_SPACE+"space"} ]]; then
         prettyEcho ""
         prettyEcho "To log into Pivotal Web Services, please provide these environment variables"
         prettyEcho ""
@@ -76,6 +68,13 @@ function attemptLogIntoPWS() {
         prettyEcho "and come back. We'll be waiting for you."
         prettyEcho ""
         exit 1
+    else
+        cf login \
+            -a api.run.pivotal.io \
+            -u ${CF_USERNAME} \
+            -p ${CF_PASSWORD} \
+            -o ${CF_ORG} \
+            -s ${CF_SPACE}
     fi
 }
 
