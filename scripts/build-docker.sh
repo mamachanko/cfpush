@@ -8,4 +8,4 @@ docker \
     build \
     .. \
     --file ../docker/Dockerfile \
-    --tag cfpush:latest
+    --tag mamachanko/cfpush:latest

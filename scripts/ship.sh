@@ -26,10 +26,6 @@ function ensureClean() {
     ensureWorkDirClean
 }
 
-function push() {
-    git push
-}
-
 ensureClean
 
 ./build.sh
@@ -40,6 +36,6 @@ ensureClean
 
 ensureClean
 
-push
+./push.sh
 
 ./destroy.sh

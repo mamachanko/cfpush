@@ -2,6 +2,10 @@
 
 set -euxo pipefail
 
-cf push
+cd $(dirname $0)
+
+./push-docker.sh
+
+./push-site.sh
 
 git push
