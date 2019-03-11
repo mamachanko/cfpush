@@ -141,7 +141,7 @@ function prompt() {
     awaitUserOk "<enter> to ➡️ "
 }
 
-function smokeTestFrontend() {
+function smokeTestChatApp() {
     curl \
         --fail \
         --silent \
@@ -150,7 +150,7 @@ function smokeTestFrontend() {
         --url ${CHAT_APP_URL}
 }
 
-function smokeTestBackend() {
+function smokeTestMessageService() {
     ./scripts/post-message.sh ${CHAT_APP_URL}
     ./scripts/post-message.sh ${CHAT_APP_URL}
     ./scripts/get-messages.sh ${CHAT_APP_URL}
@@ -159,8 +159,8 @@ function smokeTestBackend() {
 
 function runSmokeTests() {
     if [[ ${DRY} == "false" && ${CI} != "false" ]]; then
-        smokeTestBackend
-        smokeTestFrontend
+        smokeTestMessageService
+        smokeTestChatApp
     fi
 }
 
@@ -230,7 +230,7 @@ prompt \
 
     $(underline https://${CHAT_APP_URL})
 
-You should see that the app \"failed to load any messages\". Oh dear! That's because its backend isn't running yet. But our frontend is a good Cloud-citizen and handles issues with its downstream dependencies gracefully. That's an essential property of any cloud-native application.
+You should see that the app \"failed to load any messages\". Oh dear! That's because its backend - the $(bold message-service) - isn't running yet. But the $(bold "chat-app") is a good Cloud-citizen and handles issues with its downstream dependencies gracefully. That's an essential property of any cloud-native application.
 
 Let's avert this misery and deploy the $(bold "message-service"). It's a Java Spring Boot web application that exposes two endpoints:
 
@@ -253,7 +253,7 @@ prompt \
 
     $(underline https://${MESSAGE_SERVICE_URL})
 
-We have both the frontend and the backend deployed now. However, when we visit
+We have both the $(bold "chat-app") and the $(bold "message-service") deployed now. However, when we visit
 
     $(underline https://${CHAT_APP_URL})
 
@@ -265,10 +265,10 @@ In order to understand we must look at how traffic is currently routed." \
     "cf routes"
 
 prompt \
-    "The frontend is served at $(underline ${CHAT_APP_URL})
-The backend is served at  $(underline ${MESSAGE_SERVICE_URL})
+    "The $(bold "chat-app") is served at $(underline ${CHAT_APP_URL})
+The $(bold "message-service") is served at  $(underline ${MESSAGE_SERVICE_URL})
 
-But the frontend expects to reach the backend at $(underline ${CHAT_APP_URL}/api).
+The $(bold "chat-app") expects to reach the $(bold "message-service") at $(underline ${CHAT_APP_URL}/api).
 Mind the path $(underline "/api"). That's the problem!
 
 Cloud Foundry's path-based routing to the rescue.

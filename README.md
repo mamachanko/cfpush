@@ -34,24 +34,24 @@ The tutorial comes in different flavours:
 # For CI. non-interactive and with smoke tests.
 CI=true ./run.sh
 
-# For writing the tutorial. Pretend commands.
+# For writing the tutorial with pretend commands.
 DRY=true ./run.sh
 ```
 
-Run the backend with an in-memory database:
+Run the message-service with an in-memory database:
 ```bash
-./scripts/run-backend.sh
+./scripts/run-message-service.sh
 ```
 
-Run the backend with Postgres:
+Run the message-service with Postgres:
 ```bash
 docker-compose --file message-service/docker-compose.yml up -d 
-./scripts/run-backend.sh -Dspring.profiles.active=postgres
+./scripts/run-message-service.sh -Dspring.profiles.active=postgres
 ```
 
-Run the frontend:
+Run the chat-app:
 ```bash
-./scripts/run-frontend.sh
+./scripts/run-chat-app.sh
 ```
 
 Utility scripts for testing and introspection:
@@ -87,12 +87,12 @@ architecture for a chat application. And you are urged not to take pointers for 
 But it serves the purpose of exploring Cloud Foundry and cloud-native computing.
 
 ### the backend - `message-service`
-The backend is a Java Spring Boot web application. It exposes two endpoints:
+It's a Java Spring Boot web application. It exposes two endpoints:
 
     GET  /api/messages : returns list of messages
     POST /api/messages : creates a new message
 
 ### the frontend - `chat-app`
-The frontend is a Javascript React application. 
+This is a Javascript React application. 
 It continuously polls the `message-service` for messages and allows you to send new messages to it.
-It will tell you if it fails to reach the backend.
+It will tell you if it fails to reach the `message-service`.
