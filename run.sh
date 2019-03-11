@@ -15,4 +15,4 @@ docker \
     --env CF_SPACE \
     --workdir /cfpush \
     cfpush \
-    sh tutorial.sh
+    bash tutorial.sh
