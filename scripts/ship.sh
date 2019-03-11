@@ -32,7 +32,7 @@ assertGitClean
 
 ./build.sh
 
-./deploy.sh
+./test.sh
 
 assertGitClean
 
