@@ -323,16 +323,18 @@ prompt \
     * app-autoscaler
     * ...
 
-Every service is available with different plans. Some are free, some incur cost.
+Every service is available with different plans. Some are free, some incur cost. Let's ask Cloud Foundry to give us a database. 
 
-Let's ask Cloud Foundry to give us a Postgres instance." \
+$(underline Elephantsql.com) offers Postgres as a service and is available in the marketplace. The smallest plan $(bold turtle), is free. Just what we need!
+
+Let's create an $(bold elephantsql) instance using the $(bold turtle) plan and name it \"$(bold database)\"."  \
 "cf create-service
      elephantsql
      turtle
      database"
 
 prettyEcho ""
-prettyEcho "waiting for the Postgres database to be created ..."
+prettyEcho "waiting for database to be created ..."
 prettyEcho ""
 
 if [[ ${DRY} == "false" ]]; then
