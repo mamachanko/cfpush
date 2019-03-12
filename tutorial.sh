@@ -175,13 +175,17 @@ if isLoggedIntoPWS ; then
     : # noop
 else
     prompt \
-    "Let's login?" \
+    "To begin, we should login.
+
+When logging in we must identify the specific Cloud Foundry that we want to target. All the commands we run after that will run against that Cloud Foundry.
+
+In our case, we'll log into Pivotal Web Services." \
     "cf login -a api.run.pivotal.io"
 fi
 
 
 prompt \
-    "First things first. We need somewhere to deploy our apps to.
+    "We need somewhere to deploy our apps to.
 
 Let's create a new space for this tutorial." \
     "cf create-space interactive-cloud-foundry-tutorial" \

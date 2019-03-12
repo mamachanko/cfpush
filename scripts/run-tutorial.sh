@@ -19,6 +19,7 @@ docker \
     --env CF_SPACE \
     --workdir /cfpush \
     --volume $(pwd)/tutorial.sh:/cfpush/tutorial.sh \
+    --volume $(pwd)/builds:/cfpush/builds \
     --volume $(pwd)/scripts:/cfpush/scripts \
     cfpush \
     bash tutorial.sh
