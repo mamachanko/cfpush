@@ -302,9 +302,9 @@ Let's scale out to 3. Planet scale!" \
     "cf scale message-service -i 3"
 
 prompt \
-"This is weird. As we're using the application and sending messages, they change all the time.
+"This is weird. As we're using the $(bold chat-app) and sending messages, the message list keeps changing.
 
-Why is that? As we haven't provided it with a database, the $(bold "message-service") is running with an in-memory database. That means each instance has its own state. And every time we post or get messages we hit another instance. Hence, the inconsistency.
+Why is that? As we haven't provided the $(bold message-service) with a database, it is running with an in-memory database. That means each instance has its own state. And every time we post or get messages we hit another instance, hence the inconsistency.
 
 This setup is violating the idea of 'stateless processes' according to the twelve-factor app ($(underline "https://12factor.net/processes")).
 
