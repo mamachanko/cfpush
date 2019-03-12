@@ -131,7 +131,8 @@ function prompt() {
     prettyEcho ""
 
     if [[ ${DRY} == "false" ]] ; then
-        eval ${COMMAND}
+        eval ${COMMAND} \
+        | grep -v 'TIP: '
     fi
 
     prettyEcho ""
