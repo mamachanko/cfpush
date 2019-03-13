@@ -325,7 +325,11 @@ prompt \
 
 Every service is available with different plans. Some are free, some incur cost. Let's ask Cloud Foundry to give us a database. 
 
-$(underline Elephantsql.com) offers Postgres as a service and is available in the marketplace. The smallest plan $(bold turtle), is free. Just what we need!
+$(underline Elephantsql.com) offers Postgres as a service and is available in the marketplace. Let's find out more about its plans." \
+"cf marketplace -s elephantsql"
+
+prompt \
+"The smallest plan - $(bold turtle) - provides 4 concurrent connections, 20MB Storage and is free. Just what we need!
 
 Let's create an $(bold elephantsql) instance using the $(bold turtle) plan and name it \"$(bold database)\"."  \
 "cf create-service
