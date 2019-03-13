@@ -8,6 +8,11 @@ spring:
     hibernate:
       ddl-auto: update
     generate-ddl: true
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
 ---
 spring:
   profiles: postgres

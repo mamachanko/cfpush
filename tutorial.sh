@@ -323,7 +323,7 @@ prompt \
     * app-autoscaler
     * ...
 
-Every service is available with different plans. Some are free, some incur cost. Let's ask Cloud Foundry to give us a database. 
+Every service is available with different plans. Some are free, some incur cost. Let's ask Cloud Foundry to give us a database.
 
 $(underline Elephantsql.com) offers Postgres as a service and is available in the marketplace. Let's find out more about its plans." \
 "cf marketplace -s elephantsql"
@@ -363,28 +363,36 @@ Since we're using Spring Boot it will will automatically pick up the database.
 Caveat: In this case it is enough to just restart the application. In other cases we need to restage it for the changes to take effect (see $(underline "https://docs.cloudfoundry.org/devguide/deploy-apps/start-restart-restage.html"))." \
 "cf restart message-service"
 
-prettyEcho ""
-prettyEcho "As the instances of the $(bold "message-service") have restarted they are all using the database as a backing service. They no longer carry state. We can scale the message-service to our heart's content and the user will not be impacted."
-prettyEcho ""
+prompt \
+"As the instances of the $(bold "message-service") have restarted they are all using the database as a backing service. They no longer carry state. We can scale the message-service to our heart's content. The users of the chat will have a consistent experience, whether we have 1 or 100 instances running.
 
-awaitUserOk
+\"May I present to you: the internet!\" ($(underline https://youtu.be/iDbyYGrswtg))
+
+But where's the proof? How can we tell that all incoming traffic is really distributed across all instances of the $(bold message-service)?
+
+Luckily, Cloud Foundry's $(bold loggregator) collects all application logs. It annotates every logged line with the type of process and app instance, e.g. [APP/PROC/WEB/2].
+
+When inspecting the recent logs with a little help from grep we should see instances 0 - 2 logging equally often." \
+    "cf logs --recent message-service
+    | grep GET
+    | grep '\[APP\/PROC\/WEB\/\d\+\]'"
 
 runSmokeTests
 
 prompt \
 "Once you're finished playing with the $(bold chat-app), let's clean up. If we don't want incur further cost against our PWS quota, we should decommission all apps and services.
 
-The easiest way to do that is to delete the entire space." \
+The easiest way to achieve that is to delete the entire space." \
 "cf delete-space cfpush-tutorial -f"
 
 prompt \
 "That's all for now. Expect updates to this tutorial. Thank you for coming this far!
 
-Your feedback is valued. Give the repository a star, open an issue or send a PR.
+Your feedback is valued. If there is anything I can do to improve your experience, please, let me know. Give the repository a star, open an issue or send a PR.
 
 $(underline "github.com/mamachanko/cfpush")
 
 There's more: $(underline "https://docs.cloudfoundry.org/#read-the-docs")
 
-Bye bye! Let's log you out." \
+Let's log you out. Bye bye!" \
 "cf logout"
