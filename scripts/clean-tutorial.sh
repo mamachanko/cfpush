@@ -4,4 +4,4 @@ set -euxo pipefail
 
 rm -rf builds
 
-cf delete-space interactive-cloud-foundry-tutorial -f || true
+cf delete-space cfpush-tutorial -f || true

@@ -188,11 +188,11 @@ prompt \
     "We need somewhere to deploy our apps to.
 
 Let's create a new space for this tutorial." \
-    "cf create-space interactive-cloud-foundry-tutorial" \
+    "cf create-space cfpush-tutorial" \
 
 prompt \
     "We have created a new space. But we still have to set it as our current target." \
-    "cf target -s interactive-cloud-foundry-tutorial"
+    "cf target -s cfpush-tutorial"
 
 prompt \
     "We are ready for deployment. Let's start with the frontend, the $(bold "chat-app").
@@ -371,14 +371,14 @@ prompt \
 "Once you're finished playing with the $(bold chat-app), let's clean up. If we don't want incur further cost against our PWS quota, we should decommission all apps and services.
 
 The easiest way to do that is to delete the entire space." \
-"cf delete-space interactive-cloud-foundry-tutorial -f"
+"cf delete-space cfpush-tutorial -f"
 
 prompt \
 "That's all for now. Expect updates to this tutorial. Thank you for coming this far!
 
 Your feedback is valued. Give the repository a star, open an issue or send a PR.
 
-$(underline "github.com/mamachanko/interactive-cloud-foundry-tutorial")
+$(underline "github.com/mamachanko/cfpush")
 
 There's more: $(underline "https://docs.cloudfoundry.org/#read-the-docs")
 
