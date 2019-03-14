@@ -65,6 +65,7 @@ function attemptLogIntoPWS() {
             -p ${CF_PASSWORD} \
             -o ${CF_ORG} \
             -s ${CF_SPACE}
+        clear
     fi
 }
 
