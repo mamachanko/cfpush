@@ -374,6 +374,8 @@ Since we're using Spring Boot it will will automatically pick up the database.
 Caveat: In this case it is enough to just restart the application. In other cases we need to restage it for the changes to take effect (see $(underline "https://docs.cloudfoundry.org/devguide/deploy-apps/start-restart-restage.html"))." \
 "cf restart message-service"
 
+runSmokeTests
+
 prompt \
 "As the instances of the $(bold "message-service") have restarted they are all using the database as a backing service. They no longer carry state. We can scale the message-service to our heart's content. The users of the chat will have a consistent experience, whether we have 1 or 100 instances running.
 
@@ -387,8 +389,6 @@ When inspecting the recent logs with a little help from grep we should see insta
     "cf logs --recent message-service
     | grep GET
     | grep '\[APP\/PROC\/WEB\/\d\+\]'"
-
-runSmokeTests
 
 prompt \
 "Once you're finished playing with the $(bold chat-app), let's clean up. If we don't want incur further cost against our PWS quota, we should decommission all apps and services.
