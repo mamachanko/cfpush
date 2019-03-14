@@ -112,6 +112,19 @@ function welcome() {
     awaitUserOk "<enter> to ▶️  "
 }
 
+function execute() {
+    COMMAND=$@
+
+    if [[ ${DRY} == "false" ]] ; then
+        if $(echo ${COMMAND} | grep "cf login" > /dev/null); then
+            eval ${COMMAND}
+        else
+            eval ${COMMAND} \
+            | grep -v "TIP: "
+        fi
+    fi
+}
+
 function prompt() {
     PROMPT=$1
     COMMAND=$2
@@ -130,10 +143,8 @@ function prompt() {
     prettyEcho "⏳ ${COMMAND}"
     prettyEcho ""
 
-    if [[ ${DRY} == "false" ]] ; then
-        eval ${COMMAND}
-    fi
-
+    execute ${COMMAND}
+    
     prettyEcho ""
     prettyEcho "✔️ ${COMMAND}"
     prettyEcho ""
