@@ -10,6 +10,7 @@ DRY=${DRY:-false}
 
 BLUE_ON_WHITE=`tput setab 7 && tput setaf 4`
 WHITE_ON_BLUE=`tput setab 4 && tput setaf 7`
+BLACK_ON_RED=`tput setab 1 && tput setaf 0`
 UNTIL_EOL=`tput el`
 UNDERLINE=`tput smul`
 BOLD=`tput bold`
@@ -21,22 +22,27 @@ CHAT_APP_HOSTNAME="<if_you_see_this_the_chat-app_hostname_was_not_parsed_yet>"
 MESSAGE_SERVICE_URL="<if_you_see_this_the_message-service_url_was_not_parsed_yet>"
 
 function quit() {
-    echo
-    echo
-    echo Oh, I am slain... 💀
-    echo
-    echo Was there a problem?
-    echo Reach out at $(underline "github.com/mamachanko/cfpush/issues")
-    echo
-    echo You might want to decommission the cfpush-tutorial space
-    echo to not further incur cost against your quota. 🏁
-    echo
-    echo See you! 👋🏽
-    echo
+    warningEcho ""
+    warningEcho ""
+    warningEcho "Oh, I am slain... 💀"
+    warningEcho ""
+    warningEcho "Was there a problem?"
+    warningEcho "Reach out at $(underline github.com/mamachanko/cfpush/issues)"
+    warningEcho ""
+    warningEcho "You might want to decommission the cfpush-tutorial space to not further incur cost against your quota. 🏁"
+    warningEcho ""
+    warningEcho "See you! 👋🏽"
+    warningEcho ""
     exit
 }
 
 trap quit INT
+
+function warningEcho() {
+    echo "$1" \
+    | fold -w 80 -s \
+    | sed "s/^\(.*\)$/${WHITE_ON_RED}    \1${UNTIL_EOL}${RESET_STYLES}/"
+}
 
 function prettyEcho() {
     echo "$1" \
