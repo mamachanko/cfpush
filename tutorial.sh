@@ -2,6 +2,7 @@
 
 set -eo pipefail
 
+
 cd $(dirname $0)
 
 CI=${CI:-false}
@@ -18,6 +19,24 @@ RESET_STYLES=`tput sgr0`
 CHAT_APP_URL="<if_you_see_this_the_chat-app_url_was_not_parsed_yet>"
 CHAT_APP_HOSTNAME="<if_you_see_this_the_chat-app_hostname_was_not_parsed_yet>"
 MESSAGE_SERVICE_URL="<if_you_see_this_the_message-service_url_was_not_parsed_yet>"
+
+function quit() {
+    echo
+    echo
+    echo Oh, I am slain... 💀
+    echo
+    echo Was there a problem?
+    echo Reach out at $(underline "github.com/mamachanko/cfpush/issues")
+    echo
+    echo You might want to decommission the cfpush-tutorial space
+    echo to not further incur cost against your quota. 🏁
+    echo
+    echo See you! 👋🏽
+    echo
+    exit
+}
+
+trap quit INT
 
 function prettyEcho() {
     echo "$1" \
@@ -397,7 +416,9 @@ The easiest way to achieve that is to delete the entire space." \
 "cf delete-space cfpush-tutorial -f"
 
 prompt \
-"That's all for now. Expect updates to this tutorial. Thank you for coming this far!
+"🏁 That's all for now. 🏁
+
+Expect updates to this tutorial. Thank you for coming this far!
 
 Your feedback is valued. If there is anything I can do to improve your experience, please, let me know. Give the repository a star, open an issue or send a PR.
 
