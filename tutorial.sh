@@ -109,7 +109,7 @@ function welcome() {
     prettyEcho "Are you ready? We can't wait. Let's go!"
     prettyEcho ""
 
-    awaitUserOk "<enter> to ▶️  "
+    awaitUserOk "<enter> to start"
 }
 
 function execute() {
@@ -137,7 +137,7 @@ function prompt() {
     prettyEcho "👉🏽 ${COMMAND}"
     prettyEcho ""
 
-    awaitUserOk "<enter> to 🏃🏾"
+    awaitUserOk "<enter> to run"
 
     prettyEcho ""
     prettyEcho "⏳ ${COMMAND}"
@@ -149,7 +149,7 @@ function prompt() {
     prettyEcho "✔️ ${COMMAND}"
     prettyEcho ""
 
-    awaitUserOk "<enter> to ➡️ "
+    awaitUserOk "<enter> to continue"
 }
 
 function smokeTestChatApp() {
