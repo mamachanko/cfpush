@@ -20,3 +20,7 @@ COPY builds/ /cfpush/builds
 COPY scripts/post-message.sh /cfpush/scripts/post-message.sh
 COPY scripts/get-messages.sh /cfpush/scripts/get-messages.sh
 COPY tutorial.sh /cfpush/tutorial.sh
+
+WORKDIR /cfpush
+
+CMD [ "bash", "tutorial.sh" ]

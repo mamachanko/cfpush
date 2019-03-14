@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -euxo pipefail
+set -euo pipefail
 
 cd $(dirname $0)
 
@@ -17,9 +17,7 @@ docker \
     --env CF_PASSWORD \
     --env CF_ORG \
     --env CF_SPACE \
-    --workdir /cfpush \
     --volume $(pwd)/tutorial.sh:/cfpush/tutorial.sh \
     --volume $(pwd)/builds:/cfpush/builds \
     --volume $(pwd)/scripts:/cfpush/scripts \
-    cfpush \
-    bash tutorial.sh
+    mamachanko/cfpush:latest

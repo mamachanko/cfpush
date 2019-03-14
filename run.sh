@@ -13,6 +13,4 @@ docker \
     --env CF_PASSWORD \
     --env CF_ORG \
     --env CF_SPACE \
-    --workdir /cfpush \
-    cfpush \
-    bash tutorial.sh
+    mamachanko/cfpush:latest
