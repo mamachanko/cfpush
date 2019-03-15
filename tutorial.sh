@@ -33,7 +33,7 @@ function quit() {
     warningEcho ""
     warningEcho "See you! 👋🏽"
     warningEcho ""
-    exit
+    exit 1
 }
 
 trap quit INT
