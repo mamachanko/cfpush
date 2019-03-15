@@ -58,7 +58,6 @@ function bold() {
     echo "${BOLD}$1${RESET_STYLES}${BLUE_ON_WHITE}"
 }
 
-
 function ensureCfInstalled() {
     if [[ ${DRY} != "false" ]] || command cf > /dev/null 2>&1 ; then
         : # noop
@@ -96,8 +95,7 @@ function attemptLogIntoPWS() {
 
 function isLoggedIntoPWS() {
     [[ ${DRY} != "false" ]] \
-        || $(cf target > /dev/null 2>&1) \
-        || $(cf api | grep run.pivotal.io /dev/null 2>&1)
+    || ( $(cf target >/dev/null 2>&1) && $(cf api | grep 'api endpoint\:\s*https\:\/\/api.run.pivotal.io' >/dev/null 2>&1) )
 }
 
 function updateChatAppUrlAndHostname() {
