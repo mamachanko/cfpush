@@ -41,7 +41,7 @@ trap quit INT
 function warningEcho() {
     echo "$1" \
     | fold -w 80 -s \
-    | sed "s/^\(.*\)$/${WHITE_ON_RED}    \1${UNTIL_EOL}${RESET_STYLES}/"
+    | sed "s/^\(.*\)$/${BLACK_ON_RED}    \1${UNTIL_EOL}${RESET_STYLES}/"
 }
 
 function prettyEcho() {
