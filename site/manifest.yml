@@ -2,9 +2,10 @@
 applications:
 - name: cfpush-site
   memory: 64m
-  disk_quota: 128m
+  path: .
+  disk_quota: 64m
   stack: cflinuxfs3
   routes:
   - route: cfpush.cfapps.io
   buildpacks:
-  - https://github.com/cloudfoundry/nginx-buildpack.git
+  - staticfile_buildpack
