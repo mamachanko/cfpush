@@ -1,9 +1,49 @@
 {
   "dependencies": {
-    "@types/blessed": "^0.1.10",
-    "blessed": "^0.1.81",
-    "blessed-contrib": "^4.8.11",
+    "@types/react": "^16.8.8",
+    "@types/react-redux": "^7.0.6",
+    "ink": "^2.0.6",
+    "ink-box": "^1.0.0",
+    "ink-spinner": "^3.0.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.4",
+    "react-redux": "^6.0.1",
+    "redux": "^4.0.1",
+    "redux-starter-kit": "^0.4.3",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333"
+  },
+  "devDependencies": {
+    "@types/ink-testing-library": "^1.0.0",
+    "@types/jest": "^24.0.11",
+    "@typescript-eslint/eslint-plugin": "^1.5.0",
+    "eslint-config-xo-react": "^0.19.0",
+    "eslint-config-xo-typescript": "^0.9.0",
+    "eslint-plugin-jest": "^22.4.1",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^1.6.0",
+    "eslint-plugin-typescript": "^0.14.0",
+    "ink-testing-library": "^1.0.1",
+    "jest": "^24.5.0",
+    "strip-ansi": "^5.2.0",
+    "ts-jest": "^24.0.0",
+    "xo": "^0.24.0"
+  },
+  "scripts": {
+    "test": "xo && jest"
+  },
+  "xo": {
+    "extends": [
+      "xo-typescript",
+      "xo-react",
+      "plugin:jest/recommended"
+    ],
+    "extensions": [
+      "ts",
+      "tsx"
+    ],
+    "rules": {
+      "react/prop-types": "off"
+    }
   }
 }
