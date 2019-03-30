@@ -9,3 +9,5 @@ cd $(dirname $0)
 ./clean-chat-app.sh
 
 ./clean-tutorial.sh
+
+./clean-tutor-poc.sh
