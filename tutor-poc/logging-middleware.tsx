@@ -1,16 +1,11 @@
-import * as fs from 'fs';
 import {Middleware} from 'redux';
 import {Action} from './actions'; // eslint-disable-line import/named
+import {log} from './logging';
 
-const logToFile = (action: Action): void =>
-	fs.appendFile(
-		'/tmp/app.log',
-		JSON.stringify(action) + '\n',
-		() => { }
-	);
+const logAction = (action: Action): void => log(JSON.stringify(action));
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const loggingMiddleware: Middleware = _ => next => action => {
-	logToFile(action);
+	logAction(action);
 	next(action);
 };
