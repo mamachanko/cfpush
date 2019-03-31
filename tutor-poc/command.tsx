@@ -5,18 +5,24 @@ import * as React from 'react';
 import {ReactReduxContext} from 'react-redux';
 import {runCommand} from './actions';
 
-const SPACE = ' ';
-const ENTER = '\r';
+const SPACE = 'space';
+const ENTER = 'return';
 
-const useStdin = (handleInput: (input: string) => void): void => {
+interface Key {
+	name: string;
+}
+
+type InputHandler = (character: string, key: Key) => void;
+
+const useStdin = (handleInput: InputHandler): void => {
 	const {stdin, setRawMode} = React.useContext(StdinContext);
 
 	React.useEffect(() => {
 		setRawMode(true);
-		stdin.on('data', handleInput);
+		stdin.on('keypress', handleInput);
 
 		return () => {
-			stdin.removeListener('data', handleInput);
+			stdin.removeListener('keypress', handleInput);
 			setRawMode(false);
 		};
 	}, [stdin, setRawMode, handleInput]);
@@ -29,8 +35,9 @@ const Trigger = ({command}): React.ReactElement => {
 		() => dispatch(runCommand(command)),
 		[command, dispatch]
 	);
-	const handleInput = (input: string): void => {
-		if (input === SPACE) {
+
+	const handleInput: InputHandler = (_, key): void => {
+		if (key.name === SPACE) {
 			start();
 		}
 	};
@@ -77,11 +84,11 @@ const InputPrompt = (): React.ReactElement => {
 		[dispatch, userInput]
 	);
 
-	const handleInput = (input: string): void => {
-		if (input === ENTER) {
+	const handleInput: InputHandler = (character: string, key: Key): void => {
+		if (key.name === ENTER) {
 			submit();
 		} else {
-			setUserInput((prevUserInput: string) => prevUserInput + input);
+			setUserInput((prevUserInput: string) => prevUserInput + character);
 		}
 	};
 
