@@ -6,6 +6,7 @@
     "ink-box": "^1.0.0",
     "ink-spinner": "^3.0.0",
     "prop-types": "^15.7.2",
+    "qrcode-generator": "^1.4.3",
     "react": "^16.8.4",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",

@@ -1,12 +1,12 @@
+import {Box, Text} from 'ink';
 import * as React from 'react';
-import {Color} from 'ink';
-import * as Box from 'ink-box';
+import {qrcode} from './qrcode';
 
-export const Title = (): React.ReactElement => (
-	<Box
-		borderStyle="round"
-		borderColor="cyan"
-	>
-		Welcome to <Color green>cfpush</Color>
-	</Box>
-);
+export const Title = (): React.ReactElement => {
+	return (
+		<Box flexDirection="column">
+			<Text>point your phone📱here ↓</Text>
+			<Text>{qrcode('https://cfpush.cloud')}</Text>
+		</Box>
+	);
+};
