@@ -6,6 +6,7 @@ import {ReactReduxContext} from 'react-redux';
 import {runCommand} from './actions';
 
 const SPACE = ' ';
+const ENTER = '\r';
 
 const useStdin = (handleInput: (input: string) => void): void => {
 	const {stdin, setRawMode} = React.useContext(StdinContext);
@@ -18,7 +19,7 @@ const useStdin = (handleInput: (input: string) => void): void => {
 			stdin.removeListener('data', handleInput);
 			setRawMode(false);
 		};
-	});
+	}, [stdin, setRawMode, handleInput]);
 };
 
 const Trigger = ({command}): React.ReactElement => {
@@ -66,9 +67,7 @@ CommandPrompt.propTypes = {
 };
 
 const InputPrompt = (): React.ReactElement => {
-	const {store: {getState, dispatch}} = React.useContext(ReactReduxContext);
-	const {inputRequired} = getState();
-
+	const {store: {dispatch}} = React.useContext(ReactReduxContext);
 	const [userInput, setUserInput] = React.useState('');
 	const submit = React.useCallback(
 		() => {
@@ -79,7 +78,7 @@ const InputPrompt = (): React.ReactElement => {
 	);
 
 	const handleInput = (input: string): void => {
-		if (input === '\r') {
+		if (input === ENTER) {
 			submit();
 		} else {
 			setUserInput((prevUserInput: string) => prevUserInput + input);
@@ -88,16 +87,12 @@ const InputPrompt = (): React.ReactElement => {
 
 	useStdin(handleInput);
 
-	if (inputRequired) {
-		return (
-			<Box>
-				<Text>{'>_ '}</Text>
-				<Text>{userInput}</Text>
-			</Box>
-		);
-	}
-
-	return null;
+	return (
+		<Box>
+			<Text>{'>_ '}</Text>
+			<Text>{userInput}</Text>
+		</Box>
+	);
 };
 
 const ExitStatus = (): React.ReactElement => {
@@ -133,10 +128,13 @@ const Output = (): React.ReactElement => {
 };
 
 export const Command = ({command}): React.ReactElement => {
+	const {store: {getState}} = React.useContext(ReactReduxContext);
+	const {inputRequired} = getState();
+
 	return (
 		<Box flexDirection="column">
 			<Output/>
-			<InputPrompt/>
+			{inputRequired ? <InputPrompt/> : null}
 			<ExitStatus/>
 			<CommandPrompt command={command}/>
 		</Box>
