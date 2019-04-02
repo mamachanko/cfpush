@@ -13,8 +13,8 @@ export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): 
 				}
 			});
 
-			childProcess.on('exit', (code: number) => {
-				store.dispatch(finished(code));
+			childProcess.on('exit', () => {
+				store.dispatch(finished());
 				childProcess = null;
 			});
 		};
@@ -28,7 +28,7 @@ export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): 
 				if (store.getState().fakeCommands) {
 					next(action);
 					store.dispatch(outputReceived(`pretending to run "${action.command}"`));
-					store.dispatch(finished(0));
+					store.dispatch(finished());
 					return;
 				}
 
