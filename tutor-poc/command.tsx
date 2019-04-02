@@ -47,7 +47,7 @@ const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
 		if (!waitForTrigger) {
 			run();
 		}
-	}, [waitForTrigger]);
+	}, [waitForTrigger, run]);
 
 	return <Text>{`press <space> to run "${command}"`}</Text>;
 };
