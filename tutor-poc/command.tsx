@@ -41,7 +41,7 @@ const InputPrompt = ({submitInput}): React.ReactElement => {
 
 	return (
 		<Column>
-			<Text>⚠️ input required</Text>
+			<Text>⚠️  input required</Text>
 			<Text>{'>_ ' + userInput}</Text>
 		</Column>
 	);

@@ -76,7 +76,7 @@ describe('<Command/>', () => {
 			it('shows input is required', () => {
 				const {lastFrame} = render(<Command {...defaultProps} status="INPUT_REQUIRED"/>);
 
-				expect(lastFrame()).toMatch(/⚠️ input required/i);
+				expect(lastFrame()).toMatch(/⚠️ {2}input required/i);
 				expect(lastFrame()).not.toMatch(/running/i);
 			});
 
