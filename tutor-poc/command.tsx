@@ -34,7 +34,7 @@ const useStdin = (handleInput: InputHandler): void => {
 	}, [setRawMode, stdin, handleInput]);
 };
 
-const CommandTrigger = ({command, run}): React.ReactElement => {
+const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
 	const handleInput: InputHandler = (_, key): void => {
 		if (key.name === SPACE) {
 			run();
@@ -43,9 +43,11 @@ const CommandTrigger = ({command, run}): React.ReactElement => {
 
 	useStdin(handleInput);
 
-	if (process.env.CI === 'true') {
-		run();
-	}
+	React.useLayoutEffect(() => {
+		if (!waitForTrigger) {
+			run();
+		}
+	}, [waitForTrigger]);
 
 	return <Text>{`press <space> to run "${command}"`}</Text>;
 };
@@ -54,7 +56,7 @@ CommandTrigger.propTypes = {
 	command: PropTypes.string.isRequired
 };
 
-const CommandPrompt = ({command, run, submitInput, running, inputRequired}): React.ReactElement => {
+const CommandPrompt = ({command, waitForTrigger, run, submitInput, running, inputRequired}): React.ReactElement => {
 	if (running && !inputRequired) {
 		return (
 			<Box>
@@ -70,7 +72,7 @@ const CommandPrompt = ({command, run, submitInput, running, inputRequired}): Rea
 		return <InputPrompt submitInput={submitInput}/>;
 	}
 
-	return <CommandTrigger command={command} run={run}/>;
+	return <CommandTrigger command={command} run={run} waitForTrigger={waitForTrigger}/>;
 };
 
 CommandPrompt.propTypes = {
@@ -122,6 +124,7 @@ type OwnProps = {
 }
 
 type StateProps = {
+	waitForTrigger: boolean;
 	running: boolean;
 	finished: boolean;
 	inputRequired: boolean;
@@ -138,10 +141,10 @@ export type CommandProps =
 	& DispatchProps
 	& OwnProps;
 
-export const Command: React.FC<CommandProps> = ({command, run, submitInput, running, inputRequired, finished, output}): React.ReactElement => (
+export const Command: React.FC<CommandProps> = (props): React.ReactElement => (
 	<Box flexDirection="column">
-		{running || finished ? <Output output={output}/> : null}
-		{finished ? <ExitStatus/> : <CommandPrompt running={running} inputRequired={inputRequired} command={command} run={run} submitInput={submitInput}/>}
+		{props.running || props.finished ? <Output output={props.output}/> : null}
+		{props.finished ? <ExitStatus/> : <CommandPrompt {...props}/>}
 	</Box>
 );
 
@@ -150,6 +153,7 @@ Command.propTypes = {
 };
 
 const mapStateToProps = (state: State): StateProps => ({
+	waitForTrigger: !state.ci,
 	running: state.running,
 	finished: state.finished,
 	inputRequired: state.inputRequired,

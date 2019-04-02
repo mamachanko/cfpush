@@ -2,6 +2,7 @@ import {Reducer} from 'redux';
 import {Action} from './actions'; // eslint-disable-line import/named
 
 export interface State {
+	ci: boolean;
 	running: boolean;
 	finished: boolean;
 	inputRequired: boolean;
@@ -10,6 +11,7 @@ export interface State {
 }
 
 export const initialState = {
+	ci: process.env.CI === 'true',
 	// Idea: state = UNSTARTED | STARTED | FINISHED
 	running: false,
 	finished: false,

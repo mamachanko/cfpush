@@ -12,6 +12,7 @@ describe('<Command/>', () => {
 		finished: false,
 		inputRequired: false,
 		command: 'test command',
+		waitForTrigger: true,
 		run: () => {},
 		submitInput: () => {},
 		output: []
@@ -39,7 +40,7 @@ describe('<Command/>', () => {
 			expect(run).toHaveBeenCalledTimes(1);
 		});
 
-		describe('when in ci mode', () => {
+		describe('when not waiting for trigger', () => {
 			beforeEach(() => {
 				process.env.CI = 'true';
 			});
@@ -51,7 +52,7 @@ describe('<Command/>', () => {
 			it('runs command right away', () => {
 				const run = jest.fn();
 
-				render(<Command {...defaultProps} run={run}/>);
+				render(<Command {...defaultProps} waitForTrigger={false} run={run}/>);
 
 				expect(run).toHaveBeenCalledTimes(1);
 			});
