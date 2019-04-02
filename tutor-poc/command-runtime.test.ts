@@ -104,7 +104,7 @@ describe('CommandRuntimeMiddleware', () => {
 
 			childProcessMock.exit(123);
 
-			expect(storeMock.dispatch).toHaveBeenCalledWith(finished(123));
+			expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
 		});
 
@@ -135,7 +135,7 @@ describe('CommandRuntimeMiddleware', () => {
 			expect(spawnMock).toHaveBeenCalledTimes(0);
 
 			expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('pretending to run "test-command --flag --positional arg"'));
-			expect(storeMock.dispatch).toHaveBeenCalledWith(finished(0));
+			expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
 			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommandAction);
 			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
