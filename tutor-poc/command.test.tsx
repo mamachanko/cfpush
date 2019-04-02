@@ -32,9 +32,29 @@ describe('<Command/>', () => {
 			const run = jest.fn();
 			const {stdin} = render(<Command {...defaultProps} run={run}/>);
 
+			expect(run).toHaveBeenCalledTimes(0);
+
 			stdin.write(SPACE);
 
 			expect(run).toHaveBeenCalledTimes(1);
+		});
+
+		describe('when in ci mode', () => {
+			beforeEach(() => {
+				process.env.CI = 'true';
+			});
+
+			afterEach(() => {
+				delete process.env.CI;
+			});
+
+			it('runs command right away', () => {
+				const run = jest.fn();
+
+				render(<Command {...defaultProps} run={run}/>);
+
+				expect(run).toHaveBeenCalledTimes(1);
+			});
 		});
 	});
 

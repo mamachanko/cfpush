@@ -43,6 +43,10 @@ const CommandTrigger = ({command, run}): React.ReactElement => {
 
 	useStdin(handleInput);
 
+	if (process.env.CI === 'true') {
+		run();
+	}
+
 	return <Text>{`press <space> to run "${command}"`}</Text>;
 };
 
