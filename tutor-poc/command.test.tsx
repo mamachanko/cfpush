@@ -24,7 +24,7 @@ describe('<Command/>', () => {
 		it('shows which command can be run', () => {
 			const {lastFrame} = render(<Command {...defaultProps}/>);
 
-			expect(lastFrame()).toMatch(/^press <space> to run "test command"$/i);
+			expect(lastFrame()).toMatch(/press <space> to run "test command"/i);
 		});
 
 		it('runs command on <space>', () => {
@@ -53,14 +53,14 @@ describe('<Command/>', () => {
 		it('shows a spinner', () => {
 			const {lastFrame} = render(<Command {...defaultProps} status="RUNNING"/>);
 
-			expect(lastFrame()).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] running$/i);
+			expect(lastFrame()).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] running/i);
 		});
 
 		describe('when there is output', () => {
 			it('shows output', () => {
 				const {lastFrame} = render(<Command {...defaultProps} status="RUNNING" output={['test command output 1', 'test command output 2']}/>);
 
-				expect(lastFrame()).toMatch(/^test command output 1\ntest command output 2/i);
+				expect(lastFrame()).toMatch(/test command output 1\ntest command output 2/i);
 			});
 		});
 
@@ -68,7 +68,7 @@ describe('<Command/>', () => {
 			it('shows no output', () => {
 				const {lastFrame} = render(<Command {...defaultProps} status="RUNNING" output={[]}/>);
 
-				expect(lastFrame()).toMatch(/^no command output/i);
+				expect(lastFrame()).toMatch(/no command output/i);
 			});
 		});
 
@@ -83,7 +83,7 @@ describe('<Command/>', () => {
 			it('shows input prompt', () => {
 				const {lastFrame} = render(<Command {...defaultProps} status="INPUT_REQUIRED"/>);
 
-				expect(lastFrame()).toMatch(/>_$/i);
+				expect(lastFrame()).toMatch(/>_/i);
 			});
 
 			describe('when user provides input', () => {
@@ -92,7 +92,7 @@ describe('<Command/>', () => {
 
 					stdin.write('test user input');
 
-					expect(lastFrame()).toMatch(/>_ test user input$/i);
+					expect(lastFrame()).toMatch(/>_ test user input/i);
 				});
 
 				describe('when user submits input', () => {
@@ -112,16 +112,10 @@ describe('<Command/>', () => {
 	});
 
 	describe('when the command has finished', () => {
-		it('shows it has finished', () => {
-			const {lastFrame} = render(<Command {...defaultProps} status="FINISHED"/>);
-
-			expect(lastFrame()).toMatch(/✅ finished$/i);
-		});
-
-		it('shows output', () => {
+		it('shows output and that it has finished', () => {
 			const {lastFrame} = render(<Command {...defaultProps} status="FINISHED" output={['test output 1', 'test output 2']}/>);
 
-			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*✅ finished$/i);
+			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*✅ finished/i);
 		});
 	});
 });
