@@ -25,6 +25,13 @@ export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): 
 
 		return next => action => {
 			if (action.type === 'RUN_COMMAND') {
+				if (process.env.DRY === 'true') {
+					next(action);
+					store.dispatch(outputReceived(`pretending to run "${action.command}"`));
+					store.dispatch(finished(0));
+					return;
+				}
+
 				const [filename, ...args] = action.command.split(' ');
 				childProcess = spawnChildProcess(filename, args);
 				subscribe();

@@ -54,69 +54,99 @@ const createChildProcessMock = (): any => {
 };
 
 describe('CommandRuntimeMiddleware', () => {
-	it('starts to run a command', () => {
-		const storeMock = createStoreMock();
-		const nextMiddlewareMock = jest.fn();
-		const runCommandAction = runCommand('test-command --flag --positional arg');
-		const childProcessMock = createChildProcessMock();
-		const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
+	describe('when in tutorial mode', () => {
+		it('starts to run a command', () => {
+			const storeMock = createStoreMock();
+			const nextMiddlewareMock = jest.fn();
+			const runCommandAction = runCommand('test-command --flag --positional arg');
+			const childProcessMock = createChildProcessMock();
+			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
 
-		commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommandAction);
+			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommandAction);
 
-		expect(spawnMock).toHaveBeenLastCalledWith('test-command', ['--flag', '--positional', 'arg']);
-		expect(spawnMock).toHaveBeenCalledTimes(1);
+			expect(spawnMock).toHaveBeenLastCalledWith('test-command', ['--flag', '--positional', 'arg']);
+			expect(spawnMock).toHaveBeenCalledTimes(1);
 
-		expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommandAction);
-		expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommandAction);
+			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+		});
+
+		it('emits command output', () => {
+			const storeMock = createStoreMock();
+			const subshell = createChildProcessMock();
+
+			commandRuntime(null, subshell)(storeMock);
+
+			subshell.stdout.emit('test command output');
+
+			expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('test command output'));
+			expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
+		});
+
+		it('emits command input required', () => {
+			const storeMock = createStoreMock();
+			const childProcessMock = createChildProcessMock();
+
+			commandRuntime(null, childProcessMock)(storeMock);
+
+			childProcessMock.stdout.emit('input required > ');
+
+			expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('input required > '));
+			expect(storeMock.dispatch).toHaveBeenCalledWith(inputRequired());
+			expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
+		});
+
+		it('emits command finished', () => {
+			const storeMock = createStoreMock();
+			const childProcessMock = createChildProcessMock();
+
+			commandRuntime(null, childProcessMock)(storeMock);
+
+			childProcessMock.exit(123);
+
+			expect(storeMock.dispatch).toHaveBeenCalledWith(finished(123));
+			expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
+		});
+
+		it('provides user input to command', () => {
+			const storeMock = createStoreMock();
+			const childProcessMock = createChildProcessMock();
+			const nextMiddlewareMock = jest.fn();
+
+			commandRuntime(null, childProcessMock)(storeMock)(nextMiddlewareMock)(inputReceived('test user input'));
+
+			expect(childProcessMock.stdin.write).toHaveBeenCalledWith('test user input\n');
+			expect(childProcessMock.stdin.write).toHaveBeenCalledTimes(1);
+			expect(nextMiddlewareMock).toHaveBeenCalledWith(inputReceived('test user input'));
+			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+		});
 	});
 
-	it('emits command output', () => {
-		const storeMock = createStoreMock();
-		const subshell = createChildProcessMock();
+	describe('when in dry mode', () => {
+		beforeEach(() => {
+			process.env.DRY = 'true';
+		});
 
-		commandRuntime(null, subshell)(storeMock);
+		afterEach(() => {
+			delete process.env.DRY;
+		});
 
-		subshell.stdout.emit('test command output');
+		it('pretends to run a command', () => {
+			const storeMock = createStoreMock();
+			const nextMiddlewareMock = jest.fn();
+			const runCommandAction = runCommand('test-command --flag --positional arg');
+			const childProcessMock = createChildProcessMock();
+			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
 
-		expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('test command output'));
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
-	});
+			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommandAction);
 
-	it('emits command input required', () => {
-		const storeMock = createStoreMock();
-		const childProcessMock = createChildProcessMock();
+			expect(spawnMock).toHaveBeenCalledTimes(0);
 
-		commandRuntime(null, childProcessMock)(storeMock);
-
-		childProcessMock.stdout.emit('input required > ');
-
-		expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('input required > '));
-		expect(storeMock.dispatch).toHaveBeenCalledWith(inputRequired());
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
-	});
-
-	it('emits command finished', () => {
-		const storeMock = createStoreMock();
-		const childProcessMock = createChildProcessMock();
-
-		commandRuntime(null, childProcessMock)(storeMock);
-
-		childProcessMock.exit(123);
-
-		expect(storeMock.dispatch).toHaveBeenCalledWith(finished(123));
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
-	});
-
-	it('provides user input to command', () => {
-		const storeMock = createStoreMock();
-		const childProcessMock = createChildProcessMock();
-		const nextMiddlewareMock = jest.fn();
-
-		commandRuntime(null, childProcessMock)(storeMock)(nextMiddlewareMock)(inputReceived('test user input'));
-
-		expect(childProcessMock.stdin.write).toHaveBeenCalledWith('test user input\n');
-		expect(childProcessMock.stdin.write).toHaveBeenCalledTimes(1);
-		expect(nextMiddlewareMock).toHaveBeenCalledWith(inputReceived('test user input'));
-		expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+			expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('pretending to run "test-command --flag --positional arg"'));
+			expect(storeMock.dispatch).toHaveBeenCalledWith(finished(0));
+			expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
+			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommandAction);
+			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+		});
 	});
 });
