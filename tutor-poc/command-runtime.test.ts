@@ -1,5 +1,5 @@
-import {MiddlewareAPI, Dispatch} from 'redux';
-import {finished, inputRequired, outputReceived, runCommand, inputReceived, Action} from './actions'; // eslint-disable-line import/named
+import {Dispatch, MiddlewareAPI} from 'redux';
+import {Action, finished, inputReceived, inputRequired, outputReceived, runCommand} from './actions'; // eslint-disable-line import/named
 import {commandRuntime} from './command-runtime';
 import {initialState, State} from './reducer';
 
