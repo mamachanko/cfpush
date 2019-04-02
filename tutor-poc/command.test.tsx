@@ -8,9 +8,7 @@ describe('<Command/>', () => {
 	const ENTER = '\r';
 	const SPACE = ' ';
 	const defaultProps: CommandProps = {
-		running: false,
-		finished: false,
-		inputRequired: false,
+		status: 'UNSTARTED',
 		command: 'test command',
 		waitForTrigger: true,
 		run: () => {},
@@ -53,14 +51,14 @@ describe('<Command/>', () => {
 
 	describe('when command is running', () => {
 		it('shows a spinner', () => {
-			const {lastFrame} = render(<Command {...defaultProps} running/>);
+			const {lastFrame} = render(<Command {...defaultProps} status="RUNNING"/>);
 
 			expect(lastFrame()).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] running$/i);
 		});
 
 		describe('when there is output', () => {
 			it('shows output', () => {
-				const {lastFrame} = render(<Command {...defaultProps} running output={['test command output 1', 'test command output 2']}/>);
+				const {lastFrame} = render(<Command {...defaultProps} status="RUNNING" output={['test command output 1', 'test command output 2']}/>);
 
 				expect(lastFrame()).toMatch(/^test command output 1\ntest command output 2/i);
 			});
@@ -68,7 +66,7 @@ describe('<Command/>', () => {
 
 		describe('when there is no output', () => {
 			it('shows no output', () => {
-				const {lastFrame} = render(<Command {...defaultProps} running output={[]}/>);
+				const {lastFrame} = render(<Command {...defaultProps} status="RUNNING" output={[]}/>);
 
 				expect(lastFrame()).toMatch(/^no command output/i);
 			});
@@ -76,21 +74,21 @@ describe('<Command/>', () => {
 
 		describe('when input is required', () => {
 			it('shows input is required', () => {
-				const {lastFrame} = render(<Command {...defaultProps} running inputRequired/>);
+				const {lastFrame} = render(<Command {...defaultProps} status="INPUT_REQUIRED"/>);
 
 				expect(lastFrame()).toMatch(/⚠️ input required/i);
 				expect(lastFrame()).not.toMatch(/running/i);
 			});
 
 			it('shows input prompt', () => {
-				const {lastFrame} = render(<Command {...defaultProps} running inputRequired/>);
+				const {lastFrame} = render(<Command {...defaultProps} status="INPUT_REQUIRED"/>);
 
 				expect(lastFrame()).toMatch(/>_$/i);
 			});
 
 			describe('when user provides input', () => {
 				it('shows user input', () => {
-					const {lastFrame, stdin} = render(<Command {...defaultProps} running inputRequired/>);
+					const {lastFrame, stdin} = render(<Command {...defaultProps} status="INPUT_REQUIRED"/>);
 
 					stdin.write('test user input');
 
@@ -100,7 +98,7 @@ describe('<Command/>', () => {
 				describe('when user submits input', () => {
 					it('submits input on <enter>', () => {
 						const submitInput = jest.fn();
-						const {stdin} = render(<Command {...defaultProps} running inputRequired submitInput={submitInput}/>);
+						const {stdin} = render(<Command {...defaultProps} status="INPUT_REQUIRED" submitInput={submitInput}/>);
 
 						stdin.write('test user input');
 						stdin.write(ENTER);
@@ -115,13 +113,13 @@ describe('<Command/>', () => {
 
 	describe('when the command has finished', () => {
 		it('shows it has finished', () => {
-			const {lastFrame} = render(<Command {...defaultProps} finished/>);
+			const {lastFrame} = render(<Command {...defaultProps} status="FINISHED"/>);
 
 			expect(lastFrame()).toMatch(/✅ finished$/i);
 		});
 
 		it('shows output', () => {
-			const {lastFrame} = render(<Command {...defaultProps} finished output={['test output 1', 'test output 2']}/>);
+			const {lastFrame} = render(<Command {...defaultProps} status="FINISHED" output={['test output 1', 'test output 2']}/>);
 
 			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*✅ finished$/i);
 		});

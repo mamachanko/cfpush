@@ -1,24 +1,23 @@
 import {Reducer} from 'redux';
 import {Action} from './actions'; // eslint-disable-line import/named
 
+export type CommandStatus =
+	| 'UNSTARTED'
+	| 'RUNNING'
+	| 'INPUT_REQUIRED'
+	| 'FINISHED';
+
 export interface State {
 	waitForTrigger: boolean;
 	fakeCommands: boolean;
-	running: boolean;
-	finished: boolean;
-	inputRequired: boolean;
-	exitCode: number;
+	status: CommandStatus;
 	output: string[];
 }
 
-export const initialState = {
+export const initialState: State = {
 	waitForTrigger: process.env.CI !== 'true',
 	fakeCommands: process.env.DRY === 'true',
-	// Idea: state = UNSTARTED | STARTED | FINISHED
-	running: false,
-	finished: false,
-	inputRequired: false,
-	exitCode: -1,
+	status: 'UNSTARTED',
 	output: []
 };
 
@@ -26,10 +25,7 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 	if (action.type === 'RUN_COMMAND') {
 		return {
 			...state,
-			running: true,
-			finished: false,
-			inputRequired: false,
-			exitCode: -1,
+			status: 'RUNNING',
 			output: []
 		};
 	}
@@ -44,24 +40,21 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 	if (action.type === 'INPUT_REQUIRED') {
 		return {
 			...state,
-			inputRequired: true
+			status: 'INPUT_REQUIRED'
 		};
 	}
 
 	if (action.type === 'INPUT_RECEIVED') {
 		return {
 			...state,
-			inputRequired: false
+			status: 'RUNNING'
 		};
 	}
 
 	if (action.type === 'FINISHED') {
 		return {
 			...state,
-			running: false,
-			finished: true,
-			inputRequired: false,
-			exitCode: action.exitCode
+			status: 'FINISHED'
 		};
 	}
 

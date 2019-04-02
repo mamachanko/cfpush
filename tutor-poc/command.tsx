@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import * as Redux from 'redux';
 import {runCommand, inputReceived} from './actions';
 import {log} from './logging';
-import {State} from './reducer';
+import {State, CommandStatus} from './reducer'; // eslint-disable-line import/named
 
 const SPACE = 'space';
 const ENTER = 'return';
@@ -56,23 +56,27 @@ CommandTrigger.propTypes = {
 	command: PropTypes.string.isRequired
 };
 
-const CommandPrompt = ({command, waitForTrigger, run, submitInput, running, inputRequired}): React.ReactElement => {
-	if (running && !inputRequired) {
-		return (
-			<Box>
-				<Box width={2}>
-					<Spinner type="dots"/>
+const CommandPrompt = ({command, waitForTrigger, run, submitInput, status}): React.ReactElement => {
+	switch (status) {
+		case ('RUNNING'): {
+			return (
+				<Box>
+					<Box width={2}>
+						<Spinner type="dots"/>
+					</Box>
+					<Text>running</Text>
 				</Box>
-				<Text>running</Text>
-			</Box>
-		);
-	}
+			);
+		}
 
-	if (inputRequired) {
-		return <InputPrompt submitInput={submitInput}/>;
-	}
+		case ('INPUT_REQUIRED'): {
+			return <InputPrompt submitInput={submitInput}/>;
+		}
 
-	return <CommandTrigger command={command} run={run} waitForTrigger={waitForTrigger}/>;
+		default: {
+			return <CommandTrigger command={command} run={run} waitForTrigger={waitForTrigger}/>;
+		}
+	}
 };
 
 CommandPrompt.propTypes = {
@@ -125,9 +129,7 @@ type OwnProps = {
 
 type StateProps = {
 	waitForTrigger: boolean;
-	running: boolean;
-	finished: boolean;
-	inputRequired: boolean;
+	status: CommandStatus;
 	output: ReadonlyArray<string>;
 };
 
@@ -142,10 +144,12 @@ export type CommandProps =
 	& OwnProps;
 
 export const Command: React.FC<CommandProps> = (props): React.ReactElement => (
+	/* eslint-disable no-negated-condition */
 	<Box flexDirection="column">
-		{props.running || props.finished ? <Output output={props.output}/> : null}
-		{props.finished ? <ExitStatus/> : <CommandPrompt {...props}/>}
+		{(props.status !== 'UNSTARTED') ? <Output output={props.output}/> : null}
+		{props.status === 'FINISHED' ? <ExitStatus/> : <CommandPrompt {...props}/>}
 	</Box>
+	/* eslint-enable no-negated-condition */
 );
 
 Command.propTypes = {
@@ -154,9 +158,7 @@ Command.propTypes = {
 
 const mapStateToProps = (state: State): StateProps => ({
 	waitForTrigger: state.waitForTrigger,
-	running: state.running,
-	finished: state.finished,
-	inputRequired: state.inputRequired,
+	status: state.status,
 	output: state.output
 });
 
