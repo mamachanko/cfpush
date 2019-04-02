@@ -2,8 +2,11 @@ import {Box, StdinContext, Text} from 'ink';
 import Spinner from 'ink-spinner';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import {ReactReduxContext} from 'react-redux';
-import {runCommand} from './actions';
+import {connect} from 'react-redux';
+import * as Redux from 'redux';
+import {runCommand, inputReceived} from './actions';
+import {log} from './logging';
+import {State} from './reducer';
 
 const SPACE = 'space';
 const ENTER = 'return';
@@ -14,31 +17,27 @@ interface Key {
 
 type InputHandler = (character: string, key: Key) => void;
 
+const logKeypress: InputHandler = (ch, key): void => log(`keypress: ch='${ch}', key=${JSON.stringify(key)}`);
+
 const useStdin = (handleInput: InputHandler): void => {
 	const {stdin, setRawMode} = React.useContext(StdinContext);
 
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		setRawMode(true);
 		stdin.on('keypress', handleInput);
+		stdin.on('keypress', logKeypress);
 
 		return () => {
-			stdin.removeListener('keypress', handleInput);
+			stdin.removeAllListeners('keypress');
 			setRawMode(false);
 		};
-	}, [stdin, setRawMode, handleInput]);
+	}, [setRawMode, stdin, handleInput]);
 };
 
-const Trigger = ({command}): React.ReactElement => {
-	const {store: {dispatch}} = React.useContext(ReactReduxContext);
-
-	const start = React.useCallback(
-		() => dispatch(runCommand(command)),
-		[command, dispatch]
-	);
-
+const CommandTrigger = ({command, run}): React.ReactElement => {
 	const handleInput: InputHandler = (_, key): void => {
 		if (key.name === SPACE) {
-			start();
+			run();
 		}
 	};
 
@@ -47,15 +46,12 @@ const Trigger = ({command}): React.ReactElement => {
 	return <Text>{`press <space> to run "${command}"`}</Text>;
 };
 
-Trigger.propTypes = {
+CommandTrigger.propTypes = {
 	command: PropTypes.string.isRequired
 };
 
-const CommandPrompt = ({command}): React.ReactElement => {
-	const {store} = React.useContext(ReactReduxContext);
-	const {running} = store.getState();
-
-	if (running) {
+const CommandPrompt = ({command, run, submitInput, running, inputRequired}): React.ReactElement => {
+	if (running && !inputRequired) {
 		return (
 			<Box>
 				<Box width={2}>
@@ -66,64 +62,47 @@ const CommandPrompt = ({command}): React.ReactElement => {
 		);
 	}
 
-	return <Trigger command={command}/>;
+	if (inputRequired) {
+		return <InputPrompt submitInput={submitInput}/>;
+	}
+
+	return <CommandTrigger command={command} run={run}/>;
 };
 
 CommandPrompt.propTypes = {
 	command: PropTypes.string.isRequired
 };
 
-const InputPrompt = (): React.ReactElement => {
-	const {store: {dispatch}} = React.useContext(ReactReduxContext);
+const InputPrompt = ({submitInput}): React.ReactElement => {
 	const [userInput, setUserInput] = React.useState('');
-	const submit = React.useCallback(
-		() => {
-			setUserInput('');
-			dispatch({type: 'INPUT_RECEIVED', input: userInput});
-		},
-		[dispatch, userInput]
-	);
 
-	const handleInput: InputHandler = (character: string, key: Key): void => {
+	const handleInput: InputHandler = (ch: string, key: Key): void => {
 		if (key.name === ENTER) {
-			submit();
+			submitInput(userInput);
 		} else {
-			setUserInput((prevUserInput: string) => prevUserInput + character);
+			setUserInput(prevUserInput => prevUserInput + ch);
 		}
 	};
 
 	useStdin(handleInput);
 
 	return (
-		<Box>
-			<Text>{'>_ '}</Text>
-			<Text>{userInput}</Text>
+		<Box flexDirection="column">
+			<Text>⚠️ input required</Text>
+			<Text>{'>_ ' + userInput}</Text>
 		</Box>
 	);
 };
 
-const ExitStatus = (): React.ReactElement => {
-	const {store} = React.useContext(ReactReduxContext);
-	const {finished, exitCode} = store.getState();
+const ExitStatus = (): React.ReactElement => <Text>✅ finished</Text>;
 
-	if (finished) {
-		return <Text>{`finished w/ ${exitCode}`}</Text>;
-	}
-
-	return null;
-};
-
-const Output = (): React.ReactElement => {
-	const {store} = React.useContext(ReactReduxContext);
-	const {output} = store.getState();
-
+const Output = ({output}): React.ReactElement => {
 	const outputLine = (text: string): React.ReactElement =>
 		<Text key={text + String(Date.now())}>{text}</Text>;
 
 	if (output && output.length > 0) {
 		return (
 			<Box flexDirection="column">
-				<Text>output:</Text>
 				<Box flexDirection="column">
 					{output.map(outputLine)}
 				</Box>
@@ -131,23 +110,51 @@ const Output = (): React.ReactElement => {
 		);
 	}
 
-	return null;
+	return <Text>no command output</Text>;
 };
 
-export const Command = ({command}): React.ReactElement => {
-	const {store: {getState}} = React.useContext(ReactReduxContext);
-	const {inputRequired} = getState();
+type OwnProps = {
+	command: string;
+}
 
-	return (
-		<Box flexDirection="column">
-			<Output/>
-			{inputRequired ? <InputPrompt/> : null}
-			<ExitStatus/>
-			<CommandPrompt command={command}/>
-		</Box>
-	);
+type StateProps = {
+	running: boolean;
+	finished: boolean;
+	inputRequired: boolean;
+	output: ReadonlyArray<string>;
 };
+
+type DispatchProps = {
+	run: () => void;
+	submitInput: (input: string) => void;
+}
+
+export type CommandProps =
+	& StateProps
+	& DispatchProps
+	& OwnProps;
+
+export const Command: React.FC<CommandProps> = ({command, run, submitInput, running, inputRequired, finished, output}): React.ReactElement => (
+	<Box flexDirection="column">
+		{running || finished ? <Output output={output}/> : null}
+		{finished ? <ExitStatus/> : <CommandPrompt running={running} inputRequired={inputRequired} command={command} run={run} submitInput={submitInput}/>}
+	</Box>
+);
 
 Command.propTypes = {
 	command: PropTypes.string.isRequired
 };
+
+const mapStateToProps = (state: State): StateProps => ({
+	running: state.running,
+	finished: state.finished,
+	inputRequired: state.inputRequired,
+	output: state.output
+});
+
+const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: OwnProps): DispatchProps => ({
+	run: () => dispatch(runCommand(ownProps.command)),
+	submitInput: (input: string) => dispatch(inputReceived(input))
+});
+
+export const ConnectedCommand = connect<StateProps, DispatchProps, OwnProps>(mapStateToProps, mapDispatchToProps)(Command);

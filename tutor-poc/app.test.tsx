@@ -19,15 +19,6 @@ describe('<Command />', () => {
 
 		expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello there"');
 
-		await sleep(10);
-		stdin.write(SPACE);
-		expect(stripAnsi(lastFrame())).toContain('running');
-
-		await sleep(10);
-		expect(stripAnsi(lastFrame())).toContain('hello there');
-		expect(stripAnsi(lastFrame())).not.toContain('running');
-
-		await sleep(10);
 		stdin.write(SPACE);
 		expect(stripAnsi(lastFrame())).toContain('running');
 

@@ -1,7 +1,7 @@
 import {Reducer} from 'redux';
 import {Action} from './actions'; // eslint-disable-line import/named
 
-interface State {
+export interface State {
 	running: boolean;
 	finished: boolean;
 	inputRequired: boolean;
