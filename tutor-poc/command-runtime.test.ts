@@ -1,13 +1,13 @@
-import {MiddlewareAPI} from 'redux';
-import {finished, inputRequired, outputReceived, runCommand, inputReceived} from './actions';
+import {MiddlewareAPI, Dispatch} from 'redux';
+import {finished, inputRequired, outputReceived, runCommand, inputReceived, Action} from './actions'; // eslint-disable-line import/named
 import {commandRuntime} from './command-runtime';
-import {initialState} from './reducer';
+import {initialState, State} from './reducer';
 
-const createStoreMock = (): MiddlewareAPI => ({
+const createStoreMock = (overrideDefaults: Partial<State> = {}): MiddlewareAPI<Dispatch<Action>, State> => ({
 	dispatch: jest.fn(),
 	// IDEA: this shouldn't have a dependency on reducer
 	// maybe there's another way to create State
-	getState: () => initialState
+	getState: (): State => ({...initialState, ...overrideDefaults})
 });
 
 // IDEA: introduce childprocess type
@@ -123,16 +123,8 @@ describe('CommandRuntimeMiddleware', () => {
 	});
 
 	describe('when in dry mode', () => {
-		beforeEach(() => {
-			process.env.DRY = 'true';
-		});
-
-		afterEach(() => {
-			delete process.env.DRY;
-		});
-
 		it('pretends to run a command', () => {
-			const storeMock = createStoreMock();
+			const storeMock = createStoreMock({fakeCommands: true});
 			const nextMiddlewareMock = jest.fn();
 			const runCommandAction = runCommand('test-command --flag --positional arg');
 			const childProcessMock = createChildProcessMock();

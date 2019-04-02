@@ -25,7 +25,7 @@ export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): 
 
 		return next => action => {
 			if (action.type === 'RUN_COMMAND') {
-				if (process.env.DRY === 'true') {
+				if (store.getState().fakeCommands) {
 					next(action);
 					store.dispatch(outputReceived(`pretending to run "${action.command}"`));
 					store.dispatch(finished(0));

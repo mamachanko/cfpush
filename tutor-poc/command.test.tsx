@@ -41,14 +41,6 @@ describe('<Command/>', () => {
 		});
 
 		describe('when not waiting for trigger', () => {
-			beforeEach(() => {
-				process.env.CI = 'true';
-			});
-
-			afterEach(() => {
-				delete process.env.CI;
-			});
-
 			it('runs command right away', () => {
 				const run = jest.fn();
 

@@ -153,7 +153,7 @@ Command.propTypes = {
 };
 
 const mapStateToProps = (state: State): StateProps => ({
-	waitForTrigger: !state.ci,
+	waitForTrigger: state.waitForTrigger,
 	running: state.running,
 	finished: state.finished,
 	inputRequired: state.inputRequired,
