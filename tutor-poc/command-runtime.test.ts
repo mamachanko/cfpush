@@ -141,4 +141,27 @@ describe('CommandRuntimeMiddleware', () => {
 			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
 		});
 	});
+
+	describe('when in ci mode', () => {
+		it('avoids user input for "cf login" by taking credentials from the environment', () => {
+			// TODO: waitForTrigger sounds odd now
+			const storeMock = createStoreMock({waitForTrigger: false});
+			const nextMiddlewareMock = jest.fn();
+			const runCommandAction = runCommand('cf login --any --args --go --here');
+			const childProcessMock = createChildProcessMock();
+			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
+
+			process.env.CF_USERNAME = 'cf-user';
+			process.env.CF_PASSWORD = 'cf-password';
+			process.env.CF_ORG = 'cf-org';
+			process.env.CF_SPACE = 'cf-space';
+
+			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommandAction);
+
+			expect(spawnMock).toHaveBeenCalledWith('cf', ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']);
+			expect(spawnMock).toHaveBeenCalledTimes(1);
+			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommandAction);
+			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+		});
+	});
 });

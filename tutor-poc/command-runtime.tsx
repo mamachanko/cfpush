@@ -32,7 +32,15 @@ export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): 
 					return;
 				}
 
-				const [filename, ...args] = action.command.split(' ');
+				let filename: string;
+				let args: ReadonlyArray<string>;
+
+				if (!store.getState().waitForTrigger && action.command.startsWith('cf login')) {
+					[filename, ...args] = ['cf', 'login', '-a', 'api.run.pivotal.io', '-u', process.env.CF_USERNAME, '-p', process.env.CF_PASSWORD, '-o', process.env.CF_ORG, '-s', process.env.CF_SPACE];
+				} else {
+					[filename, ...args] = action.command.split(' ');
+				}
+
 				childProcess = spawnChildProcess(filename, args);
 				subscribe();
 			}
