@@ -4,6 +4,4 @@ set -ex
 
 cd $(dirname $0)
 
-./test-tutor-poc.sh
-
-./test-tutorial.sh
+CI=true ../run.sh
