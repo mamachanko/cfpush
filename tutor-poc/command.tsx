@@ -131,7 +131,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 };
 
 const mapStateToProps = (state: State): StateProps => ({
-	waitForTrigger: state.waitForTrigger,
+	waitForTrigger: !state.ci,
 	status: state.status,
 	output: state.output
 });

@@ -8,15 +8,15 @@ export type CommandStatus =
 	| 'FINISHED';
 
 export interface State {
-	waitForTrigger: boolean;
-	fakeCommands: boolean;
+	ci: boolean;
+	dry: boolean;
 	status: CommandStatus;
 	output: string[];
 }
 
 export const initialState: State = {
-	waitForTrigger: process.env.CI !== 'true',
-	fakeCommands: process.env.DRY === 'true',
+	ci: process.env.CI === 'true',
+	dry: process.env.DRY === 'true',
 	status: 'UNSTARTED',
 	output: []
 };

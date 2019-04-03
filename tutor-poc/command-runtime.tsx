@@ -25,7 +25,7 @@ export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): 
 
 		return next => action => {
 			if (action.type === 'RUN_COMMAND') {
-				if (store.getState().fakeCommands) {
+				if (store.getState().dry) {
 					next(action);
 					store.dispatch(outputReceived(`pretending to run "${action.command}"`));
 					store.dispatch(finished());
@@ -35,7 +35,7 @@ export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): 
 				let filename: string;
 				let args: ReadonlyArray<string>;
 
-				if (!store.getState().waitForTrigger && action.command.startsWith('cf login')) {
+				if (store.getState().ci && action.command.startsWith('cf login')) {
 					[filename, ...args] = ['cf', 'login', '-a', 'api.run.pivotal.io', '-u', process.env.CF_USERNAME, '-p', process.env.CF_PASSWORD, '-o', process.env.CF_ORG, '-s', process.env.CF_SPACE];
 				} else {
 					[filename, ...args] = action.command.split(' ');

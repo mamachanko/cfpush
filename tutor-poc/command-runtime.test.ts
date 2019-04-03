@@ -124,7 +124,7 @@ describe('CommandRuntimeMiddleware', () => {
 
 	describe('when in dry mode', () => {
 		it('pretends to run a command', () => {
-			const storeMock = createStoreMock({fakeCommands: true});
+			const storeMock = createStoreMock({dry: true});
 			const nextMiddlewareMock = jest.fn();
 			const runCommandAction = runCommand('test-command --flag --positional arg');
 			const childProcessMock = createChildProcessMock();
@@ -144,8 +144,7 @@ describe('CommandRuntimeMiddleware', () => {
 
 	describe('when in ci mode', () => {
 		it('avoids user input for "cf login" by taking credentials from the environment', () => {
-			// TODO: waitForTrigger sounds odd now
-			const storeMock = createStoreMock({waitForTrigger: false});
+			const storeMock = createStoreMock({ci: true});
 			const nextMiddlewareMock = jest.fn();
 			const runCommandAction = runCommand('cf login --any --args --go --here');
 			const childProcessMock = createChildProcessMock();
