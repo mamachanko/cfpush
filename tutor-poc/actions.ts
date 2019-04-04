@@ -1,11 +1,3 @@
-export interface ActivateCiMode {
-	type: 'ACTIVATE_CI_MODE';
-}
-
-export interface ActivateDryMode {
-	type: 'ACTIVATE_DRY_MODE';
-}
-
 export interface RunCommand {
 	type: 'RUN_COMMAND';
 	command: string;
@@ -30,8 +22,6 @@ interface Finished {
 }
 
 export type Action =
-	| ActivateCiMode
-	| ActivateDryMode
 	| RunCommand
 	| OutputReceived
 	| InputRequired
@@ -43,5 +33,3 @@ export const outputReceived = (output: string): OutputReceived => ({type: 'OUTPU
 export const inputRequired = (): InputRequired => ({type: 'INPUT_REQUIRED'});
 export const inputReceived = (input: string): InputReceived => ({type: 'INPUT_RECEIVED', input});
 export const finished = (): Finished => ({type: 'FINISHED'});
-export const activateCiMode = (): ActivateCiMode => ({type: 'ACTIVATE_CI_MODE'});
-export const activateDryMode = (): ActivateDryMode => ({type: 'ACTIVATE_DRY_MODE'});

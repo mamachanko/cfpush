@@ -1,6 +1,5 @@
 import {Reducer} from 'redux';
 import {Action} from './actions'; // eslint-disable-line import/named
-import {log} from './logging';
 
 export type CommandStatus =
 	| 'UNSTARTED'
@@ -22,21 +21,12 @@ export const initialState: State = {
 	output: []
 };
 
-log(`initial state: ${JSON.stringify(initialState)}`);
-
 export const reducer: Reducer = (state: State = initialState, action: Action): State => {
 	if (action.type === 'RUN_COMMAND') {
 		return {
 			...state,
 			status: 'RUNNING',
 			output: []
-		};
-	}
-
-	if (action.type === 'OUTPUT_RECEIVED') {
-		return {
-			...state,
-			output: [...state.output, action.output]
 		};
 	}
 
@@ -61,17 +51,10 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		};
 	}
 
-	if (action.type === 'ACTIVATE_CI_MODE') {
+	if (action.type === 'OUTPUT_RECEIVED') {
 		return {
 			...state,
-			ci: true
-		};
-	}
-
-	if (action.type === 'ACTIVATE_DRY_MODE') {
-		return {
-			...state,
-			dry: true
+			output: state.output ? [...state.output, action.output] : [action.output]
 		};
 	}
 

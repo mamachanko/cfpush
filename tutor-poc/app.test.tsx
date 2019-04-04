@@ -9,6 +9,13 @@ const SPACE = ' ';
 const sleep = (ms?: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms || 0));
 
 describe('<Command />', () => {
+	const initialState = {
+		ci: false,
+		dry: false,
+		status: 'UNSTARTED',
+		output: []
+	};
+
 	afterEach(() => {
 		cleanup();
 	});
@@ -16,7 +23,7 @@ describe('<Command />', () => {
 	describe('when in tutorial mode', () => {
 		it('runs command when pressing space', async () => {
 			const {lastFrame, stdin} = render(
-				<App command="echo hello there" store={createStore()}/>
+				<App command="echo hello there" store={createStore(initialState)}/>
 			);
 
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello there"');
@@ -33,7 +40,7 @@ describe('<Command />', () => {
 	describe('when in dry mode', () => {
 		it('pretends to run command on <space>', async () => {
 			const {lastFrame, stdin} = render(
-				<App dry command="echo hello we are in dry mode" store={createStore()}/>
+				<App command="echo hello we are in dry mode" store={createStore({...initialState, dry: true})}/>
 			);
 
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello we are in dry mode"');
@@ -47,7 +54,7 @@ describe('<Command />', () => {
 	describe('when in ci mode', () => {
 		it('runs command right away', async () => {
 			const {lastFrame} = render(
-				<App ci command="echo hello we are in ci mode" store={createStore()}/>
+				<App command="echo hello we are in ci mode" store={createStore({...initialState, ci: true})}/>
 			);
 
 			await sleep(100);
