@@ -1,16 +1,11 @@
 import {Reducer} from 'redux';
 import {Action, RUN_COMMAND, INPUT_REQUIRED, INPUT_RECEIVED, OUTPUT_RECEIVED, FINISHED} from './actions'; // eslint-disable-line import/named
-
-export type CommandStatus =
-	| 'UNSTARTED'
-	| 'RUNNING'
-	| 'INPUT_REQUIRED'
-	| 'FINISHED';
+import * as CommandStatus from './command-status';
 
 export interface State {
 	ci: boolean;
 	dry: boolean;
-	status: CommandStatus;
+	status: CommandStatus.CommandStatus;
 	output: string[];
 }
 
@@ -26,7 +21,7 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		case (RUN_COMMAND): {
 			return {
 				...state,
-				status: 'RUNNING',
+				status: CommandStatus.RUNNING,
 				output: []
 			};
 		}
@@ -34,21 +29,21 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		case (INPUT_REQUIRED): {
 			return {
 				...state,
-				status: 'INPUT_REQUIRED'
+				status: CommandStatus.INPUT_REQUIRED
 			};
 		}
 
 		case (INPUT_RECEIVED): {
 			return {
 				...state,
-				status: 'RUNNING'
+				status: CommandStatus.RUNNING
 			};
 		}
 
 		case (FINISHED): {
 			return {
 				...state,
-				status: 'FINISHED'
+				status: CommandStatus.FINISHED
 			};
 		}
 
