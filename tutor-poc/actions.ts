@@ -1,24 +1,30 @@
+
+export const RUN_COMMAND = 'RUN_COMMAND';
 export interface RunCommand {
-	type: 'RUN_COMMAND';
+	type: typeof RUN_COMMAND;
 	command: string;
 }
 
-interface OutputReceived {
-	type: 'OUTPUT_RECEIVED';
+export const OUTPUT_RECEIVED = 'OUTPUT_RECEIVED';
+export interface OutputReceived {
+	type: typeof OUTPUT_RECEIVED;
 	output: string;
 }
 
-interface InputRequired {
-	type: 'INPUT_REQUIRED';
+export const INPUT_REQUIRED = 'INPUT_REQUIRED';
+export interface InputRequired {
+	type: typeof INPUT_REQUIRED;
 }
 
-interface InputReceived {
-	type: 'INPUT_RECEIVED';
+export const INPUT_RECEIVED = 'INPUT_RECEIVED';
+export interface InputReceived {
+	type: typeof INPUT_RECEIVED;
 	input: string;
 }
 
-interface Finished {
-	type: 'FINISHED';
+export const FINISHED = 'FINISHED';
+export interface Finished {
+	type: typeof FINISHED;
 }
 
 export type Action =
