@@ -50,7 +50,7 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		case (OUTPUT_RECEIVED): {
 			return {
 				...state,
-				output: state.output ? [...state.output, action.output] : [action.output]
+				output: state.output ? [...state.output, action.payload.output] : [action.payload.output]
 			};
 		}
 

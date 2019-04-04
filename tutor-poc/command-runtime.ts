@@ -1,33 +1,41 @@
 import {spawn} from 'child_process';
-import {Middleware} from 'redux';
-import {finished, inputRequired, outputReceived} from './actions';
+import {Middleware, Dispatch} from 'redux';
+import {Action, finished, inputRequired, INPUT_RECEIVED, outputReceived, RUN_COMMAND} from './actions'; // eslint-disable-line import/named
+import {State} from './reducer';
 
-export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): Middleware => {
+export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): Middleware<{}, State, Dispatch<Action>> => {
 	return store => {
 		const runCommand = runner(store, spawnChildProcess);
 
-		if (childProcess !== null) {
+		if (childProcess) {
 			subscribe(store.dispatch, childProcess);
 		}
 
-		return next => action => {
-			if (action.type === 'RUN_COMMAND') {
-				if (store.getState().dry) {
+		return next => (action: Action) => {
+			switch (action.type) {
+				case (RUN_COMMAND): {
+					const {command} = action.payload;
+					if (store.getState().dry) {
+						next(action);
+						store.dispatch(outputReceived(`pretending to run "${command}"`));
+						store.dispatch(finished());
+						break;
+					}
+
+					childProcess = runCommand(command);
+					subscribe(store.dispatch, childProcess);
 					next(action);
-					store.dispatch(outputReceived(`pretending to run "${action.command}"`));
-					store.dispatch(finished());
-					return;
+					break;
 				}
 
-				childProcess = runCommand(action.command);
-				subscribe(store.dispatch, childProcess);
-			}
+				case (INPUT_RECEIVED): {
+					childProcess.stdin.write(`${action.payload.input}\n`);
+					next(action);
+					break;
+				}
 
-			if (action.type === 'INPUT_RECEIVED') {
-				childProcess.stdin.write(`${action.input}\n`);
+				default: next(action);
 			}
-
-			next(action);
 		};
 	};
 };
