@@ -2,7 +2,7 @@ import {AppContext} from 'ink';
 import * as React from 'react';
 import {Provider} from 'react-redux';
 import {Store} from 'redux-starter-kit';
-import {ConnectedCommand} from './command';
+import {CurrentCommand} from './command';
 import {log} from './logging';
 import {State} from './reducer';
 import {createStore} from './store';
@@ -33,7 +33,7 @@ export const App: React.FunctionComponent<AppProps> = ({store = appStore, exit =
 	return (
 		<Provider store={store}>
 			<Title/>
-			<ConnectedCommand exit={exit ? exit : defaultExit}/>
+			<CurrentCommand exit={exit ? exit : defaultExit}/>
 		</Provider>
 	);
 };

@@ -170,4 +170,4 @@ const mapDispatchToProps = (dispatch: Redux.Dispatch): DispatchProps => ({
 	submitInput: (input: string) => dispatch(inputReceived(input))
 });
 
-export const ConnectedCommand = connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps)(Command);
+export const CurrentCommand = connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps)(Command);
