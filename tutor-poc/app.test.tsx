@@ -2,10 +2,9 @@ import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
 import stripAnsi from 'strip-ansi';
 import {App} from './app';
-import {createStore} from './store';
-import {State} from './reducer';
 import {UNSTARTED} from './command-status';
-import {log} from './logging';
+import {State} from './reducer';
+import {createStore} from './store';
 
 const SPACE = ' ';
 
@@ -63,7 +62,6 @@ describe('<Command />', () => {
 				<App store={createStore({...initialState, dry: true})}/>
 			);
 
-			log(lastFrame());
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
 			stdin.write(SPACE);
@@ -80,7 +78,6 @@ describe('<Command />', () => {
 			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
 
 			stdin.write(SPACE);
-			log(lastFrame());
 		});
 	});
 });
