@@ -1,12 +1,11 @@
-import {AppContext} from 'ink';
 import * as React from 'react';
 import {Provider} from 'react-redux';
 import {Store} from 'redux-starter-kit';
 import {CurrentCommand} from './command';
-import {log} from './logging';
 import {State} from './reducer';
 import {createStore} from './store';
 import {Title} from './title';
+import {WhileCommands} from './while-commands';
 
 const initialState: State = {
 	ci: process.env.CI === 'true',
@@ -22,23 +21,17 @@ const initialState: State = {
 	}
 };
 
-log(`\n--- ${new Date()} ---`);
-log(`initial state: ${JSON.stringify(initialState)}`);
-
 const appStore = createStore(initialState);
 
-export const App: React.FunctionComponent<AppProps> = ({store = appStore, exit = undefined}): React.ReactElement => {
-	const {exit: defaultExit} = React.useContext(AppContext);
-
-	return (
-		<Provider store={store}>
-			<Title/>
-			<CurrentCommand exit={exit ? exit : defaultExit}/>
-		</Provider>
-	);
-};
+export const App: React.FunctionComponent<AppProps> = ({store = appStore}): React.ReactElement => (
+	<Provider store={store}>
+		<Title/>
+		<WhileCommands>
+			<CurrentCommand/>
+		</WhileCommands>
+	</Provider>
+);
 
 export type AppProps = {
 	store?: Store;
-	exit?: () => void;
 }

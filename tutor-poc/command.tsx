@@ -95,10 +95,6 @@ const Running: React.FC = (): React.ReactElement => (
 	</Box>
 );
 
-type OwnProps = {
-	exit: () => void;
-}
-
 type StateProps = {
 	command: reducer.CurrentCommand;
 	waitForTrigger: boolean;
@@ -111,16 +107,10 @@ type DispatchProps = {
 }
 
 export type CommandProps =
-	& OwnProps
 	& StateProps
 	& DispatchProps;
 
 export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
-	if (props.command.command === undefined) {
-		props.exit();
-		return null;
-	}
-
 	switch (props.command.status) {
 		case (CommandStatus.RUNNING): {
 			return (

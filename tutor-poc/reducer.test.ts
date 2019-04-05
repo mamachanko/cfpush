@@ -224,4 +224,34 @@ describe('reducer', () => {
 			});
 		});
 	});
+
+	describe('when completing the last command', () => {
+		it('completes the current command and sets the current command to undefined', () => {
+			const nextState = reducer({
+				...defaultState,
+				commands: {
+					...defaultState.commands,
+					current: {
+						...defaultState.commands.current,
+						status: FINISHED,
+						output: ['existing command output 1', 'existing command output 2']
+					},
+					next: []
+				}
+			}, completed());
+
+			expect(nextState).toStrictEqual({
+				...defaultState,
+				commands: {
+					...defaultState.commands,
+					completed: [{
+						command: 'command one',
+						output: ['existing command output 1', 'existing command output 2']
+					}],
+					current: undefined,
+					next: []
+				}
+			});
+		});
+	});
 });

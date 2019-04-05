@@ -1,5 +1,5 @@
 import {Reducer} from 'redux';
-import {Action, RUN_COMMAND, INPUT_REQUIRED, INPUT_RECEIVED, OUTPUT_RECEIVED, FINISHED, COMPLETED} from './actions'; // eslint-disable-line import/named
+import {Action, COMPLETED, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, RUN_COMMAND} from './actions'; // eslint-disable-line import/named
 import * as CommandStatus from './command-status';
 
 export type Command = string;
@@ -107,11 +107,11 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 						command: state.commands.current.command,
 						output: state.commands.current.output
 					}],
-					current: {
+					current: state.commands.next[0] ? {
 						command: state.commands.next[0],
 						status: CommandStatus.UNSTARTED,
 						output: []
-					},
+					} : undefined,
 					next: state.commands.next.slice(1)
 				}
 			};
