@@ -3,24 +3,30 @@
 import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
 import {Command, CommandProps} from './command'; // eslint-disable-line import/named
+import {RUNNING, INPUT_REQUIRED} from './command-status';
+import {CurrentCommand} from './reducer';
+import {FINISHED} from './actions';
 
 describe('<Command/>', () => {
 	const ENTER = '\r';
 	const SPACE = ' ';
 	const defaultProps: CommandProps = {
-		status: 'UNSTARTED',
-		command: 'test command',
+		command: {
+			command: 'test command',
+			status: 'UNSTARTED',
+			output: []
+		},
 		waitForTrigger: true,
 		run: () => {},
-		submitInput: () => {},
-		output: []
+		complete: () => {},
+		submitInput: () => {}
 	};
 
 	afterEach(() => {
 		cleanup();
 	});
 
-	describe('when command has not been run yet', () => {
+	describe('when command has not yet been run', () => {
 		it('shows which command can be run', () => {
 			const {lastFrame} = render(<Command {...defaultProps}/>);
 
@@ -51,14 +57,24 @@ describe('<Command/>', () => {
 
 	describe('when command is running', () => {
 		it('shows a spinner', () => {
-			const {lastFrame} = render(<Command {...defaultProps} status="RUNNING"/>);
+			const runningCommand: CurrentCommand = {
+				command: 'test command',
+				status: RUNNING,
+				output: []
+			};
+			const {lastFrame} = render(<Command {...defaultProps} command={runningCommand}/>);
 
 			expect(lastFrame()).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] running/i);
 		});
 
 		describe('when there is output', () => {
 			it('shows output', () => {
-				const {lastFrame} = render(<Command {...defaultProps} status="RUNNING" output={['test command output 1', 'test command output 2']}/>);
+				const runningCommandWithOutput: CurrentCommand = {
+					command: 'test command',
+					status: RUNNING,
+					output: ['test command output 1', 'test command output 2']
+				};
+				const {lastFrame} = render(<Command {...defaultProps} command={runningCommandWithOutput}/>);
 
 				expect(lastFrame()).toMatch(/test command output 1\ntest command output 2/i);
 			});
@@ -66,29 +82,40 @@ describe('<Command/>', () => {
 
 		describe('when there is no output', () => {
 			it('shows no output', () => {
-				const {lastFrame} = render(<Command {...defaultProps} status="RUNNING" output={[]}/>);
+				const runningCommandWithoutOutput: CurrentCommand = {
+					command: 'test command',
+					status: RUNNING,
+					output: []
+				};
+				const {lastFrame} = render(<Command {...defaultProps} command={runningCommandWithoutOutput}/>);
 
 				expect(lastFrame()).toMatch(/no command output/i);
 			});
 		});
 
 		describe('when input is required', () => {
+			const commandWaitingForInput: CurrentCommand = {
+				command: 'test command',
+				status: INPUT_REQUIRED,
+				output: []
+			};
+
 			it('shows input is required', () => {
-				const {lastFrame} = render(<Command {...defaultProps} status="INPUT_REQUIRED"/>);
+				const {lastFrame} = render(<Command {...defaultProps} command={commandWaitingForInput}/>);
 
 				expect(lastFrame()).toMatch(/⚠️ {2}input required/i);
 				expect(lastFrame()).not.toMatch(/running/i);
 			});
 
 			it('shows input prompt', () => {
-				const {lastFrame} = render(<Command {...defaultProps} status="INPUT_REQUIRED"/>);
+				const {lastFrame} = render(<Command {...defaultProps} command={commandWaitingForInput}/>);
 
 				expect(lastFrame()).toMatch(/>_/i);
 			});
 
 			describe('when user provides input', () => {
 				it('shows user input', () => {
-					const {lastFrame, stdin} = render(<Command {...defaultProps} status="INPUT_REQUIRED"/>);
+					const {lastFrame, stdin} = render(<Command {...defaultProps} command={commandWaitingForInput}/>);
 
 					stdin.write('test user input');
 
@@ -98,7 +125,7 @@ describe('<Command/>', () => {
 				describe('when user submits input', () => {
 					it('submits input on <enter>', () => {
 						const submitInput = jest.fn();
-						const {stdin} = render(<Command {...defaultProps} status="INPUT_REQUIRED" submitInput={submitInput}/>);
+						const {stdin} = render(<Command {...defaultProps} command={commandWaitingForInput} submitInput={submitInput}/>);
 
 						stdin.write('test user input');
 						stdin.write(ENTER);
@@ -112,10 +139,39 @@ describe('<Command/>', () => {
 	});
 
 	describe('when the command has finished', () => {
-		it('shows output and that it has finished', () => {
-			const {lastFrame} = render(<Command {...defaultProps} status="FINISHED" output={['test output 1', 'test output 2']}/>);
+		const finishedCommand: CurrentCommand = {
+			command: 'test command',
+			status: FINISHED,
+			output: ['test output 1', 'test output 2']
+		};
 
-			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*✅ finished/i);
+		it('shows output', () => {
+			const {lastFrame} = render(<Command {...defaultProps} command={finishedCommand}/>);
+
+			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*/i);
+		});
+
+		it('shows it has finished', () => {
+			const {lastFrame} = render(<Command {...defaultProps} command={finishedCommand}/>);
+
+			expect(lastFrame()).toMatch(/✅ finished/i);
+		});
+
+		it('shows prompt to complete', () => {
+			const {lastFrame} = render(<Command {...defaultProps} command={finishedCommand}/>);
+
+			expect(lastFrame()).toMatch(/done. press <space> to complete./i);
+		});
+
+		describe('when pressing <space>', () => {
+			it('completes the command', () => {
+				const complete = jest.fn();
+				const {stdin} = render(<Command {...defaultProps} command={finishedCommand} complete={complete}/>);
+
+				stdin.write(SPACE);
+
+				expect(complete).toHaveBeenCalledTimes(1);
+			});
 		});
 	});
 });

@@ -2,9 +2,6 @@
 export const RUN_COMMAND = 'RUN_COMMAND';
 export interface RunCommand {
 	type: typeof RUN_COMMAND;
-	payload: {
-		command: string;
-	};
 }
 
 export const OUTPUT_RECEIVED = 'OUTPUT_RECEIVED';
@@ -33,15 +30,22 @@ export interface Finished {
 	type: typeof FINISHED;
 }
 
+export const COMPLETED = 'COMPLETED';
+export interface Completed {
+	type: typeof COMPLETED;
+}
+
 export type Action =
 	| RunCommand
 	| OutputReceived
 	| InputRequired
 	| InputReceived
-	| Finished;
+	| Finished
+	| Completed;
 
-export const runCommand = (command: string): RunCommand => ({type: 'RUN_COMMAND', payload: {command}});
-export const outputReceived = (output: string): OutputReceived => ({type: 'OUTPUT_RECEIVED', payload: {output}});
-export const inputRequired = (): InputRequired => ({type: 'INPUT_REQUIRED'});
-export const inputReceived = (input: string): InputReceived => ({type: 'INPUT_RECEIVED', payload: {input}});
-export const finished = (): Finished => ({type: 'FINISHED'});
+export const runCommand = (): RunCommand => ({type: RUN_COMMAND});
+export const outputReceived = (output: string): OutputReceived => ({type: OUTPUT_RECEIVED, payload: {output}});
+export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
+export const inputReceived = (input: string): InputReceived => ({type: INPUT_RECEIVED, payload: {input}});
+export const finished = (): Finished => ({type: FINISHED});
+export const completed = (): Completed => ({type: COMPLETED});

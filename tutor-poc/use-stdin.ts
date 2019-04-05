@@ -16,9 +16,11 @@ export const useStdin = (handleInput: InputHandler): void => {
 	const {stdin, setRawMode} = React.useContext(StdinContext);
 	React.useLayoutEffect(() => {
 		setRawMode(true);
+		log('subscribing to stdin');
 		stdin.on('keypress', handleInput);
 		stdin.on('keypress', logKeypress);
 		return () => {
+			log('unsubscribing from stdin');
 			stdin.removeAllListeners('keypress');
 			setRawMode(false);
 		};

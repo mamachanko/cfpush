@@ -3,15 +3,16 @@ import Spinner from 'ink-spinner';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import * as Redux from 'redux';
-import {inputReceived, runCommand} from './actions';
-import {CommandStatus, State} from './reducer'; // eslint-disable-line import/named
-import {InputHandler, useStdin, Key, SPACE, ENTER} from './use-stdin'; // eslint-disable-line import/named
+import {completed, inputReceived, runCommand} from './actions';
 import {Column} from './column';
+import * as CommandStatus from './command-status';
+import * as reducer from './reducer';
+import {ENTER, InputHandler, Key, SPACE, useStdin} from './use-stdin'; // eslint-disable-line import/named
 
 const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
 	const handleInput: InputHandler = (_, key): void => {
 		if (key.name === SPACE) {
-			run();
+			run(command);
 		}
 	};
 
@@ -23,7 +24,7 @@ const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
 		}
 	}, [waitForTrigger, run]);
 
-	return <Text>{`press <space> to run "${command}"`}</Text>;
+	return <Text>{`press <space> to run "${command.command}"`}</Text>;
 };
 
 const InputPrompt = ({submitInput}): React.ReactElement => {
@@ -43,6 +44,29 @@ const InputPrompt = ({submitInput}): React.ReactElement => {
 		<Column>
 			<Text>⚠️  input required</Text>
 			<Text>{'>_ ' + userInput}</Text>
+		</Column>
+	);
+};
+
+const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {
+	const handleInput: InputHandler = (_: string, key: Key): void => {
+		if (key.name === SPACE) {
+			complete();
+		}
+	};
+
+	useStdin(handleInput);
+
+	React.useLayoutEffect(() => {
+		if (!waitForTrigger) {
+			complete();
+		}
+	}, [waitForTrigger, complete]);
+
+	return (
+		<Column>
+			<Text>✅ finished</Text>
+			<Text>{'done. press <space> to complete.'}</Text>
 		</Column>
 	);
 };
@@ -72,50 +96,55 @@ const Running: React.FC = (): React.ReactElement => (
 );
 
 type OwnProps = {
-	command: string;
+	exit: () => void;
 }
 
 type StateProps = {
+	command: reducer.CurrentCommand;
 	waitForTrigger: boolean;
-	status: CommandStatus;
-	output: ReadonlyArray<string>;
 };
 
 type DispatchProps = {
 	run: () => void;
+	complete: () => void;
 	submitInput: (input: string) => void;
 }
 
 export type CommandProps =
+	& OwnProps
 	& StateProps
-	& DispatchProps
-	& OwnProps;
+	& DispatchProps;
 
 export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
-	switch (props.status) {
-		case ('RUNNING'): {
+	if (props.command.command === undefined) {
+		props.exit();
+		return null;
+	}
+
+	switch (props.command.status) {
+		case (CommandStatus.RUNNING): {
 			return (
 				<Column>
-					<Output {...props}/>
+					<Output {...props.command}/>
 					<Running/>
 				</Column>
 			);
 		}
 
-		case ('INPUT_REQUIRED'): {
+		case (CommandStatus.INPUT_REQUIRED): {
 			return (
 				<Column>
-					<Output {...props}/>
+					<Output {...props.command}/>
 					<InputPrompt {...props}/>
 				</Column>
 			);
 		}
 
-		case ('FINISHED'): {
+		case (CommandStatus.FINISHED): {
 			return (
 				<Column>
-					<Output {...props}/>
-					<Text>✅ finished</Text>
+					<Output {...props.command}/>
+					<CompletePrompt {...props}/>
 				</Column>
 			);
 		}
@@ -130,15 +159,15 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 	}
 };
 
-const mapStateToProps = (state: State): StateProps => ({
-	waitForTrigger: !state.ci,
-	status: state.status,
-	output: state.output
+const mapStateToProps = (state: reducer.State): StateProps => ({
+	command: state.commands.current,
+	waitForTrigger: !state.ci
 });
 
-const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: OwnProps): DispatchProps => ({
-	run: () => dispatch(runCommand(ownProps.command)),
+const mapDispatchToProps = (dispatch: Redux.Dispatch): DispatchProps => ({
+	run: () => dispatch(runCommand()),
+	complete: () => dispatch(completed()),
 	submitInput: (input: string) => dispatch(inputReceived(input))
 });
 
-export const ConnectedCommand = connect<StateProps, DispatchProps, OwnProps>(mapStateToProps, mapDispatchToProps)(Command);
+export const ConnectedCommand = connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps)(Command);

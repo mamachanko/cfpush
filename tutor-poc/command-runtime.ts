@@ -2,6 +2,7 @@ import {spawn} from 'child_process';
 import {Middleware, Dispatch} from 'redux';
 import {Action, finished, inputRequired, INPUT_RECEIVED, outputReceived, RUN_COMMAND} from './actions'; // eslint-disable-line import/named
 import {State} from './reducer';
+import {log} from './logging';
 
 export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): Middleware<{}, State, Dispatch<Action>> => {
 	return store => {
@@ -14,7 +15,7 @@ export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): 
 		return next => (action: Action) => {
 			switch (action.type) {
 				case (RUN_COMMAND): {
-					const {command} = action.payload;
+					const {command} = store.getState().commands.current;
 					if (store.getState().dry) {
 						next(action);
 						store.dispatch(outputReceived(`pretending to run "${command}"`));
@@ -72,6 +73,10 @@ const subscribe = (dispatch, childProcess): void => {
 		if (output.endsWith('> ')) {
 			dispatch(inputRequired());
 		}
+	});
+
+	childProcess.stderr.on('data', (data: any) => {
+		log(`stderr: ${data}`);
 	});
 
 	childProcess.on('exit', () => {

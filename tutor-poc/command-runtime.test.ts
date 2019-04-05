@@ -1,13 +1,13 @@
 import {Dispatch, MiddlewareAPI} from 'redux';
 import {Action, finished, inputReceived, inputRequired, outputReceived, runCommand} from './actions'; // eslint-disable-line import/named
 import {commandRuntime} from './command-runtime';
-import {initialState, State} from './reducer';
+import {State, initialState} from './reducer';
 
-const createStoreMock = (overrideDefaults: Partial<State> = {}): MiddlewareAPI<Dispatch<Action>, State> => ({
+const createStoreMock = (state: State = initialState): MiddlewareAPI<Dispatch<Action>, State> => ({
 	dispatch: jest.fn(),
 	// IDEA: this shouldn't have a dependency on reducer
 	// maybe there's another way to create State
-	getState: (): State => ({...initialState, ...overrideDefaults})
+	getState: (): State => state
 });
 
 // IDEA: introduce childprocess type
@@ -36,6 +36,9 @@ const createChildProcessMock = (): any => {
 		stdin: {
 			write: jest.fn()
 		},
+		stderr: {
+			on: () => {}
+		},
 		on: (event: string, callback: (output: string) => void) => {
 			if (event !== 'exit') {
 				throw new Error(`unexpected event listener on '${event}'. expected 'exit'.`);
@@ -55,24 +58,39 @@ const createChildProcessMock = (): any => {
 
 describe('CommandRuntimeMiddleware', () => {
 	describe('when in tutorial mode', () => {
+		let storeMock: MiddlewareAPI;
+
+		beforeEach(() => {
+			storeMock = createStoreMock({
+				ci: false,
+				dry: false,
+				commands: {
+					completed: [],
+					current: {
+						command: 'test-command --flag --positional arg',
+						status: 'UNSTARTED',
+						output: []
+					},
+					next: []
+				}
+			});
+		});
+
 		it('starts to run a command', () => {
-			const storeMock = createStoreMock();
 			const nextMiddlewareMock = jest.fn();
-			const runCommandAction = runCommand('test-command --flag --positional arg');
 			const childProcessMock = createChildProcessMock();
 			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
 
-			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommandAction);
+			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommand());
 
 			expect(spawnMock).toHaveBeenLastCalledWith('test-command', ['--flag', '--positional', 'arg']);
 			expect(spawnMock).toHaveBeenCalledTimes(1);
 
-			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommandAction);
+			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
 			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
 		});
 
 		it('emits command output', () => {
-			const storeMock = createStoreMock();
 			const subshell = createChildProcessMock();
 
 			commandRuntime(null, subshell)(storeMock);
@@ -84,20 +102,18 @@ describe('CommandRuntimeMiddleware', () => {
 		});
 
 		it('emits command input required', () => {
-			const storeMock = createStoreMock();
 			const childProcessMock = createChildProcessMock();
 
 			commandRuntime(null, childProcessMock)(storeMock);
 
 			childProcessMock.stdout.emit('input required > ');
 
-			expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('input required > '));
-			expect(storeMock.dispatch).toHaveBeenCalledWith(inputRequired());
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('input required > '));
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, inputRequired());
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
 		});
 
 		it('emits command finished', () => {
-			const storeMock = createStoreMock();
 			const childProcessMock = createChildProcessMock();
 
 			commandRuntime(null, childProcessMock)(storeMock);
@@ -109,7 +125,6 @@ describe('CommandRuntimeMiddleware', () => {
 		});
 
 		it('provides user input to command', () => {
-			const storeMock = createStoreMock();
 			const childProcessMock = createChildProcessMock();
 			const nextMiddlewareMock = jest.fn();
 
@@ -123,30 +138,59 @@ describe('CommandRuntimeMiddleware', () => {
 	});
 
 	describe('when in dry mode', () => {
+		const storeMock = createStoreMock({
+			ci: false,
+			dry: true,
+			commands: {
+				completed: [],
+				current: {
+					command: 'test-command --flag --positional arg',
+					status: 'UNSTARTED',
+					output: []
+				},
+				next: []
+			}
+		});
+
 		it('pretends to run a command', () => {
-			const storeMock = createStoreMock({dry: true});
 			const nextMiddlewareMock = jest.fn();
-			const runCommandAction = runCommand('test-command --flag --positional arg');
 			const childProcessMock = createChildProcessMock();
 			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
 
-			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommandAction);
+			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommand());
 
 			expect(spawnMock).toHaveBeenCalledTimes(0);
 
-			expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('pretending to run "test-command --flag --positional arg"'));
-			expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('pretending to run "test-command --flag --positional arg"'));
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, finished());
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
-			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommandAction);
+			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
 			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
 		});
 	});
 
-	describe('when in ci mode', () => {
-		it('avoids user input for "cf login" by taking credentials from the environment', () => {
-			const storeMock = createStoreMock({ci: true});
+	describe('when in ci mode and current command is cf login', () => {
+		let storeMock: MiddlewareAPI;
+
+		beforeEach(() => {
+			storeMock = createStoreMock({
+				ci: true,
+				dry: false,
+				commands: {
+					completed: [],
+					current: {
+						command: 'cf login --any --args --go --here',
+						status: 'UNSTARTED',
+						output: []
+					},
+					next: []
+				}
+			});
+		});
+
+		it('avoids user input by taking credentials from the environment', () => {
 			const nextMiddlewareMock = jest.fn();
-			const runCommandAction = runCommand('cf login --any --args --go --here');
+			const runCommandAction = runCommand();
 			const childProcessMock = createChildProcessMock();
 			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
 
@@ -159,7 +203,7 @@ describe('CommandRuntimeMiddleware', () => {
 
 			expect(spawnMock).toHaveBeenCalledWith('cf', ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']);
 			expect(spawnMock).toHaveBeenCalledTimes(1);
-			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommandAction);
+			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
 			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
 		});
 	});

@@ -3,17 +3,27 @@ import * as React from 'react';
 import stripAnsi from 'strip-ansi';
 import {App} from './app';
 import {createStore} from './store';
+import {State} from './reducer';
+import {UNSTARTED} from './command-status';
+import {log} from './logging';
 
 const SPACE = ' ';
 
 const sleep = (ms?: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms || 0));
 
 describe('<Command />', () => {
-	const initialState = {
+	const initialState: State = {
 		ci: false,
 		dry: false,
-		status: 'UNSTARTED',
-		output: []
+		commands: {
+			completed: [],
+			current: {
+				command: 'echo hi this is the first command',
+				status: UNSTARTED,
+				output: []
+			},
+			next: ['echo hello this is the second command']
+		}
 	};
 
 	afterEach(() => {
@@ -21,45 +31,78 @@ describe('<Command />', () => {
 	});
 
 	describe('when in tutorial mode', () => {
-		it('runs command when pressing space', async () => {
+		it('runs commands one after another by pressing <space>', async () => {
+			const exit = jest.fn();
 			const {lastFrame, stdin} = render(
-				<App command="echo hello there" store={createStore(initialState)}/>
+				<App store={createStore(initialState)} exit={exit}/>
 			);
 
-			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello there"');
+			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
 			stdin.write(SPACE);
 			expect(stripAnsi(lastFrame())).toContain('running');
-
 			await sleep(10);
-			expect(stripAnsi(lastFrame())).toContain('hello there');
+			expect(stripAnsi(lastFrame())).toContain('hi this is the first command');
 			expect(stripAnsi(lastFrame())).not.toContain('running');
+			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
+			expect(exit).not.toHaveBeenCalled();
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello this is the second command"');
+			expect(exit).not.toHaveBeenCalled();
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toContain('running');
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toContain('hello this is the second command');
+			expect(stripAnsi(lastFrame())).not.toContain('running');
+			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
+
+			stdin.write(SPACE);
+			expect(exit).toHaveBeenCalledTimes(1);
 		});
 	});
 
 	describe('when in dry mode', () => {
-		it('pretends to run command on <space>', async () => {
+		it('pretends to run commands on <space>', async () => {
+			const exit = jest.fn();
 			const {lastFrame, stdin} = render(
-				<App command="echo hello we are in dry mode" store={createStore({...initialState, dry: true})}/>
+				<App store={createStore({...initialState, dry: true})} exit={exit}/>
 			);
 
-			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello we are in dry mode"');
+			log(lastFrame());
+			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
 			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toContain('pretending to run "echo hello we are in dry mode"');
+			expect(stripAnsi(lastFrame())).toContain('pretending to run "echo hi this is the first command"');
 			expect(stripAnsi(lastFrame())).not.toContain('running');
+			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
+			expect(exit).not.toHaveBeenCalled();
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello this is the second command"');
+			expect(exit).not.toHaveBeenCalled();
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toContain('pretending to run "echo hello this is the second command"');
+			expect(stripAnsi(lastFrame())).not.toContain('running');
+			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
+
+			stdin.write(SPACE);
+			log(lastFrame());
+			expect(exit).toHaveBeenCalledTimes(1);
 		});
 	});
 
 	describe('when in ci mode', () => {
-		it('runs command right away', async () => {
-			const {lastFrame} = render(
-				<App command="echo hello we are in ci mode" store={createStore({...initialState, ci: true})}/>
+		it('runs commands right away and exits', async () => {
+			const exit = jest.fn();
+			render(
+				<App store={createStore({...initialState, ci: true})} exit={exit}/>
 			);
 
-			await sleep(100);
-			expect(stripAnsi(lastFrame())).toContain('hello we are in ci mode');
-			expect(stripAnsi(lastFrame())).not.toContain('running');
+			await sleep(10);
+			expect(exit).toHaveBeenCalled();
 		});
 	});
 });
