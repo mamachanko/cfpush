@@ -2,6 +2,7 @@
   "dependencies": {
     "@types/react": "^16.8.8",
     "@types/react-redux": "^7.0.6",
+    "@types/uuid": "^3.4.4",
     "@types/winston": "^2.4.4",
     "ink": "2.1.1",
     "ink-box": "^1.0.0",
@@ -13,6 +14,7 @@
     "redux-starter-kit": "^0.4.3",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333",
+    "uuid": "^3.3.2",
     "winston": "^3.2.1"
   },
   "devDependencies": {

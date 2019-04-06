@@ -36,7 +36,7 @@ describe('reducer', () => {
 
 	describe('when output is received', () => {
 		it('appends to the current command\'s empty output', () => {
-			const nextState = reducer(defaultState, outputReceived('new command output'));
+			const nextState = reducer(defaultState, outputReceived('new command output', 'uid 123'));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
@@ -60,7 +60,7 @@ describe('reducer', () => {
 						output: ['existing command output']
 					}
 				}
-			}, outputReceived('new command output'));
+			}, outputReceived('new command output', 'uid 123'));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
@@ -84,7 +84,7 @@ describe('reducer', () => {
 						output: null
 					}
 				}
-			}, outputReceived('new command output'));
+			}, outputReceived('new command output', 'uid 123'));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,

@@ -92,23 +92,25 @@ describe('CommandRuntimeMiddleware', () => {
 
 		it('emits command output', () => {
 			const subshell = createChildProcessMock();
+			const uidFactory = (): string => 'test command output uid';
 
-			commandRuntime(null, subshell)(storeMock);
+			commandRuntime(null, subshell, uidFactory)(storeMock);
 
 			subshell.stdout.emit('test command output');
 
-			expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('test command output'));
+			expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('test command output', 'test command output uid'));
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
 		});
 
 		it('emits command input required', () => {
 			const childProcessMock = createChildProcessMock();
+			const uidFactory = (): string => 'test command output uid';
 
-			commandRuntime(null, childProcessMock)(storeMock);
+			commandRuntime(null, childProcessMock, uidFactory)(storeMock);
 
 			childProcessMock.stdout.emit('input required > ');
 
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('input required > '));
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('input required > ', 'test command output uid'));
 			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, inputRequired());
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
 		});
@@ -156,12 +158,13 @@ describe('CommandRuntimeMiddleware', () => {
 			const nextMiddlewareMock = jest.fn();
 			const childProcessMock = createChildProcessMock();
 			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
+			const uidFactory = (): string => 'test command output uid';
 
-			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommand());
+			commandRuntime(spawnMock, null, uidFactory)(storeMock)(nextMiddlewareMock)(runCommand());
 
 			expect(spawnMock).toHaveBeenCalledTimes(0);
 
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('pretending to run "test-command --flag --positional arg"'));
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('pretending to run "test-command --flag --positional arg"', 'test command output uid'));
 			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, finished());
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
 			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());

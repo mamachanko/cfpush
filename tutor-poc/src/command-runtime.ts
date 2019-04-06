@@ -1,15 +1,18 @@
 import {spawn} from 'child_process';
 import {Middleware, Dispatch} from 'redux';
+import {v4 as uuid} from 'uuid';
 import {Action, finished, inputRequired, INPUT_RECEIVED, outputReceived, RUN_COMMAND} from './actions'; // eslint-disable-line import/named
 import {State} from './reducer';
 import {logger} from './logging';
 
-export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): Middleware<{}, State, Dispatch<Action>> => {
+const defaultUidFactory = (): string => String(uuid());
+
+export const commandRuntime = (spawnChildProcess = spawn, childProcess = null, uidFactory = defaultUidFactory): Middleware<{}, State, Dispatch<Action>> => {
 	return store => {
 		const runCommand = runner(store, spawnChildProcess);
 
 		if (childProcess) {
-			subscribe(store.dispatch, childProcess);
+			subscribe(store.dispatch, childProcess, uidFactory);
 		}
 
 		return next => (action: Action) => {
@@ -18,13 +21,13 @@ export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): 
 					const {command} = store.getState().commands.current;
 					if (store.getState().dry) {
 						next(action);
-						store.dispatch(outputReceived(`pretending to run "${command}"`));
+						store.dispatch(outputReceived(`pretending to run "${command}"`, uidFactory()));
 						store.dispatch(finished());
 						break;
 					}
 
 					childProcess = runCommand(command);
-					subscribe(store.dispatch, childProcess);
+					subscribe(store.dispatch, childProcess, uidFactory);
 					next(action);
 					break;
 				}
@@ -66,10 +69,10 @@ const runner = (store, spawnChildProcess) => (command: string) => {
 	return spawnChildProcess(filename, args);
 };
 
-const subscribe = (dispatch, childProcess): void => {
+const subscribe = (dispatch, childProcess, uidFactory): void => {
 	childProcess.stdout.on('data', (data: any) => {
 		const output = String(data);
-		dispatch(outputReceived(output));
+		dispatch(outputReceived(output, uidFactory()));
 		if (output.endsWith('> ')) {
 			dispatch(inputRequired());
 		}
