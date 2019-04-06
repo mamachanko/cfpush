@@ -16,6 +16,6 @@ export const WhileCommands = connect<StateProps>(mapStateToProps)(
 			return <>{children}</>;
 		}
 
-		return null;
+		return <></>;
 	}
 );

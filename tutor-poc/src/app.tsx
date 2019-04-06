@@ -22,8 +22,8 @@ const defaultStore = createStore({
 
 export const App: React.FC<AppProps> = ({store = defaultStore}): React.ReactElement => (
 	<Provider store={store}>
-		<Title/>
 		<WhileCommands>
+			<Title/>
 			<CurrentCommand/>
 		</WhileCommands>
 	</Provider>

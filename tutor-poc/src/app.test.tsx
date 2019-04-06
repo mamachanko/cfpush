@@ -39,9 +39,9 @@ describe('<Command />', () => {
 
 			stdin.write(SPACE);
 			expect(stripAnsi(lastFrame())).toContain('running');
+
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toContain('hi this is the first command');
-			expect(stripAnsi(lastFrame())).not.toContain('running');
 			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
 
 			stdin.write(SPACE);
@@ -49,10 +49,15 @@ describe('<Command />', () => {
 
 			stdin.write(SPACE);
 			expect(stripAnsi(lastFrame())).toContain('running');
+
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toContain('hello this is the second command');
-			expect(stripAnsi(lastFrame())).not.toContain('running');
 			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/^\s*hi this is the first command\s*hello this is the second command\s*$/
+			);
 		});
 	});
 
@@ -66,7 +71,6 @@ describe('<Command />', () => {
 
 			stdin.write(SPACE);
 			expect(stripAnsi(lastFrame())).toContain('pretending to run "echo hi this is the first command"');
-			expect(stripAnsi(lastFrame())).not.toContain('running');
 			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
 
 			stdin.write(SPACE);
@@ -74,10 +78,26 @@ describe('<Command />', () => {
 
 			stdin.write(SPACE);
 			expect(stripAnsi(lastFrame())).toContain('pretending to run "echo hello this is the second command"');
-			expect(stripAnsi(lastFrame())).not.toContain('running');
 			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
 
 			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/^\s*pretending to run "echo hi this is the first command"\s*pretending to run "echo hello this is the second command"\s*$/
+			);
+		});
+	});
+
+	describe('when in ci mode', () => {
+		it('runs commands one after another without prompt', async () => {
+			const {lastFrame} = render(
+				<App store={createStore({...initialState, ci: true})}/>
+			);
+
+			await sleep(50);
+
+			expect(stripAnsi(lastFrame())).toMatch(
+				/^\s*hi this is the first command\s*hello this is the second command\s*$/
+			);
 		});
 	});
 });

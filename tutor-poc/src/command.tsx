@@ -1,4 +1,4 @@
-import {Box, Text} from 'ink';
+import {Box, Text, Static} from 'ink';
 import Spinner from 'ink-spinner';
 import * as React from 'react';
 import {connect} from 'react-redux';
@@ -81,7 +81,9 @@ const Output = ({output}): React.ReactElement => {
 	if (output && output.length > 0) {
 		return (
 			<Column>
-				{output.map(outputLine)}
+				<Static>
+					{output.map(outputLine)}
+				</Static>
 			</Column>
 		);
 	}

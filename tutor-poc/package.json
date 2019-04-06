@@ -34,7 +34,7 @@
     "xo": "^0.24.0"
   },
   "scripts": {
-    "test": "xo && jest"
+    "test": "xo && jest --runInBand"
   },
   "xo": {
     "extends": [
