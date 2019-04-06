@@ -72,8 +72,11 @@ const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {
 };
 
 const Output = ({output}): React.ReactElement => {
-	const outputLine = (text: string): React.ReactElement =>
-		<Text key={text + String(Date.now())}>{text}</Text>;
+	const outputLine = (output: reducer.Output): React.ReactElement => (
+		<Text key={output.uid}>
+			{output.text}
+		</Text>
+	);
 
 	if (output && output.length > 0) {
 		return (

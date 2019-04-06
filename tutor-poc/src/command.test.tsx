@@ -72,7 +72,7 @@ describe('<Command/>', () => {
 				const runningCommandWithOutput: CurrentCommand = {
 					command: 'test command',
 					status: RUNNING,
-					output: ['test command output 1', 'test command output 2']
+					output: [{text: 'test command output 1', uid: '1'}, {text: 'test command output 2', uid: '2'}]
 				};
 				const {lastFrame} = render(<Command {...defaultProps} command={runningCommandWithOutput}/>);
 
@@ -142,7 +142,7 @@ describe('<Command/>', () => {
 		const finishedCommand: CurrentCommand = {
 			command: 'test command',
 			status: FINISHED,
-			output: ['test output 1', 'test output 2']
+			output: [{text: 'test output 1', uid: '1'}, {text: 'test output 2', uid: '2'}]
 		};
 
 		it('shows output', () => {

@@ -8,7 +8,7 @@ export const OUTPUT_RECEIVED = 'OUTPUT_RECEIVED';
 export interface OutputReceived {
 	type: typeof OUTPUT_RECEIVED;
 	payload: {
-		output: string;
+		text: string;
 		uid: string;
 	};
 }
@@ -45,7 +45,7 @@ export type Action =
 	| Completed;
 
 export const runCommand = (): RunCommand => ({type: RUN_COMMAND});
-export const outputReceived = (output: string, uid: string): OutputReceived => ({type: OUTPUT_RECEIVED, payload: {output, uid}});
+export const outputReceived = (text: string, uid: string): OutputReceived => ({type: OUTPUT_RECEIVED, payload: {text, uid}});
 export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
 export const inputReceived = (input: string): InputReceived => ({type: INPUT_RECEIVED, payload: {input}});
 export const finished = (): Finished => ({type: FINISHED});

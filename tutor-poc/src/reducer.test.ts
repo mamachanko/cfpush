@@ -44,7 +44,7 @@ describe('reducer', () => {
 					...defaultState.commands,
 					current: {
 						...defaultState.commands.current,
-						output: ['new command output']
+						output: [{text: 'new command output', uid: 'uid 123'}]
 					}
 				}
 			});
@@ -57,10 +57,10 @@ describe('reducer', () => {
 					...defaultState.commands,
 					current: {
 						...defaultState.commands.current,
-						output: ['existing command output']
+						output: [{text: 'existing command output', uid: 'uid 0'}]
 					}
 				}
-			}, outputReceived('new command output', 'uid 123'));
+			}, outputReceived('new command output', 'uid 1'));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
@@ -68,7 +68,10 @@ describe('reducer', () => {
 					...defaultState.commands,
 					current: {
 						...defaultState.commands.current,
-						output: ['existing command output', 'new command output']
+						output: [
+							{text: 'existing command output', uid: 'uid 0'},
+							{text: 'new command output', uid: 'uid 1'}
+						]
 					}
 				}
 			});
@@ -92,7 +95,7 @@ describe('reducer', () => {
 					...defaultState.commands,
 					current: {
 						...defaultState.commands.current,
-						output: ['new command output']
+						output: [{text: 'new command output', uid: 'uid 123'}]
 					}
 				}
 			});

@@ -4,15 +4,20 @@ import * as CommandStatus from './command-status';
 
 export type Command = string;
 
+export type Output = {
+	text: string;
+	uid: string;
+}
+
 export interface CompletedCommand {
 	command: Command;
-	output: ReadonlyArray<string>;
+	output: ReadonlyArray<Output>;
 }
 
 export interface CurrentCommand {
 	command: Command;
 	status: CommandStatus.CommandStatus;
-	output: ReadonlyArray<string>;
+	output: ReadonlyArray<Output>;
 }
 
 export interface Commands {
@@ -91,8 +96,8 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 					current: {
 						...state.commands.current,
 						output: state.commands.current.output ?
-							[...state.commands.current.output, action.payload.output] :
-							[action.payload.output]
+							[...state.commands.current.output, action.payload] :
+							[action.payload]
 					}
 				}
 			};
