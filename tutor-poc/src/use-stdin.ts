@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {StdinContext} from 'ink';
-import {log} from './logging';
+import {logger} from './logging';
 
 export const SPACE = 'space';
 export const ENTER = 'return';
@@ -10,7 +10,9 @@ export interface Key {
 }
 export type InputHandler = (character: string, key: Key) => void;
 
-const logKeypress: InputHandler = (ch, key): void => log(`keypress: ch='${ch}', key=${JSON.stringify(key)}`);
+const logKeypress: InputHandler = (ch, key): void => {
+	logger.debug(`keypress: ch='${ch}', key=`, key);
+};
 
 export const useStdin = (handleInput: InputHandler): void => {
 	const {stdin, setRawMode} = React.useContext(StdinContext);

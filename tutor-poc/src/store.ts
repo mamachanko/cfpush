@@ -2,10 +2,10 @@ import {configureStore, Store} from 'redux-starter-kit';
 import {commandRuntime} from './command-runtime';
 import {loggingMiddleware} from './logging-middleware';
 import {reducer} from './reducer';
-import {log} from './logging';
+import {logger} from './logging';
 
 export const createStore = (initialState: any): Store => {
-	log(`\ninitial state: ${JSON.stringify(initialState)}`);
+	logger.debug('initial state:', initialState);
 
 	return configureStore({
 		reducer,

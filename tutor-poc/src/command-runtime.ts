@@ -2,7 +2,7 @@ import {spawn} from 'child_process';
 import {Middleware, Dispatch} from 'redux';
 import {Action, finished, inputRequired, INPUT_RECEIVED, outputReceived, RUN_COMMAND} from './actions'; // eslint-disable-line import/named
 import {State} from './reducer';
-import {log} from './logging';
+import {logger} from './logging';
 
 export const commandRuntime = (spawnChildProcess = spawn, childProcess = null): Middleware<{}, State, Dispatch<Action>> => {
 	return store => {
@@ -76,7 +76,7 @@ const subscribe = (dispatch, childProcess): void => {
 	});
 
 	childProcess.stderr.on('data', (data: any) => {
-		log(`stderr: ${data}`);
+		logger.error(`command stderr: ${data}`);
 	});
 
 	childProcess.on('exit', () => {

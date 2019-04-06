@@ -2,6 +2,7 @@
   "dependencies": {
     "@types/react": "^16.8.8",
     "@types/react-redux": "^7.0.6",
+    "@types/winston": "^2.4.4",
     "ink": "2.1.1",
     "ink-box": "^1.0.0",
     "ink-spinner": "^3.0.0",
@@ -11,7 +12,8 @@
     "redux": "^4.0.1",
     "redux-starter-kit": "^0.4.3",
     "ts-node": "^8.0.3",
-    "typescript": "^3.3.3333"
+    "typescript": "^3.3.3333",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "@types/ink-testing-library": "^1.0.0",
