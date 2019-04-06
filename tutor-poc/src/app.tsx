@@ -2,12 +2,11 @@ import * as React from 'react';
 import {Provider} from 'react-redux';
 import {Store} from 'redux-starter-kit';
 import {CurrentCommand} from './command';
-import {State} from './reducer';
 import {createStore} from './store';
 import {Title} from './title';
 import {WhileCommands} from './while-commands';
 
-const initialState: State = {
+const defaultStore = createStore({
 	ci: process.env.CI === 'true',
 	dry: process.env.DRY === 'true',
 	commands: {
@@ -19,11 +18,9 @@ const initialState: State = {
 		},
 		next: ['cf logout']
 	}
-};
+});
 
-const appStore = createStore(initialState);
-
-export const App: React.FunctionComponent<AppProps> = ({store = appStore}): React.ReactElement => (
+export const App: React.FC<AppProps> = ({store = defaultStore}): React.ReactElement => (
 	<Provider store={store}>
 		<Title/>
 		<WhileCommands>
@@ -32,6 +29,6 @@ export const App: React.FunctionComponent<AppProps> = ({store = appStore}): Reac
 	</Provider>
 );
 
-export type AppProps = {
+type AppProps = {
 	store?: Store;
 }
