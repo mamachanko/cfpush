@@ -59,6 +59,27 @@ describe('<Command />', () => {
 				/^\s*hi this is the first command\s*hello this is the second command\s*$/
 			);
 		});
+
+		it('quits on "q"', async () => {
+			const {lastFrame, stdin} = render(
+				<App store={createStore(initialState)}/>
+			);
+
+			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toContain('running');
+
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toContain('hi this is the first command');
+			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
+
+			stdin.write('q');
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/^\s*hi this is the first command\s*ok.\s*bye.\s*$/
+			);
+		});
 	});
 
 	describe('when in dry mode', () => {

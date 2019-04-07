@@ -21,7 +21,8 @@ export const useStdin = (handleInput: InputHandler): void => {
 		stdin.on('keypress', handleInput);
 		stdin.on('keypress', logKeypress);
 		return () => {
-			stdin.removeAllListeners('keypress');
+			stdin.removeListener('keypress', handleInput);
+			stdin.removeListener('keypress', logKeypress);
 			setRawMode(false);
 		};
 	}, [setRawMode, stdin, handleInput]);
