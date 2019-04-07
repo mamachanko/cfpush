@@ -1,65 +1,47 @@
+/* eslint-disable max-nested-callbacks */
+
 import {Dispatch, MiddlewareAPI} from 'redux';
 import {Action, finished, inputReceived, inputRequired, outputReceived, runCommand} from './actions'; // eslint-disable-line import/named
 import {commandRuntime} from './command-runtime';
-import {State, initialState} from './reducer';
+import {ExitHandler, StdoutHandler, CommandRunner, WriteToStdin} from './exec'; // eslint-disable-line import/named
+import {initialState, State} from './reducer';
 
 const createStoreMock = (state: State = initialState): MiddlewareAPI<Dispatch<Action>, State> => ({
 	dispatch: jest.fn(),
-	// IDEA: this shouldn't have a dependency on reducer
-	// maybe there's another way to create State
 	getState: (): State => state
 });
 
-// IDEA: introduce childprocess type
-const createChildProcessMock = (): any => {
-	const listeners = {
-		stdout: null,
-		exit: null
-	};
-	return {
-		stdout: {
-			on: (event: string, callback: (output: any) => void) => {
-				if (event !== 'data') {
-					throw new Error(`unexpected event listener on '${event}'. expected 'data'.`);
-				}
-
-				if (listeners.stdout !== null) {
-					throw new Error('event listener on stdout \'data\' already exists');
-				}
-
-				listeners.stdout = callback;
-			},
-			emit: (output: any) => {
-				listeners.stdout(output);
-			}
-		},
-		stdin: {
-			write: jest.fn()
-		},
-		stderr: {
-			on: () => {}
-		},
-		on: (event: string, callback: (output: string) => void) => {
-			if (event !== 'exit') {
-				throw new Error(`unexpected event listener on '${event}'. expected 'exit'.`);
-			}
-
-			if (listeners.exit !== null) {
-				throw new Error('event listener on \'exit\' already exists');
-			}
-
-			listeners.exit = callback;
-		},
-		exit: (exitCode: number) => {
-			listeners.exit(exitCode);
-		}
-	};
-};
+const uidDummy = (): string => 'test-uid';
 
 describe('CommandRuntimeMiddleware', () => {
-	describe('when in tutorial mode', () => {
-		let storeMock: MiddlewareAPI;
+	let sut;
 
+	let executeMock: CommandRunner;
+	let stdoutMock: WriteToStdin;
+	let exitCommand: () => void;
+	const write: (input: string) => void = jest.fn();
+
+	let storeMock: MiddlewareAPI;
+	const nextMiddlewareMock = jest.fn();
+
+	afterEach(() => {
+		jest.resetAllMocks();
+	});
+
+	beforeEach(() => {
+		executeMock = jest.fn()
+			.mockImplementationOnce((_, handlers) => {
+				stdoutMock = (text: string) => handlers.stdout.map(
+					(stdoutHandler: StdoutHandler) => stdoutHandler(text)
+				);
+				exitCommand = () => handlers.exit.map(
+					(exitHandler: ExitHandler) => exitHandler()
+				);
+				return {write};
+			});
+	});
+
+	describe('when in tutorial mode', () => {
 		beforeEach(() => {
 			storeMock = createStoreMock({
 				ci: false,
@@ -74,140 +56,153 @@ describe('CommandRuntimeMiddleware', () => {
 					next: []
 				}
 			});
+
+			sut = commandRuntime(executeMock, uidDummy)(storeMock)(nextMiddlewareMock);
 		});
 
-		it('starts to run a command', () => {
-			const nextMiddlewareMock = jest.fn();
-			const childProcessMock = createChildProcessMock();
-			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
+		describe('when running a command', () => {
+			beforeEach(() => {
+				sut(runCommand());
+			});
 
-			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommand());
+			it('starts to run a command', () => {
+				expect(executeMock).toHaveBeenLastCalledWith({filename: 'test-command', args: ['--flag', '--positional', 'arg']}, expect.any(Object));
+				expect(executeMock).toHaveBeenCalledTimes(1);
+			});
 
-			expect(spawnMock).toHaveBeenLastCalledWith('test-command', ['--flag', '--positional', 'arg']);
-			expect(spawnMock).toHaveBeenCalledTimes(1);
+			it('calls the next middleware', () => {
+				expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
+				expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+			});
 
-			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
-			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
-		});
+			describe('when the command writes to stdout', () => {
+				beforeEach(() => {
+					stdoutMock('test command output');
+				});
 
-		it('emits command output', () => {
-			const subshell = createChildProcessMock();
-			const uidFactory = (): string => 'test command output uid';
+				it('emits output with uid', () => {
+					expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('test command output', 'test-uid'));
+					expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
+				});
+			});
 
-			commandRuntime(null, subshell, uidFactory)(storeMock);
+			describe('when command waits for input', () => {
+				beforeEach(() => {
+					stdoutMock('input required > ');
+				});
 
-			subshell.stdout.emit('test command output');
+				it('emits input required, output and assigns uid', () => {
+					expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('input required > ', 'test-uid'));
+					expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, inputRequired());
+					expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
+				});
 
-			expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('test command output', 'test command output uid'));
-			expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
-		});
+				describe('when user provides input', () => {
+					beforeEach(() => {
+						sut(inputReceived('test user input'));
+					});
 
-		it('emits command input required', () => {
-			const childProcessMock = createChildProcessMock();
-			const uidFactory = (): string => 'test command output uid';
+					it('writes to command stdin', () => {
+						expect(write).toHaveBeenCalledWith('test user input\n');
+						expect(write).toHaveBeenCalledTimes(1);
+					});
 
-			commandRuntime(null, childProcessMock, uidFactory)(storeMock);
+					it('calls next middleware', () => {
+						expect(nextMiddlewareMock).toHaveBeenCalledWith(inputReceived('test user input'));
+						expect(nextMiddlewareMock).toHaveBeenCalledTimes(2); // Previous calls exist
+					});
+				});
+			});
 
-			childProcessMock.stdout.emit('input required > ');
+			describe('when command exits', () => {
+				beforeEach(() => {
+					exitCommand();
+				});
 
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('input required > ', 'test command output uid'));
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, inputRequired());
-			expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
-		});
-
-		it('emits command finished', () => {
-			const childProcessMock = createChildProcessMock();
-
-			commandRuntime(null, childProcessMock)(storeMock);
-
-			childProcessMock.exit(123);
-
-			expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
-			expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
-		});
-
-		it('provides user input to command', () => {
-			const childProcessMock = createChildProcessMock();
-			const nextMiddlewareMock = jest.fn();
-
-			commandRuntime(null, childProcessMock)(storeMock)(nextMiddlewareMock)(inputReceived('test user input'));
-
-			expect(childProcessMock.stdin.write).toHaveBeenCalledWith('test user input\n');
-			expect(childProcessMock.stdin.write).toHaveBeenCalledTimes(1);
-			expect(nextMiddlewareMock).toHaveBeenCalledWith(inputReceived('test user input'));
-			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
-		});
-	});
-
-	describe('when in dry mode', () => {
-		const storeMock = createStoreMock({
-			ci: false,
-			dry: true,
-			commands: {
-				completed: [],
-				current: {
-					command: 'test-command --flag --positional arg',
-					status: 'UNSTARTED',
-					output: []
-				},
-				next: []
-			}
-		});
-
-		it('pretends to run a command', () => {
-			const nextMiddlewareMock = jest.fn();
-			const childProcessMock = createChildProcessMock();
-			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
-			const uidFactory = (): string => 'test command output uid';
-
-			commandRuntime(spawnMock, null, uidFactory)(storeMock)(nextMiddlewareMock)(runCommand());
-
-			expect(spawnMock).toHaveBeenCalledTimes(0);
-
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('pretending to run "test-command --flag --positional arg"', 'test command output uid'));
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, finished());
-			expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
-			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
-			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
-		});
-	});
-
-	describe('when in ci mode and current command is cf login', () => {
-		let storeMock: MiddlewareAPI;
-
-		beforeEach(() => {
-			storeMock = createStoreMock({
-				ci: true,
-				dry: false,
-				commands: {
-					completed: [],
-					current: {
-						command: 'cf login --any --args --go --here',
-						status: 'UNSTARTED',
-						output: []
-					},
-					next: []
-				}
+				it('emits command finished', () => {
+					expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
+					expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
+				});
 			});
 		});
 
-		it('avoids user input by taking credentials from the environment', () => {
-			const nextMiddlewareMock = jest.fn();
-			const runCommandAction = runCommand();
-			const childProcessMock = createChildProcessMock();
-			const spawnMock = jest.fn().mockReturnValueOnce(childProcessMock);
+		describe('when in dry mode', () => {
+			beforeEach(() => {
+				storeMock = createStoreMock({
+					ci: false,
+					dry: true,
+					commands: {
+						completed: [],
+						current: {
+							command: 'test-command --flag --positional arg',
+							status: 'UNSTARTED',
+							output: []
+						},
+						next: []
+					}
+				});
 
-			process.env.CF_USERNAME = 'cf-user';
-			process.env.CF_PASSWORD = 'cf-password';
-			process.env.CF_ORG = 'cf-org';
-			process.env.CF_SPACE = 'cf-space';
+				sut = commandRuntime(executeMock, uidDummy)(storeMock)(nextMiddlewareMock);
+			});
 
-			commandRuntime(spawnMock)(storeMock)(nextMiddlewareMock)(runCommandAction);
+			describe('when running a command', () => {
+				beforeEach(() => {
+					sut(runCommand());
+				});
 
-			expect(spawnMock).toHaveBeenCalledWith('cf', ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']);
-			expect(spawnMock).toHaveBeenCalledTimes(1);
-			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
-			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+				it('pretends to run a command', () => {
+					expect(executeMock).not.toHaveBeenCalled();
+					expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('pretending to run "test-command --flag --positional arg"', 'test-uid'));
+					expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, finished());
+					expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
+					expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
+					expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+				});
+			});
+		});
+
+		describe('when in ci mode', () => {
+			beforeEach(() => {
+				storeMock = createStoreMock({
+					ci: true,
+					dry: false,
+					commands: {
+						completed: [],
+						current: {
+							command: 'cf login --any further --args go --here',
+							status: 'UNSTARTED',
+							output: []
+						},
+						next: []
+					}
+				});
+
+				sut = commandRuntime(executeMock, uidDummy)(storeMock)(nextMiddlewareMock);
+			});
+
+			describe('when running command "cf login"', () => {
+				beforeEach(() => {
+					process.env.CF_USERNAME = 'cf-user';
+					process.env.CF_PASSWORD = 'cf-password';
+					process.env.CF_ORG = 'cf-org';
+					process.env.CF_SPACE = 'cf-space';
+
+					sut(runCommand());
+				});
+
+				it('avoids user input by taking credentials from the environment', () => {
+					expect(executeMock).toHaveBeenCalledWith(
+						{filename: 'cf', args: ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']},
+						expect.any(Object)
+					);
+					expect(executeMock).toHaveBeenCalledTimes(1);
+				});
+
+				it('calls the next middleware', () => {
+					expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
+					expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+				});
+			});
 		});
 	});
 });
