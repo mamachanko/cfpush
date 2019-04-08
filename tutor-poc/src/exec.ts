@@ -1,4 +1,4 @@
-import {spawn} from 'child_process';
+import * as execa from 'execa';
 
 export type StdoutHandler = (data: any) => void;
 export type ExitHandler = () => void;
@@ -24,7 +24,7 @@ export type RunningCommand = {
 export type CommandRunner = (command: CommandOptions, handlers: StdHandlers) => RunningCommand;
 
 export const execute: CommandRunner = (command: CommandOptions, handlers: StdHandlers): RunningCommand => {
-	const childProcess = spawn(command.filename, command.args);
+	const childProcess = execa(command.filename, command.args);
 	const {stdin, stdout, stderr} = childProcess;
 
 	handlers.stdout.map(stdoutHandler => stdout.on('data', stdoutHandler));
