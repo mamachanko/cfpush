@@ -31,12 +31,12 @@ const exitDisplay = (
 
 export const App: React.FC<AppProps> = ({store = defaultStore}): React.ReactElement => (
 	<Provider store={store}>
-		<Quitable exitDisplay={exitDisplay}>
-			<WhileCommands>
+		<WhileCommands>
+			<Quitable exitDisplay={exitDisplay}>
 				<Title/>
 				<CurrentCommand/>
-			</WhileCommands>
-		</Quitable>
+			</Quitable>
+		</WhileCommands>
 	</Provider>
 );
 
