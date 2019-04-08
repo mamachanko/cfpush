@@ -1,4 +1,4 @@
-import {Box, Text, Static} from 'ink';
+import {Box, Text} from 'ink';
 import Spinner from 'ink-spinner';
 import * as React from 'react';
 import {connect} from 'react-redux';
@@ -6,6 +6,7 @@ import * as Redux from 'redux';
 import {completed, inputReceived, runCommand} from './actions';
 import {Column} from './column';
 import * as CommandStatus from './command-status';
+import {Output} from './output';
 import * as reducer from './reducer';
 import {ENTER, InputHandler, Key, SPACE, useStdin} from './use-stdin'; // eslint-disable-line import/named
 
@@ -69,26 +70,6 @@ const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {
 			<Text>{'done. press <space> to complete.'}</Text>
 		</Column>
 	);
-};
-
-const Output = ({output}): React.ReactElement => {
-	const outputLine = (output: reducer.Output): React.ReactElement => (
-		<Text key={output.uid}>
-			{output.text}
-		</Text>
-	);
-
-	if (output && output.length > 0) {
-		return (
-			<Column>
-				<Static>
-					{output.map(outputLine)}
-				</Static>
-			</Column>
-		);
-	}
-
-	return <Text>no command output</Text>;
 };
 
 const Running: React.FC = (): React.ReactElement => (

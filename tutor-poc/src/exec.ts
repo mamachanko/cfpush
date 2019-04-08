@@ -23,8 +23,12 @@ export type RunningCommand = {
 
 export type CommandRunner = (command: CommandOptions, handlers: StdHandlers) => RunningCommand;
 
+const executionOptions: execa.Options = {
+	cleanup: true
+};
+
 export const execute: CommandRunner = (command: CommandOptions, handlers: StdHandlers): RunningCommand => {
-	const childProcess = execa(command.filename, command.args);
+	const childProcess = execa(command.filename, command.args, executionOptions);
 	const {stdin, stdout, stderr} = childProcess;
 
 	handlers.stdout.map(stdoutHandler => stdout.on('data', stdoutHandler));
