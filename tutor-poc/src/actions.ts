@@ -36,13 +36,19 @@ export interface Completed {
 	type: typeof COMPLETED;
 }
 
+export const EXIT_APP = 'EXIT_APP';
+export interface ExitApp {
+	type: typeof EXIT_APP;
+}
+
 export type Action =
 	| RunCommand
 	| OutputReceived
 	| InputRequired
 	| InputReceived
 	| Finished
-	| Completed;
+	| Completed
+	| ExitApp;
 
 export const runCommand = (): RunCommand => ({type: RUN_COMMAND});
 export const outputReceived = (text: string, uid: string): OutputReceived => ({type: OUTPUT_RECEIVED, payload: {text, uid}});
@@ -50,3 +56,4 @@ export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
 export const inputReceived = (input: string): InputReceived => ({type: INPUT_RECEIVED, payload: {input}});
 export const finished = (): Finished => ({type: FINISHED});
 export const completed = (): Completed => ({type: COMPLETED});
+export const exitApp = (): ExitApp => ({type: EXIT_APP});

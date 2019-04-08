@@ -8,7 +8,8 @@ import {Column} from './column';
 import * as CommandStatus from './command-status';
 import {Output} from './output';
 import * as reducer from './reducer';
-import {ENTER, InputHandler, Key, SPACE, useStdin} from './use-stdin'; // eslint-disable-line import/named
+import {InputHandler, Key, SPACE, useStdin} from './use-stdin'; // eslint-disable-line import/named
+import {InputPrompt} from './input-prompt';
 
 const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
 	const handleInput: InputHandler = (_, key): void => {
@@ -26,27 +27,6 @@ const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
 	}, [waitForTrigger, run]);
 
 	return <Text>{`press <space> to run "${command.command}"`}</Text>;
-};
-
-const InputPrompt = ({submitInput}): React.ReactElement => {
-	const [userInput, setUserInput] = React.useState('');
-
-	const handleInput: InputHandler = (ch: string, key: Key): void => {
-		if (key.name === ENTER) {
-			submitInput(userInput);
-		} else {
-			setUserInput(prevUserInput => prevUserInput + ch);
-		}
-	};
-
-	useStdin(handleInput);
-
-	return (
-		<Column>
-			<Text>⚠️  input required</Text>
-			<Text>{'>_ ' + userInput}</Text>
-		</Column>
-	);
 };
 
 const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {

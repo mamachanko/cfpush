@@ -15,3 +15,8 @@ export const logger = createLogger({
 		new transports.File({filename: LOG_FILENAME})
 	]
 });
+
+logger.info('');
+logger.info('');
+logger.info('---------- CFPUSH');
+logger.info('');

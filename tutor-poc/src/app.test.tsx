@@ -74,7 +74,7 @@ describe('<Command />', () => {
 			expect(stripAnsi(lastFrame())).toContain('hi this is the first command');
 			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
 
-			stdin.write('q');
+			stdin.write('\x03');
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
 				/^\s*hi this is the first command\s*ok.\s*bye.\s*$/

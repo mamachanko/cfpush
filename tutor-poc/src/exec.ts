@@ -1,3 +1,4 @@
+import {SIGTERM} from 'constants';
 import * as execa from 'execa';
 
 export type StdoutHandler = (data: any) => void;
@@ -19,6 +20,7 @@ export type WriteToStdin = (input: string) => void
 
 export type RunningCommand = {
 	write: WriteToStdin;
+	kill: () => void;
 }
 
 export type CommandRunner = (command: CommandOptions, handlers: StdHandlers) => RunningCommand;
@@ -36,6 +38,7 @@ export const execute: CommandRunner = (command: CommandOptions, handlers: StdHan
 	handlers.exit.map(exit => childProcess.on('exit', exit));
 
 	return {
-		write: (input: string) => stdin.write(input)
+		write: (input: string) => stdin.write(input),
+		kill: () => childProcess.kill('SIGTERM')
 	};
 };
