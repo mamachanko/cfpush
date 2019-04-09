@@ -1,9 +1,9 @@
 /* eslint-disable max-nested-callbacks */
 
 import {Dispatch, MiddlewareAPI} from 'redux';
-import {Action, finished, inputReceived, inputRequired, outputReceived, runCommand} from './actions'; // eslint-disable-line import/named
+import {Action, finished, inputReceived, inputRequired, outputReceived, runCommand, exitApp} from './actions'; // eslint-disable-line import/named
 import {commandRuntime} from './command-runtime';
-import {ExitHandler, StdoutHandler, CommandRunner, WriteToStdin} from './exec'; // eslint-disable-line import/named
+import {ExitHandler, StdoutHandler, CommandRunner, WriteToStdin, RunningCommand} from './exec'; // eslint-disable-line import/named
 import {initialState, State} from './reducer';
 
 const createStoreMock = (state: State = initialState): MiddlewareAPI<Dispatch<Action>, State> => ({
@@ -19,7 +19,8 @@ describe('CommandRuntimeMiddleware', () => {
 	let executeMock: CommandRunner;
 	let stdoutMock: WriteToStdin;
 	let exitCommand: () => void;
-	const write: (input: string) => void = jest.fn();
+	const writeStub: (input: string) => void = jest.fn();
+	const cancelStub: () => void = jest.fn();
 
 	let storeMock: MiddlewareAPI;
 	const nextMiddlewareMock = jest.fn();
@@ -29,16 +30,17 @@ describe('CommandRuntimeMiddleware', () => {
 	});
 
 	beforeEach(() => {
-		executeMock = jest.fn()
-			.mockImplementationOnce((_, handlers) => {
-				stdoutMock = (text: string) => handlers.stdout.map(
-					(stdoutHandler: StdoutHandler) => stdoutHandler(text)
-				);
-				exitCommand = () => handlers.exit.map(
-					(exitHandler: ExitHandler) => exitHandler()
-				);
-				return {write};
-			});
+		const executeDummy: CommandRunner = (_, handlers): RunningCommand => {
+			stdoutMock = (text: string) =>
+				handlers.stdout.map((stdoutHandler: StdoutHandler) => stdoutHandler(text));
+
+			exitCommand = () =>
+				handlers.exit.map((exitHandler: ExitHandler) => exitHandler());
+
+			return {write: writeStub, cancel: cancelStub};
+		};
+
+		executeMock = jest.fn().mockImplementationOnce(executeDummy);
 	});
 
 	describe('when in tutorial mode', () => {
@@ -104,8 +106,8 @@ describe('CommandRuntimeMiddleware', () => {
 					});
 
 					it('writes to command stdin', () => {
-						expect(write).toHaveBeenCalledWith('test user input\n');
-						expect(write).toHaveBeenCalledTimes(1);
+						expect(writeStub).toHaveBeenCalledWith('test user input\n');
+						expect(writeStub).toHaveBeenCalledTimes(1);
 					});
 
 					it('calls next middleware', () => {
@@ -123,6 +125,21 @@ describe('CommandRuntimeMiddleware', () => {
 				it('emits command finished', () => {
 					expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
 					expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
+				});
+			});
+
+			describe('when exiting the app', () => {
+				beforeEach(() => {
+					sut(exitApp());
+				});
+
+				it('cancels the running command', () => {
+					expect(cancelStub).toHaveBeenCalledTimes(1);
+				});
+
+				it('calls next middleware', () => {
+					expect(nextMiddlewareMock).toHaveBeenCalledWith(exitApp());
+					expect(nextMiddlewareMock).toHaveBeenCalledTimes(2); // Previous calls exist
 				});
 			});
 		});

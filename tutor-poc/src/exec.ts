@@ -15,10 +15,12 @@ export type CommandOptions = {
 	args: ReadonlyArray<string>;
 }
 
-export type WriteToStdin = (input: string) => void
+export type WriteToStdin = (input: string) => void;
+export type Cancel = () => void;
 
 export type RunningCommand = {
 	write: WriteToStdin;
+	cancel: Cancel;
 }
 
 export type CommandRunner = (command: CommandOptions, handlers: StdHandlers) => RunningCommand;
@@ -36,6 +38,7 @@ export const execute: CommandRunner = (command: CommandOptions, handlers: StdHan
 	handlers.exit.map(exit => childProcess.on('exit', exit));
 
 	return {
-		write: (input: string) => stdin.write(input)
+		write: (input: string) => stdin.write(input),
+		cancel: () => childProcess.kill('SIGTERM')
 	};
 };

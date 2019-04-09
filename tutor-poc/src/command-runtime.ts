@@ -1,7 +1,7 @@
 import {Dispatch, Middleware} from 'redux';
 import {v4 as uuid} from 'uuid';
-import {Action, finished, inputRequired, INPUT_RECEIVED, outputReceived, RUN_COMMAND} from './actions'; // eslint-disable-line import/named
-import {CommandOptions, execute, ExitHandler, StderrHandler, StdoutHandler, WriteToStdin} from './exec'; // eslint-disable-line import/named
+import {Action, finished, inputRequired, INPUT_RECEIVED, outputReceived, RUN_COMMAND, EXIT_APP} from './actions'; // eslint-disable-line import/named
+import {CommandOptions, execute, ExitHandler, StderrHandler, StdoutHandler, WriteToStdin, Cancel} from './exec'; // eslint-disable-line import/named
 import {logger} from './logging';
 import {State} from './reducer';
 
@@ -10,6 +10,7 @@ const defaultUidFactory = (): string => String(uuid());
 export const commandRuntime = (run = execute, uid = defaultUidFactory): Middleware<{}, State, Dispatch<Action>> => {
 	return store => {
 		let write: WriteToStdin;
+		let cancel: Cancel;
 
 		const isCi = (): boolean => store.getState().ci;
 		const isDry = (): boolean => store.getState().dry;
@@ -51,13 +52,19 @@ export const commandRuntime = (run = execute, uid = defaultUidFactory): Middlewa
 						break;
 					}
 
-					({write} = run(parseCommand(command, isCi()), handlers));
+					({write, cancel} = run(parseCommand(command, isCi()), handlers));
 					next(action);
 					break;
 				}
 
 				case (INPUT_RECEIVED): {
 					write(`${action.payload.input}\n`);
+					next(action);
+					break;
+				}
+
+				case (EXIT_APP): {
+					cancel();
 					next(action);
 					break;
 				}
