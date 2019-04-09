@@ -144,6 +144,17 @@ describe('CommandRuntimeMiddleware', () => {
 			});
 		});
 
+		describe('when exiting the app', () => {
+			beforeEach(() => {
+				sut(exitApp());
+			});
+
+			it('calls next middleware', () => {
+				expect(nextMiddlewareMock).toHaveBeenCalledWith(exitApp());
+				expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
+			});
+		});
+
 		describe('when in dry mode', () => {
 			beforeEach(() => {
 				storeMock = createStoreMock({

@@ -51,7 +51,8 @@ export const commandRuntime = (run = execute, uid = defaultUidFactory): Middlewa
 						break;
 					}
 
-					runningCommand = run(parseCommand(command, isCi()), handlers);
+					const commandOptions = parseCommand(command, isCi());
+					runningCommand = run(commandOptions, handlers);
 					next(action);
 					break;
 				}
@@ -63,7 +64,10 @@ export const commandRuntime = (run = execute, uid = defaultUidFactory): Middlewa
 				}
 
 				case (EXIT_APP): {
-					runningCommand.cancel();
+					if (runningCommand != null) { // eslint-disable-line no-eq-null, eqeqeq
+						runningCommand.cancel();
+					}
+
 					next(action);
 					break;
 				}
