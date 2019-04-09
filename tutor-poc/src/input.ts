@@ -2,6 +2,11 @@ import * as React from 'react';
 import {StdinContext} from 'ink';
 import {logger} from './logging';
 
+export const isAlnumOrSpace = (key: Key): boolean =>
+	key.name &&
+	!key.ctrl &&
+	Boolean(key.name.match(/[a-zA-Z0-9 ]+/));
+
 export const SPACE = 'space';
 export const ENTER = 'return';
 

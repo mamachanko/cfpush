@@ -1,16 +1,21 @@
 import * as React from 'react';
 import {Text} from 'ink';
 import {Column} from './column';
-import {ENTER, InputHandler, Key, useStdin} from './input'; // eslint-disable-line import/named
+import {ENTER, InputHandler, Key, useStdin, isAlnumOrSpace} from './input'; // eslint-disable-line import/named
+
+const inputReducer = (input: string, newInput: string): string => input + newInput;
 
 export const InputPrompt = ({submitInput}): React.ReactElement => {
-	const [userInput, setUserInput] = React.useState('');
+	const [input, appendInput] = React.useReducer(inputReducer, '');
 
 	const handleInput: InputHandler = (ch: string, key: Key): void => {
 		if (key.name === ENTER) {
-			submitInput(userInput);
-		} else {
-			setUserInput(prevUserInput => prevUserInput + ch);
+			submitInput(input);
+			return;
+		}
+
+		if (isAlnumOrSpace(key)) {
+			appendInput(ch);
 		}
 	};
 
@@ -19,7 +24,7 @@ export const InputPrompt = ({submitInput}): React.ReactElement => {
 	return (
 		<Column>
 			<Text>⚠️  input required</Text>
-			<Text>{'>_ ' + userInput}</Text>
+			<Text>{'>_ ' + input}</Text>
 		</Column>
 	);
 };

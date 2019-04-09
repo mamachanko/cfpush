@@ -1,6 +1,7 @@
 import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
 import {InputPrompt} from './input-prompt';
+import {CTRL_C} from './test-utils';
 
 describe('<InputPrompt/>', () => {
 	let lastFrame;
@@ -24,15 +25,18 @@ describe('<InputPrompt/>', () => {
 	describe('when typing', () => {
 		beforeEach(() => {
 			stdin.write('h');
-			stdin.write('e');
+			stdin.write('@');
+			stdin.write('E');
+			stdin.write('[$$]');
 			stdin.write('ll');
-			stdin.write('o');
+			stdin.write('O');
+			stdin.write(CTRL_C);
 			stdin.write(' ');
 			stdin.write('123');
 		});
 
-		it('shows input', () => {
-			expect(lastFrame()).toMatch(/input required\s*>_ hello 123/);
+		it('shows alphanumeric and whitespace input only', () => {
+			expect(lastFrame()).toMatch(/input required\s*>_ hEllO 123/);
 		});
 
 		describe('when pressing <enter>', () => {
@@ -41,7 +45,7 @@ describe('<InputPrompt/>', () => {
 			});
 
 			it('submits input', () => {
-				expect(submit).toHaveBeenCalledWith('hello 123');
+				expect(submit).toHaveBeenCalledWith('hEllO 123');
 				expect(submit).toHaveBeenCalledTimes(1);
 			});
 
