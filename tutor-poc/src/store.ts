@@ -1,13 +1,11 @@
 import {configureStore, Store} from 'redux-starter-kit';
 import {commandRuntime} from './command-runtime';
 import {loggingMiddleware} from './logging-middleware';
-import {reducer} from './reducer';
-import {logger} from './logging';
+import {reducer, State, initialState as defaultInitialState} from './reducer';
+import {Action} from './actions'; // eslint-disable-line import/named
 
-export const createStore = (initialState: any): Store => {
-	logger.debug('initial state:', initialState);
-
-	return configureStore({
+export const createStore = (initialState: State = defaultInitialState): Store<State, Action> =>
+	configureStore<State, Action>({
 		reducer,
 		preloadedState: initialState,
 		middleware: [
@@ -15,4 +13,3 @@ export const createStore = (initialState: any): Store => {
 			loggingMiddleware
 		]
 	});
-};

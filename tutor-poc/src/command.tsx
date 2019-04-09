@@ -8,7 +8,7 @@ import {Column} from './column';
 import * as CommandStatus from './command-status';
 import {Output} from './output';
 import * as reducer from './reducer';
-import {ENTER, InputHandler, Key, SPACE, useStdin} from './use-stdin'; // eslint-disable-line import/named
+import {ENTER, InputHandler, Key, SPACE, useStdin} from './input'; // eslint-disable-line import/named
 
 const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
 	const handleInput: InputHandler = (_, key): void => {

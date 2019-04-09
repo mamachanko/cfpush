@@ -1,8 +1,12 @@
-import {render} from 'ink';
+import {render, RenderOptions} from 'ink';
 import * as React from 'react';
 import {App} from './src/app';
 
-const {waitUntilExit} = render(<App/>);
+const options: RenderOptions = {
+	exitOnCtrlC: false
+};
+
+const {waitUntilExit} = render(<App/>, options);
 
 waitUntilExit()
 	.then(() => console.log('🏁'))

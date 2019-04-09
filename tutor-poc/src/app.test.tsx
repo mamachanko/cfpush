@@ -3,18 +3,13 @@ import * as React from 'react';
 import stripAnsi from 'strip-ansi';
 import {App} from './app';
 import {UNSTARTED} from './command-status';
-import {State} from './reducer';
+import {initialState as defaultInitialState, State} from './reducer';
 import {createStore} from './store';
-
-const SPACE = ' ';
-
-const sleep = (ms?: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms || 0));
+import {sleep, SPACE, CTRL_C} from './test-utils';
 
 describe('<Command />', () => {
 	const initialState: State = {
-		ci: false,
-		dry: false,
-		exit: false,
+		...defaultInitialState,
 		commands: {
 			completed: [],
 			current: {
@@ -61,7 +56,7 @@ describe('<Command />', () => {
 			);
 		});
 
-		it('quits on "q"', async () => {
+		it('quits on "ctrl-c"', async () => {
 			const {lastFrame, stdin} = render(
 				<App store={createStore(initialState)}/>
 			);
@@ -75,7 +70,7 @@ describe('<Command />', () => {
 			expect(stripAnsi(lastFrame())).toContain('hi this is the first command');
 			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
 
-			stdin.write('q');
+			stdin.write(CTRL_C);
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
 				/^\s*hi this is the first command\s*ok.\s*bye.\s*$/

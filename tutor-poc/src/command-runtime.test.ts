@@ -1,15 +1,10 @@
 /* eslint-disable max-nested-callbacks */
 
-import {Dispatch, MiddlewareAPI} from 'redux';
-import {Action, finished, inputReceived, inputRequired, outputReceived, runCommand, exitApp} from './actions'; // eslint-disable-line import/named
+import {MiddlewareAPI} from 'redux';
+import {finished, inputReceived, inputRequired, outputReceived, runCommand, exitApp} from './actions';
 import {commandRuntime} from './command-runtime';
 import {ExitHandler, StdoutHandler, CommandRunner, WriteToStdin, RunningCommand} from './exec'; // eslint-disable-line import/named
-import {initialState, State} from './reducer';
-
-const createStoreMock = (state: State = initialState): MiddlewareAPI<Dispatch<Action>, State> => ({
-	dispatch: jest.fn(),
-	getState: (): State => state
-});
+import {createStoreMock} from './test-utils';
 
 const uidDummy = (): string => 'test-uid';
 

@@ -4,6 +4,7 @@ import {Text} from 'ink';
 import {Provider} from 'react-redux';
 import {createStore} from './store';
 import {WhileCommands} from './while-commands';
+import {initialState} from './reducer';
 
 describe('<WhileCommands>', () => {
 	afterEach(() => {
@@ -12,8 +13,7 @@ describe('<WhileCommands>', () => {
 
 	describe('when there is a current command', () => {
 		const store = createStore({
-			ci: false,
-			dry: false,
+			...initialState,
 			commands: {
 				completed: [],
 				current: {
@@ -40,8 +40,7 @@ describe('<WhileCommands>', () => {
 	});
 	describe('when there is no more current command', () => {
 		const store = createStore({
-			ci: false,
-			dry: false,
+			...initialState,
 			commands: {
 				completed: [],
 				current: undefined,

@@ -1,5 +1,5 @@
-import {Dispatch, Middleware} from 'redux';
 import {v4 as uuid} from 'uuid';
+import {Middleware, Dispatch} from 'redux';
 import {Action, EXIT_APP, finished, inputRequired, INPUT_RECEIVED, outputReceived, RUN_COMMAND} from './actions'; // eslint-disable-line import/named
 import {CommandOptions, execute, ExitHandler, RunningCommand, StderrHandler, StdoutHandler} from './exec'; // eslint-disable-line import/named
 import {logger} from './logging';
