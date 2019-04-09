@@ -2,7 +2,7 @@ import {AppContext} from 'ink';
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {exitApp} from './actions';
-import {Key, useStdin} from './input';
+import {useOnCtrlC} from './input';
 import {State} from './reducer';
 
 type OwnProps = {
@@ -39,11 +39,7 @@ const _Quitable: React.FC<Props> = ({children, exitDisplay, scheduleExit, lastCa
 		}
 	}, [exit, lastCallToExit]);
 
-	useStdin((_: string, key: Key) => {
-		if (key.ctrl && key.name === 'c') {
-			scheduleExit();
-		}
-	});
+	useOnCtrlC(scheduleExit);
 
 	return lastCallToExit ? exitDisplay : <>{children}</>;
 };

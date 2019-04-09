@@ -6,43 +6,30 @@ import * as Redux from 'redux';
 import {completed, inputReceived, runCommand} from './actions';
 import {Column} from './column';
 import * as CommandStatus from './command-status';
+import {InputPrompt, useOnSpace} from './input';
 import {Output} from './output';
 import * as reducer from './reducer';
-import {InputHandler, Key, SPACE, useStdin} from './input'; // eslint-disable-line import/named
-import {InputPrompt} from './input-prompt';
 
 const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
-	const handleInput: InputHandler = (_, key): void => {
-		if (key.name === SPACE) {
-			run(command);
-		}
-	};
-
-	useStdin(handleInput);
-
 	React.useLayoutEffect(() => {
 		if (!waitForTrigger) {
 			run();
 		}
 	}, [waitForTrigger, run]);
 
+	useOnSpace(run);
+
 	return <Text>{`press <space> to run "${command.command}"`}</Text>;
 };
 
 const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {
-	const handleInput: InputHandler = (_: string, key: Key): void => {
-		if (key.name === SPACE) {
-			complete();
-		}
-	};
-
-	useStdin(handleInput);
-
 	React.useLayoutEffect(() => {
 		if (!waitForTrigger) {
 			complete();
 		}
 	}, [waitForTrigger, complete]);
+
+	useOnSpace(complete);
 
 	return (
 		<Column>

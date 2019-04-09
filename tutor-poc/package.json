@@ -5,6 +5,7 @@
     "@types/react-redux": "^7.0.6",
     "@types/uuid": "^3.4.4",
     "@types/winston": "^2.4.4",
+    "deep-equal": "^1.0.1",
     "execa": "^1.0.0",
     "ink": "2.1.1",
     "ink-box": "^1.0.0",

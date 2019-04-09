@@ -1,6 +1,6 @@
 import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
-import {InputPrompt} from './input-prompt';
+import {InputPrompt} from './input';
 import {CTRL_C} from './test-utils';
 
 describe('<InputPrompt/>', () => {
