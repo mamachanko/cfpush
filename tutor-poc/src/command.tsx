@@ -69,7 +69,7 @@ type StateProps = {
 type DispatchProps = {
 	run: () => void;
 	complete: () => void;
-	submitInput: (input: string) => void;
+	submit: (input: string) => void;
 }
 
 export type CommandProps =
@@ -123,7 +123,7 @@ const mapStateToProps = (state: reducer.State): StateProps => ({
 const mapDispatchToProps = (dispatch: Redux.Dispatch): DispatchProps => ({
 	run: () => dispatch(runCommand()),
 	complete: () => dispatch(completed()),
-	submitInput: (input: string) => dispatch(inputReceived(input))
+	submit: (input: string) => dispatch(inputReceived(input))
 });
 
 export const CurrentCommand = connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps)(Command);

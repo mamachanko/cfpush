@@ -19,7 +19,7 @@ describe('<Command/>', () => {
 		waitForTrigger: true,
 		run: () => {},
 		complete: () => {},
-		submitInput: () => {}
+		submit: () => {}
 	};
 
 	afterEach(() => {
@@ -124,14 +124,14 @@ describe('<Command/>', () => {
 
 				describe('when user submits input', () => {
 					it('submits input on <enter>', () => {
-						const submitInput = jest.fn();
-						const {stdin} = render(<Command {...defaultProps} command={commandWaitingForInput} submitInput={submitInput}/>);
+						const submit = jest.fn();
+						const {stdin} = render(<Command {...defaultProps} command={commandWaitingForInput} submit={submit}/>);
 
 						stdin.write('test user input');
 						stdin.write(ENTER);
 
-						expect(submitInput).toHaveBeenCalledWith('test user input');
-						expect(submitInput).toHaveBeenCalledTimes(1);
+						expect(submit).toHaveBeenCalledWith('test user input');
+						expect(submit).toHaveBeenCalledTimes(1);
 					});
 				});
 			});

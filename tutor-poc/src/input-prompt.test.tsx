@@ -15,7 +15,7 @@ describe('<InputPrompt/>', () => {
 	});
 
 	beforeEach(() => {
-		({lastFrame, stdin} = render(<InputPrompt submitInput={submit}/>));
+		({lastFrame, stdin} = render(<InputPrompt submit={submit}/>));
 	});
 
 	it('shows prompt', () => {
