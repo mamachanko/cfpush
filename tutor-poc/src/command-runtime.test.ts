@@ -46,6 +46,7 @@ describe('CommandRuntimeMiddleware', () => {
 			storeMock = createStoreMock({
 				ci: false,
 				dry: false,
+				exit: false,
 				commands: {
 					completed: [],
 					current: {
@@ -131,6 +132,7 @@ describe('CommandRuntimeMiddleware', () => {
 				storeMock = createStoreMock({
 					ci: false,
 					dry: true,
+					exit: false,
 					commands: {
 						completed: [],
 						current: {
@@ -166,6 +168,7 @@ describe('CommandRuntimeMiddleware', () => {
 				storeMock = createStoreMock({
 					ci: true,
 					dry: false,
+					exit: false,
 					commands: {
 						completed: [],
 						current: {

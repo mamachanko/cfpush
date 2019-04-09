@@ -1,10 +1,11 @@
 import {reducer, State} from './reducer';
-import {runCommand, inputRequired, finished, outputReceived, INPUT_REQUIRED, inputReceived, completed} from './actions';
+import {runCommand, inputRequired, finished, outputReceived, INPUT_REQUIRED, inputReceived, completed, exitApp} from './actions';
 import {UNSTARTED, RUNNING, FINISHED} from './command-status';
 
 const defaultState: State = {
 	ci: false,
 	dry: false,
+	exit: false,
 	commands: {
 		completed: [],
 		current: {
@@ -255,6 +256,14 @@ describe('reducer', () => {
 					next: []
 				}
 			});
+		});
+	});
+
+	describe('when exiting the app', () => {
+		it('sets exit to true', () => {
+			const nextState = reducer(defaultState, exitApp());
+
+			expect(nextState).toStrictEqual({...defaultState, exit: true});
 		});
 	});
 });

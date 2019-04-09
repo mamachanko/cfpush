@@ -14,6 +14,7 @@ describe('<Command />', () => {
 	const initialState: State = {
 		ci: false,
 		dry: false,
+		exit: false,
 		commands: {
 			completed: [],
 			current: {
