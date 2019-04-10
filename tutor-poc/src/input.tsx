@@ -39,30 +39,40 @@ const CTRL_C: Key = {
 	sequence: '\u0003'
 };
 
-export type InputHandler = (character: string, key: Key) => void;
+type CharacterKeyHandler = (ch: string, key: Key) => void;
+type KeyHandler = (key: Key) => void;
 
-const logKeypress: InputHandler = (ch, key): void => {
-	logger.debug(`keypress: ch='${ch}', key=${JSON.stringify(key)}`);
+const omitCharacter = (handleKey: KeyHandler): CharacterKeyHandler => (_: string, key: Key) => handleKey(key);
+
+const logKeypress: KeyHandler = (key: Key): void => {
+	logger.debug(`keypress: key=${JSON.stringify(key)}`);
 };
 
-const useStdin = (handleInput: InputHandler): void => {
+const defaultKeyHandlers = [logKeypress];
+
+const useStdin = (handleKey: KeyHandler): void => {
 	const {stdin, setRawMode} = React.useContext(StdinContext);
 
-	React.useLayoutEffect(() => {
-		setRawMode(true);
-		stdin.on('keypress', handleInput);
-		stdin.on('keypress', logKeypress);
+	const listeners = React.useMemo(() => [...defaultKeyHandlers, handleKey].map(omitCharacter), [handleKey]);
 
-		return () => {
-			stdin.removeListener('keypress', handleInput);
-			stdin.removeListener('keypress', logKeypress);
-			setRawMode(false);
-		};
-	}, [setRawMode, stdin, handleInput]);
+	const subscribe = React.useCallback(() => {
+		setRawMode(true);
+		listeners.forEach(listener => stdin.on('keypress', listener));
+	}, [setRawMode, listeners, stdin]);
+
+	const unsubscribe = React.useCallback(() => {
+		listeners.forEach(listener => stdin.removeListener('keypress', listener));
+		setRawMode(false);
+	}, [listeners, setRawMode, stdin]);
+
+	React.useLayoutEffect(() => {
+		subscribe();
+		return unsubscribe;
+	}, [subscribe, unsubscribe]);
 };
 
 export const useOnKey = (key: Key, callback: () => void): void => {
-	useStdin((_: string, pressed: Key) => {
+	useStdin((pressed: Key) => {
 		if (deepEqual(pressed, key)) {
 			callback();
 		}
@@ -82,13 +92,13 @@ type Props = {
 export const InputPrompt: React.FC<Props> = ({submit}): React.ReactElement => {
 	const [input, appendInput] = React.useReducer(inputReducer, '');
 
-	const handleInput: InputHandler = (ch: string, key: Key): void => {
+	const handleKey: KeyHandler = (key: Key): void => {
 		if (isAlnumOrSpace(key)) {
 			appendInput(key.sequence);
 		}
 	};
 
-	useStdin(handleInput);
+	useStdin(handleKey);
 
 	useOnEnter(() => submit(input));
 
