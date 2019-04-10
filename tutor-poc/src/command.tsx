@@ -6,7 +6,8 @@ import * as Redux from 'redux';
 import {completed, inputReceived, runCommand} from './actions';
 import {Column} from './column';
 import * as CommandStatus from './command-status';
-import {InputPrompt, useOnSpace} from './input';
+import {useOnSpace} from './input';
+import {InputPrompt} from './input-prompt';
 import {Output} from './output';
 import * as reducer from './reducer';
 

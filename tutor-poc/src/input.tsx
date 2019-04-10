@@ -1,10 +1,9 @@
 import * as deepEqual from 'deep-equal';
-import {StdinContext, Text} from 'ink';
+import {StdinContext} from 'ink';
 import * as React from 'react';
-import {Column} from './column';
 import {logger} from './logging';
 
-interface Key {
+export interface Key {
 	name: string;
 	sequence: string;
 	ctrl: boolean;
@@ -71,7 +70,7 @@ const useStdin = (handleKey: KeyHandler): void => {
 	}, [subscribe, unsubscribe]);
 };
 
-export const useOnKey = (key: Key, callback: () => void): void => {
+const useOnKey = (key: Key, callback: () => void): void => {
 	useStdin((pressed: Key) => {
 		if (deepEqual(pressed, key)) {
 			callback();
@@ -83,34 +82,10 @@ export const useOnCtrlC = (callback: () => void): void => useOnKey(CTRL_C, callb
 export const useOnSpace = (callback: () => void): void => useOnKey(SPACE, callback);
 export const useOnEnter = (callback: () => void): void => useOnKey(ENTER, callback);
 
-const inputReducer = (input: string, newInput: string): string => input + newInput;
+const isAlnum = (key: Key): boolean => key.name && !key.ctrl && Boolean(key.sequence.match(/[a-zA-Z0-9]+/));
 
-type Props = {
-	submit: (input: string) => void;
-}
-
-export const InputPrompt: React.FC<Props> = ({submit}): React.ReactElement => {
-	const [input, appendInput] = React.useReducer(inputReducer, '');
-
-	const handleKey: KeyHandler = (key: Key): void => {
-		if (isAlnumOrSpace(key)) {
-			appendInput(key.sequence);
-		}
-	};
-
-	useStdin(handleKey);
-
-	useOnEnter(() => submit(input));
-
-	return (
-		<Column>
-			<Text>⚠️  input required</Text>
-			<Text>{'>_ ' + input}</Text>
-		</Column>
-	);
-};
-
-const isAlnumOrSpace = (key: Key): boolean =>
-	key.name &&
-	!key.ctrl &&
-	Boolean(key.name.match(/[a-zA-Z0-9 ]+/));
+export const useOnAlnum = (keyHandler: KeyHandler): void => useStdin((key: Key) => {
+	if (isAlnum(key)) {
+		keyHandler(key);
+	}
+});

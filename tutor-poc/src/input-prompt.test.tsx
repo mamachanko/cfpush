@@ -1,6 +1,6 @@
 import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
-import {InputPrompt} from './input';
+import {InputPrompt} from './input-prompt';
 import {CTRL_C} from './test-utils';
 
 describe('<InputPrompt/>', () => {
@@ -35,8 +35,8 @@ describe('<InputPrompt/>', () => {
 			stdin.write('123');
 		});
 
-		it('shows alphanumeric and whitespace input only', () => {
-			expect(lastFrame()).toMatch(/input required\s*>_ hEllO 123/);
+		it('shows alphanumeric input only', () => {
+			expect(lastFrame()).toMatch(/input required\s*>_ hEllO123/);
 		});
 
 		describe('when pressing <enter>', () => {
@@ -45,7 +45,7 @@ describe('<InputPrompt/>', () => {
 			});
 
 			it('submits input', () => {
-				expect(submit).toHaveBeenCalledWith('hEllO 123');
+				expect(submit).toHaveBeenCalledWith('hEllO123');
 				expect(submit).toHaveBeenCalledTimes(1);
 			});
 

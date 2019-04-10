@@ -119,7 +119,7 @@ describe('<Command/>', () => {
 
 					stdin.write('test user input');
 
-					expect(lastFrame()).toMatch(/>_ test user input/i);
+					expect(lastFrame()).toMatch(/>_ testuserinput/i);
 				});
 
 				describe('when user submits input', () => {
@@ -130,7 +130,7 @@ describe('<Command/>', () => {
 						stdin.write('test user input');
 						stdin.write(ENTER);
 
-						expect(submit).toHaveBeenCalledWith('test user input');
+						expect(submit).toHaveBeenCalledWith('testuserinput');
 						expect(submit).toHaveBeenCalledTimes(1);
 					});
 				});
