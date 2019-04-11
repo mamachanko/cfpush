@@ -9,6 +9,7 @@
     "execa": "^1.0.0",
     "ink": "2.1.1",
     "ink-box": "^1.0.0",
+    "ink-link": "^1.0.0",
     "ink-spinner": "^3.0.0",
     "jsesc": "^2.5.2",
     "prop-types": "^15.7.2",

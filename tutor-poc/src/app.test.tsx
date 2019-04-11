@@ -73,7 +73,7 @@ describe('<Command />', () => {
 			stdin.write(CTRL_C);
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/^\s*hi this is the first command\s*ok.\s*bye.\s*$/
+				/^\s*hi this is the first command\s*oh, i am slain/i
 			);
 		});
 	});
