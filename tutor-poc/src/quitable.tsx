@@ -30,18 +30,18 @@ const mapStateToProps = (state: State): StateProps => ({
 	lastCallToExit: state.app.exit
 });
 
-const _Quitable: React.FC<Props> = ({children, exitDisplay, scheduleExit, lastCallToExit}): React.ReactElement => {
-	const {exit} = React.useContext(AppContext);
+export const Quitable = connect<StateProps, DispatchProps, OwnProps>(mapStateToProps, mapDispatchToProps)(
+	({children, exitDisplay, scheduleExit, lastCallToExit}): React.ReactElement => {
+		const {exit} = React.useContext(AppContext);
 
-	React.useEffect(() => {
-		if (lastCallToExit) {
-			exit();
-		}
-	}, [exit, lastCallToExit]);
+		React.useEffect(() => {
+			if (lastCallToExit) {
+				exit();
+			}
+		}, [exit, lastCallToExit]);
 
-	useOnCtrlC(scheduleExit);
+		useOnCtrlC(scheduleExit);
 
-	return lastCallToExit ? exitDisplay : <>{children}</>;
-};
-
-export const Quitable = connect<StateProps, DispatchProps, OwnProps>(mapStateToProps, mapDispatchToProps)(_Quitable);
+		return lastCallToExit ? exitDisplay : <>{children}</>;
+	}
+);
