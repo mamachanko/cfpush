@@ -100,17 +100,10 @@ describe('<Command/>', () => {
 				output: []
 			};
 
-			it('shows input is required', () => {
-				const {lastFrame} = render(<Command {...defaultProps} command={commandWaitingForInput}/>);
-
-				expect(lastFrame()).toMatch(/⚠️ {2}input required/i);
-				expect(lastFrame()).not.toMatch(/running/i);
-			});
-
 			it('shows input prompt', () => {
 				const {lastFrame} = render(<Command {...defaultProps} command={commandWaitingForInput}/>);
 
-				expect(lastFrame()).toMatch(/>_/i);
+				expect(lastFrame()).toMatch(/⚠️ {2}input required >_/i);
 			});
 
 			describe('when user provides input', () => {

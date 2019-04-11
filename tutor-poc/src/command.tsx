@@ -79,7 +79,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 			return (
 				<Column>
 					<Output {...props.command}/>
-					<InputPrompt {...props}/>
+					<InputPrompt {...props} prompt="⚠️  input required >_"/>
 				</Column>
 			);
 		}

@@ -15,11 +15,11 @@ describe('<InputPrompt/>', () => {
 	});
 
 	beforeEach(() => {
-		({lastFrame, stdin} = render(<InputPrompt submit={submit}/>));
+		({lastFrame, stdin} = render(<InputPrompt submit={submit} prompt={'input goes here >_'}/>));
 	});
 
 	it('shows prompt', () => {
-		expect(lastFrame()).toMatch(/input required\s*>_/);
+		expect(lastFrame()).toEqual('input goes here >_');
 	});
 
 	describe('when typing', () => {
@@ -36,7 +36,7 @@ describe('<InputPrompt/>', () => {
 		});
 
 		it('shows alphanumeric input only', () => {
-			expect(lastFrame()).toMatch(/input required\s*>_ hEllO123/);
+			expect(lastFrame()).toEqual('input goes here >_ hEllO123');
 		});
 
 		describe('when pressing <enter>', () => {
@@ -50,7 +50,7 @@ describe('<InputPrompt/>', () => {
 			});
 
 			it('clears input', () => {
-				expect(lastFrame()).toMatch(/input required\s*>_/);
+				expect(lastFrame()).toEqual('input goes here >_');
 			});
 		});
 	});
