@@ -4,6 +4,9 @@ import {InputPrompt} from './input-prompt';
 import {CTRL_C} from './test-utils';
 
 describe('<InputPrompt/>', () => {
+	const ENTER = '\r';
+	const BACKSPACE = '\u007F';
+
 	let lastFrame;
 	let stdin;
 
@@ -20,6 +23,16 @@ describe('<InputPrompt/>', () => {
 
 	it('shows prompt', () => {
 		expect(lastFrame()).toEqual('input goes here >_');
+	});
+
+	describe('when pressing <backspace>', () => {
+		beforeEach(() => {
+			stdin.write(BACKSPACE);
+		});
+
+		it('nothing changes', () => {
+			expect(lastFrame()).toEqual('input goes here >_');
+		});
 	});
 
 	describe('when typing', () => {
@@ -39,9 +52,19 @@ describe('<InputPrompt/>', () => {
 			expect(lastFrame()).toEqual('input goes here >_ hEllO123');
 		});
 
+		describe('when pressing <backspace>', () => {
+			beforeEach(() => {
+				stdin.write(BACKSPACE);
+			});
+
+			it('removes last character', () => {
+				expect(lastFrame()).toEqual('input goes here >_ hEllO12');
+			});
+		});
+
 		describe('when pressing <enter>', () => {
 			beforeEach(() => {
-				stdin.write('\r');
+				stdin.write(ENTER);
 			});
 
 			it('submits input', () => {

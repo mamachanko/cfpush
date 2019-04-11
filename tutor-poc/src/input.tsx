@@ -39,6 +39,13 @@ const CTRL_C: Key = {
 	sequence: '\u0003'
 };
 
+const BACKSPACE: Key = {
+	...defaultKey,
+	name: 'backspace',
+	ctrl: false,
+	sequence: '\u007F'
+};
+
 type CharacterKeyHandler = (ch: string, key: Key) => void;
 type KeyHandler = (key: Key) => void;
 
@@ -82,6 +89,7 @@ const useOnKey = (key: Key, callback: () => void): void => {
 export const useOnCtrlC = (callback: () => void): void => useOnKey(CTRL_C, callback);
 export const useOnSpace = (callback: () => void): void => useOnKey(SPACE, callback);
 export const useOnEnter = (callback: () => void): void => useOnKey(ENTER, callback);
+export const useOnBackspace = (callback: () => void): void => useOnKey(BACKSPACE, callback);
 
 const isAlnum = (key: Key): boolean => key.name && !key.ctrl && Boolean(key.sequence.match(/[a-zA-Z0-9]+/));
 

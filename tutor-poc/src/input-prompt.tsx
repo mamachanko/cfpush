@@ -1,6 +1,6 @@
 import {Text} from 'ink';
 import * as React from 'react';
-import {Key, useOnAlnum, useOnEnter} from './input';
+import {Key, useOnAlnum, useOnEnter, useOnBackspace} from './input';
 
 const KEYPRESS = 'KEYPRESS';
 type Keypress = {
@@ -10,6 +10,11 @@ type Keypress = {
 	};
 }
 
+const REMOVE_LAST = 'REMOVE_LAST';
+type RemoveLast = {
+	type: typeof REMOVE_LAST;
+}
+
 const CLEAR = 'CLEAR';
 type Clear = {
 	type: typeof CLEAR;
@@ -17,12 +22,17 @@ type Clear = {
 
 type InputAction =
 	| Keypress
+	| RemoveLast
 	| Clear;
 
 const inputReducer = (state: string, action: InputAction): string => {
 	switch (action.type) {
 		case (KEYPRESS): {
 			return `${state}${action.payload.key.sequence}`;
+		}
+
+		case (REMOVE_LAST): {
+			return state.slice(0, state.length - 1);
 		}
 
 		case (CLEAR): {
@@ -42,10 +52,12 @@ type Props = {
 export const InputPrompt: React.FC<Props> = ({submit, prompt}): React.ReactElement => {
 	const [input, dispatch] = React.useReducer(inputReducer, '');
 
-	const keypress = (key: Key): void => dispatch({type: 'KEYPRESS', payload: {key}});
-	const clear = (): void => dispatch({type: 'CLEAR'});
+	const keypress = (key: Key): void => dispatch({type: KEYPRESS, payload: {key}});
+	const removeLast = (): void => dispatch({type: REMOVE_LAST});
+	const clear = (): void => dispatch({type: CLEAR});
 
 	useOnAlnum(keypress);
+	useOnBackspace(removeLast);
 	useOnEnter(() => {
 		clear();
 		submit(input);
