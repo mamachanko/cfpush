@@ -41,9 +41,11 @@ describe('CommandRuntimeMiddleware', () => {
 	describe('when in tutorial mode', () => {
 		beforeEach(() => {
 			storeMock = createStoreMock({
-				ci: false,
-				dry: false,
-				exit: false,
+				app: {
+					ci: false,
+					dry: false,
+					exit: false
+				},
 				commands: {
 					completed: [],
 					current: {
@@ -153,9 +155,11 @@ describe('CommandRuntimeMiddleware', () => {
 		describe('when in dry mode', () => {
 			beforeEach(() => {
 				storeMock = createStoreMock({
-					ci: false,
-					dry: true,
-					exit: false,
+					app: {
+						ci: false,
+						dry: true,
+						exit: false
+					},
 					commands: {
 						completed: [],
 						current: {
@@ -189,9 +193,11 @@ describe('CommandRuntimeMiddleware', () => {
 		describe('when in ci mode', () => {
 			beforeEach(() => {
 				storeMock = createStoreMock({
-					ci: true,
-					dry: false,
-					exit: false,
+					app: {
+						ci: true,
+						dry: false,
+						exit: false
+					},
 					commands: {
 						completed: [],
 						current: {

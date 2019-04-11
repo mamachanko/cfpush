@@ -105,7 +105,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 
 const mapStateToProps = (state: reducer.State): StateProps => ({
 	command: state.commands.current,
-	waitForTrigger: !state.ci
+	waitForTrigger: !state.app.ci
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch): DispatchProps => ({

@@ -2,14 +2,14 @@ import {Reducer} from 'redux';
 import {Action, COMPLETED, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, RUN_COMMAND, EXIT_APP} from './actions'; // eslint-disable-line import/named
 import * as CommandStatus from './command-status';
 
-export type Command = string;
+type Command = string;
 
 export type Output = {
 	text: string;
 	uid: string;
 }
 
-export interface CompletedCommand {
+interface CompletedCommand {
 	command: Command;
 	output: ReadonlyArray<Output>;
 }
@@ -20,23 +20,29 @@ export interface CurrentCommand {
 	output: ReadonlyArray<Output>;
 }
 
-export interface Commands {
+interface Commands {
 	completed: ReadonlyArray<CompletedCommand>;
 	current: CurrentCommand;
 	next: ReadonlyArray<Command>;
 }
 
-export interface State {
+type App = {
 	ci: boolean;
 	dry: boolean;
 	exit: boolean;
+}
+
+export interface State {
+	app: App;
 	commands: Commands;
 }
 
 export const initialState: State = {
-	ci: false,
-	dry: false,
-	exit: false,
+	app: {
+		ci: false,
+		dry: false,
+		exit: false
+	},
 	commands: {
 		completed: [],
 		current: {
@@ -125,7 +131,13 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		}
 
 		case (EXIT_APP): {
-			return {...state, exit: true};
+			return {
+				...state,
+				app: {
+					...state.app,
+					exit: true
+				}
+			};
 		}
 
 		default: return state;

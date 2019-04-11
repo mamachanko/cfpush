@@ -11,8 +11,11 @@ import {WhileCommands} from './while-commands';
 
 const defaultStore = createStore({
 	...initialState,
-	ci: process.env.CI === 'true',
-	dry: process.env.DRY === 'true',
+	app: {
+		...initialState.app,
+		ci: process.env.CI === 'true',
+		dry: process.env.DRY === 'true'
+	},
 	commands: {
 		completed: [],
 		current: {

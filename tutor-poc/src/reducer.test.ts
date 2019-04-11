@@ -3,9 +3,11 @@ import {runCommand, inputRequired, finished, outputReceived, INPUT_REQUIRED, inp
 import {UNSTARTED, RUNNING, FINISHED} from './command-status';
 
 const defaultState: State = {
-	ci: false,
-	dry: false,
-	exit: false,
+	app: {
+		ci: false,
+		dry: false,
+		exit: false
+	},
 	commands: {
 		completed: [],
 		current: {
@@ -263,7 +265,7 @@ describe('reducer', () => {
 		it('sets exit to true', () => {
 			const nextState = reducer(defaultState, exitApp());
 
-			expect(nextState).toStrictEqual({...defaultState, exit: true});
+			expect(nextState).toStrictEqual({...defaultState, app: {...defaultState.app, exit: true}});
 		});
 	});
 });

@@ -80,8 +80,9 @@ describe('<Command />', () => {
 
 	describe('when in dry mode', () => {
 		it('pretends to run commands on <space>', async () => {
+			const store = createStore({...initialState, app: {...initialState.app, dry: true}});
 			const {lastFrame, stdin} = render(
-				<App store={createStore({...initialState, dry: true})}/>
+				<App store={store}/>
 			);
 
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
@@ -106,9 +107,8 @@ describe('<Command />', () => {
 
 	describe('when in ci mode', () => {
 		it('runs commands one after another without prompt', async () => {
-			const {lastFrame} = render(
-				<App store={createStore({...initialState, ci: true})}/>
-			);
+			const store = createStore({...initialState, app: {...initialState.app, ci: true}});
+			const {lastFrame} = render(<App store={store}/>);
 
 			await sleep(50);
 

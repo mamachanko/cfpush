@@ -11,8 +11,8 @@ export const commandRuntime = (run = execute, uid = defaultUidFactory): Middlewa
 	return store => {
 		let runningCommand: RunningCommand;
 
-		const isCi = (): boolean => store.getState().ci;
-		const isDry = (): boolean => store.getState().dry;
+		const isCi = (): boolean => store.getState().app.ci;
+		const isDry = (): boolean => store.getState().app.dry;
 
 		const stdoutHandler: StdoutHandler = (data: any): void => {
 			const output = String(data);

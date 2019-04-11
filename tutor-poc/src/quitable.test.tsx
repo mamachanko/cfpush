@@ -8,7 +8,7 @@ import {exitApp} from './actions';
 import {initialState} from './reducer';
 
 const renderQuitable = (exit: boolean): any => {
-	const store = createStoreMock({...initialState, exit});
+	const store = createStoreMock({...initialState, app: {...initialState.app, exit}});
 
 	const exitDisplay = (
 		<Box flexDirection="column">

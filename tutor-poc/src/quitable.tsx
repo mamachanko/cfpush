@@ -27,7 +27,7 @@ const mapDispatchToProps = (dispatch): DispatchProps => ({
 });
 
 const mapStateToProps = (state: State): StateProps => ({
-	lastCallToExit: state.exit
+	lastCallToExit: state.app.exit
 });
 
 const _Quitable: React.FC<Props> = ({children, exitDisplay, scheduleExit, lastCallToExit}): React.ReactElement => {
