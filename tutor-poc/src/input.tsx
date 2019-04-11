@@ -1,6 +1,7 @@
 import * as deepEqual from 'deep-equal';
 import {StdinContext} from 'ink';
 import * as React from 'react';
+import * as jsesc from 'jsesc';
 import {logger} from './logging';
 
 export interface Key {
@@ -44,7 +45,7 @@ type KeyHandler = (key: Key) => void;
 const omitCharacter = (handleKey: KeyHandler): CharacterKeyHandler => (_: string, key: Key) => handleKey(key);
 
 const logKeypress: KeyHandler = (key: Key): void => {
-	logger.debug(`keypress: key=${JSON.stringify(key)}`);
+	logger.debug(`keypress: key=${JSON.stringify({...key, escapedSequence: jsesc(key.sequence)})}`);
 };
 
 const defaultKeyHandlers = [logKeypress];

@@ -10,6 +10,7 @@
     "ink": "2.1.1",
     "ink-box": "^1.0.0",
     "ink-spinner": "^3.0.0",
+    "jsesc": "^2.5.2",
     "prop-types": "^15.7.2",
     "react": "16.8.6",
     "react-redux": "^6.0.1",
