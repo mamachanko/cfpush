@@ -8,22 +8,25 @@ import {initialState} from './reducer';
 import {createStore} from './store';
 import {Title} from './title';
 import {WhileCommands} from './while-commands';
+import * as config from './config';
+
+const [firstCommand, ...next] = config.tutorial;
 
 const defaultStore = createStore({
 	...initialState,
 	app: {
 		...initialState.app,
-		ci: process.env.CI === 'true',
-		dry: process.env.DRY === 'true'
+		ci: config.ci,
+		dry: config.dry
 	},
 	commands: {
 		completed: [],
 		current: {
-			command: 'cf login -a api.run.pivotal.io --sso',
+			command: firstCommand,
 			status: 'UNSTARTED',
 			output: []
 		},
-		next: ['cf logout']
+		next
 	}
 });
 
