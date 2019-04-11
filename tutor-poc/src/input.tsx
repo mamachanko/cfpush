@@ -51,26 +51,27 @@ type KeyHandler = (key: Key) => void;
 
 const omitCharacter = (handleKey: KeyHandler): CharacterKeyHandler => (_: string, key: Key) => handleKey(key);
 
-const logKeypress: KeyHandler = (key: Key): void => {
-	logger.debug(`keypress: key=${JSON.stringify({...key, escapedSequence: jsesc(key.sequence)})}`);
+const logKeypress: CharacterKeyHandler = (character: string, key: Key): void => {
+	logger.debug(`keypress: character="${character}", key=${JSON.stringify({...key, escapedSequence: jsesc(key.sequence)})}`);
 };
-
-const defaultKeyHandlers = [logKeypress];
 
 const useStdin = (handleKey: KeyHandler): void => {
 	const {stdin, setRawMode} = React.useContext(StdinContext);
-
-	const listeners = React.useMemo(() => [...defaultKeyHandlers, handleKey].map(omitCharacter), [handleKey]);
+	const listener = React.useMemo(() => omitCharacter(handleKey), [handleKey]);
 
 	const subscribe = React.useCallback(() => {
 		setRawMode(true);
-		listeners.forEach(listener => stdin.on('keypress', listener));
-	}, [setRawMode, listeners, stdin]);
+		stdin.on('keypress', listener);
+		if (!stdin.listeners('keypress').includes(logKeypress)) {
+			stdin.prependListener('keypress', logKeypress);
+		}
+	}, [setRawMode, stdin, listener]);
 
 	const unsubscribe = React.useCallback(() => {
-		listeners.forEach(listener => stdin.removeListener('keypress', listener));
+		stdin.removeListener('keypress', listener);
+		stdin.removeListener('keypress', logKeypress);
 		setRawMode(false);
-	}, [listeners, setRawMode, stdin]);
+	}, [listener, setRawMode, stdin]);
 
 	React.useLayoutEffect(() => {
 		subscribe();
