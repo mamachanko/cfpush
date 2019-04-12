@@ -1,8 +1,8 @@
 /* eslint-disable max-nested-callbacks */
 
 import {MiddlewareAPI} from 'redux';
-import {finished, inputReceived, inputRequired, outputReceived, runCommand, exitApp} from './actions';
-import {commandRuntime} from './command-runtime';
+import {finished, inputReceived, inputRequired, outputReceived, runCommand, exitApp, started} from './actions';
+import {createCommandRuntimeMiddleware} from './command-runtime';
 import {ExitHandler, StdoutHandler, CommandRunner, WriteToStdin, RunningCommand} from './exec'; // eslint-disable-line import/named
 import {createStoreMock} from './test-utils';
 
@@ -43,7 +43,6 @@ describe('CommandRuntimeMiddleware', () => {
 			storeMock = createStoreMock({
 				app: {
 					ci: false,
-					dry: false,
 					exit: false
 				},
 				commands: {
@@ -57,12 +56,12 @@ describe('CommandRuntimeMiddleware', () => {
 				}
 			});
 
-			sut = commandRuntime(executeMock, uidDummy)(storeMock)(nextMiddlewareMock);
+			sut = createCommandRuntimeMiddleware(executeMock, uidDummy)(storeMock)(nextMiddlewareMock);
 		});
 
 		describe('when running a command', () => {
 			beforeEach(() => {
-				sut(runCommand());
+				sut(runCommand('test-command --flag --positional arg'));
 			});
 
 			it('starts to run a command', () => {
@@ -70,8 +69,13 @@ describe('CommandRuntimeMiddleware', () => {
 				expect(executeMock).toHaveBeenCalledTimes(1);
 			});
 
+			it('emits the command has started', () => {
+				expect(storeMock.dispatch).toHaveBeenCalledWith(started());
+				expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
+			});
+
 			it('calls the next middleware', () => {
-				expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
+				expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand('test-command --flag --positional arg'));
 				expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
 			});
 
@@ -81,8 +85,8 @@ describe('CommandRuntimeMiddleware', () => {
 				});
 
 				it('emits output with uid', () => {
-					expect(storeMock.dispatch).toHaveBeenCalledWith(outputReceived('test command output', 'test-uid'));
-					expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
+					expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived('test command output', 'test-uid'));
+					expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // Previous calls exist
 				});
 			});
 
@@ -92,9 +96,9 @@ describe('CommandRuntimeMiddleware', () => {
 				});
 
 				it('emits input required, output and assigns uid', () => {
-					expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('input required > ', 'test-uid'));
-					expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, inputRequired());
-					expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
+					expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived('input required > ', 'test-uid'));
+					expect(storeMock.dispatch).toHaveBeenNthCalledWith(3, inputRequired());
+					expect(storeMock.dispatch).toHaveBeenCalledTimes(3); // Previous calls exist
 				});
 
 				describe('when user provides input', () => {
@@ -121,7 +125,7 @@ describe('CommandRuntimeMiddleware', () => {
 
 				it('emits command finished', () => {
 					expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
-					expect(storeMock.dispatch).toHaveBeenCalledTimes(1);
+					expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // Previous calls exist
 				});
 			});
 
@@ -149,91 +153,6 @@ describe('CommandRuntimeMiddleware', () => {
 			it('calls next middleware', () => {
 				expect(nextMiddlewareMock).toHaveBeenCalledWith(exitApp());
 				expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
-			});
-		});
-
-		describe('when in dry mode', () => {
-			beforeEach(() => {
-				storeMock = createStoreMock({
-					app: {
-						ci: false,
-						dry: true,
-						exit: false
-					},
-					commands: {
-						completed: [],
-						current: {
-							command: 'test-command --flag --positional arg',
-							status: 'UNSTARTED',
-							output: []
-						},
-						next: []
-					}
-				});
-
-				sut = commandRuntime(executeMock, uidDummy)(storeMock)(nextMiddlewareMock);
-			});
-
-			describe('when running a command', () => {
-				beforeEach(() => {
-					sut(runCommand());
-				});
-
-				it('pretends to run a command', () => {
-					expect(executeMock).not.toHaveBeenCalled();
-					expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, outputReceived('pretending to run "test-command --flag --positional arg"', 'test-uid'));
-					expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, finished());
-					expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
-					expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
-					expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
-				});
-			});
-		});
-
-		describe('when in ci mode', () => {
-			beforeEach(() => {
-				storeMock = createStoreMock({
-					app: {
-						ci: true,
-						dry: false,
-						exit: false
-					},
-					commands: {
-						completed: [],
-						current: {
-							command: 'cf login --any further --args go --here',
-							status: 'UNSTARTED',
-							output: []
-						},
-						next: []
-					}
-				});
-
-				sut = commandRuntime(executeMock, uidDummy)(storeMock)(nextMiddlewareMock);
-			});
-
-			describe('when running command "cf login"', () => {
-				beforeEach(() => {
-					process.env.CF_USERNAME = 'cf-user';
-					process.env.CF_PASSWORD = 'cf-password';
-					process.env.CF_ORG = 'cf-org';
-					process.env.CF_SPACE = 'cf-space';
-
-					sut(runCommand());
-				});
-
-				it('avoids user input by taking credentials from the environment', () => {
-					expect(executeMock).toHaveBeenCalledWith(
-						{filename: 'cf', args: ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']},
-						expect.any(Object)
-					);
-					expect(executeMock).toHaveBeenCalledTimes(1);
-				});
-
-				it('calls the next middleware', () => {
-					expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
-					expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
-				});
 			});
 		});
 	});

@@ -1,5 +1,5 @@
 import {Reducer} from 'redux';
-import {Action, COMPLETED, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, RUN_COMMAND, EXIT_APP, STARTED} from './actions'; // eslint-disable-line import/named
+import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, STARTED} from './actions'; // eslint-disable-line import/named
 import * as CommandStatus from './command-status';
 
 type Command = string;
@@ -28,7 +28,6 @@ interface Commands {
 
 type App = {
 	ci: boolean;
-	dry: boolean;
 	exit: boolean;
 }
 
@@ -40,7 +39,6 @@ export interface State {
 export const initialState: State = {
 	app: {
 		ci: false,
-		dry: false,
 		exit: false
 	},
 	commands: {

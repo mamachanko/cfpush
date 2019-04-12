@@ -2,9 +2,9 @@ import * as React from 'react';
 import {render, cleanup} from 'ink-testing-library';
 import {Text} from 'ink';
 import {Provider} from 'react-redux';
-import {createStore} from './store';
 import {WhileCommands} from './while-commands';
 import {initialState} from './reducer';
+import {createStoreMock} from './test-utils';
 
 describe('<WhileCommands>', () => {
 	afterEach(() => {
@@ -12,7 +12,7 @@ describe('<WhileCommands>', () => {
 	});
 
 	describe('when there is a current command', () => {
-		const store = createStore({
+		const store = createStoreMock({
 			...initialState,
 			commands: {
 				completed: [],
@@ -39,7 +39,7 @@ describe('<WhileCommands>', () => {
 		});
 	});
 	describe('when there is no more current command', () => {
-		const store = createStore({
+		const store = createStoreMock({
 			...initialState,
 			commands: {
 				completed: [],

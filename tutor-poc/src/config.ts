@@ -1,7 +1,29 @@
+export const Tutorial = 'TUTORIAL';
+export const Dry = 'DRY';
+export const Ci = 'CI';
+export type Mode =
+	| typeof Tutorial
+	| typeof Dry
+	| typeof Ci;
+
+export interface Config {
+	mode: Mode;
+	commands: ReadonlyArray<string>;
+}
+
 const ci = process.env.CI === 'true';
 const dry = process.env.DRY === 'true';
 
-const tutorial = [
+let mode: Mode = Tutorial;
+if (dry) {
+	mode = Dry;
+}
+
+if (ci) {
+	mode = Ci;
+}
+
+const commands = [
 	'cf login -a api.run.pivotal.io --sso',
 	// 'cf create-space cfpush-tutorial',
 	// 'cf target -s cfpush-tutorial',
@@ -26,4 +48,4 @@ const tutorial = [
 	'cf logout'
 ];
 
-export {ci, dry, tutorial};
+export const config: Config = {mode, commands};

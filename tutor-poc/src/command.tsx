@@ -11,16 +11,18 @@ import {InputPrompt} from './input-prompt';
 import {Output} from './output';
 import * as reducer from './reducer';
 
-const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
+const CommandTrigger = ({currentCommand: {command}, run, waitForTrigger}): React.ReactElement => {
+	const runCommand = React.useCallback(() => run(command), [run, command]);
+
 	React.useLayoutEffect(() => {
 		if (!waitForTrigger) {
-			run();
+			runCommand();
 		}
-	}, [waitForTrigger, run]);
+	}, [waitForTrigger, runCommand]);
 
-	useOnSpace(run);
+	useOnSpace(runCommand);
 
-	return <Text>{`press <space> to run "${command.command}"`}</Text>;
+	return <Text>{`press <space> to run "${command}"`}</Text>;
 };
 
 const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {
@@ -50,12 +52,12 @@ const Running: React.FC = (): React.ReactElement => (
 );
 
 type StateProps = {
-	command: reducer.CurrentCommand;
+	currentCommand: reducer.CurrentCommand;
 	waitForTrigger: boolean;
 };
 
 type DispatchProps = {
-	run: () => void;
+	run: (command: string) => void;
 	complete: () => void;
 	submit: (input: string) => void;
 }
@@ -65,11 +67,11 @@ export type CommandProps =
 	& DispatchProps;
 
 export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
-	switch (props.command.status) {
+	switch (props.currentCommand.status) {
 		case (CommandStatus.RUNNING): {
 			return (
 				<Column>
-					<Output {...props.command}/>
+					<Output {...props.currentCommand}/>
 					<Running/>
 				</Column>
 			);
@@ -78,7 +80,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 		case (CommandStatus.INPUT_REQUIRED): {
 			return (
 				<Column>
-					<Output {...props.command}/>
+					<Output {...props.currentCommand}/>
 					<InputPrompt {...props} prompt="⚠️  input required >_"/>
 				</Column>
 			);
@@ -87,7 +89,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 		case (CommandStatus.FINISHED): {
 			return (
 				<Column>
-					<Output {...props.command}/>
+					<Output {...props.currentCommand}/>
 					<CompletePrompt {...props}/>
 				</Column>
 			);
@@ -104,12 +106,12 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 };
 
 const mapStateToProps = (state: reducer.State): StateProps => ({
-	command: state.commands.current,
+	currentCommand: state.commands.current,
 	waitForTrigger: !state.app.ci
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch): DispatchProps => ({
-	run: () => dispatch(runCommand()),
+	run: (command: string) => dispatch(runCommand(command)),
 	complete: () => dispatch(completed()),
 	submit: (input: string) => dispatch(inputReceived(input))
 });

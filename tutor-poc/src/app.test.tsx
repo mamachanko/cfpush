@@ -1,25 +1,11 @@
 import {cleanup, render} from 'ink-testing-library';
-import * as React from 'react';
 import stripAnsi from 'strip-ansi';
-import {App} from './app';
-import {UNSTARTED} from './command-status';
-import {initialState as defaultInitialState, State} from './reducer';
-import {createStore} from './store';
-import {sleep, SPACE, CTRL_C} from './test-utils';
+import {createApp} from './app';
+import {Ci, Dry, Tutorial} from './config';
+import {CTRL_C, sleep, SPACE} from './test-utils';
 
 describe('<Command />', () => {
-	const initialState: State = {
-		...defaultInitialState,
-		commands: {
-			completed: [],
-			current: {
-				command: 'echo hi this is the first command',
-				status: UNSTARTED,
-				output: []
-			},
-			next: ['echo hello this is the second command']
-		}
-	};
+	const commands = ['echo hi this is the first command', 'echo hello this is the second command'];
 
 	afterEach(() => {
 		cleanup();
@@ -27,9 +13,7 @@ describe('<Command />', () => {
 
 	describe('when in tutorial mode', () => {
 		it('runs commands one after another by pressing <space>', async () => {
-			const {lastFrame, stdin} = render(
-				<App store={createStore(initialState)}/>
-			);
+			const {lastFrame, stdin} = render(createApp({commands, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
@@ -57,9 +41,7 @@ describe('<Command />', () => {
 		});
 
 		it('quits on "ctrl-c"', async () => {
-			const {lastFrame, stdin} = render(
-				<App store={createStore(initialState)}/>
-			);
+			const {lastFrame, stdin} = render(createApp({commands, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
@@ -80,10 +62,7 @@ describe('<Command />', () => {
 
 	describe('when in dry mode', () => {
 		it('pretends to run commands on <space>', async () => {
-			const store = createStore({...initialState, app: {...initialState.app, dry: true}});
-			const {lastFrame, stdin} = render(
-				<App store={store}/>
-			);
+			const {lastFrame, stdin} = render(createApp({commands, mode: Dry}));
 
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
@@ -107,8 +86,7 @@ describe('<Command />', () => {
 
 	describe('when in ci mode', () => {
 		it('runs commands one after another without prompt', async () => {
-			const store = createStore({...initialState, app: {...initialState.app, ci: true}});
-			const {lastFrame} = render(<App store={store}/>);
+			const {lastFrame} = render(createApp({commands, mode: Ci}));
 
 			await sleep(50);
 

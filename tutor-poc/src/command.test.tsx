@@ -11,7 +11,7 @@ describe('<Command/>', () => {
 	const ENTER = '\r';
 	const SPACE = ' ';
 	const defaultProps: CommandProps = {
-		command: {
+		currentCommand: {
 			command: 'test command',
 			status: 'UNSTARTED',
 			output: []
@@ -41,6 +41,7 @@ describe('<Command/>', () => {
 
 			stdin.write(SPACE);
 
+			expect(run).toHaveBeenCalledWith('test command');
 			expect(run).toHaveBeenCalledTimes(1);
 		});
 
@@ -62,7 +63,7 @@ describe('<Command/>', () => {
 				status: RUNNING,
 				output: []
 			};
-			const {lastFrame} = render(<Command {...defaultProps} command={runningCommand}/>);
+			const {lastFrame} = render(<Command {...defaultProps} currentCommand={runningCommand}/>);
 
 			expect(lastFrame()).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] running/i);
 		});
@@ -74,7 +75,7 @@ describe('<Command/>', () => {
 					status: RUNNING,
 					output: [{text: 'test command output 1', uid: '1'}, {text: 'test command output 2', uid: '2'}]
 				};
-				const {lastFrame} = render(<Command {...defaultProps} command={runningCommandWithOutput}/>);
+				const {lastFrame} = render(<Command {...defaultProps} currentCommand={runningCommandWithOutput}/>);
 
 				expect(lastFrame()).toMatch(/test command output 1\ntest command output 2/i);
 			});
@@ -87,7 +88,7 @@ describe('<Command/>', () => {
 					status: RUNNING,
 					output: []
 				};
-				const {lastFrame} = render(<Command {...defaultProps} command={runningCommandWithoutOutput}/>);
+				const {lastFrame} = render(<Command {...defaultProps} currentCommand={runningCommandWithoutOutput}/>);
 
 				expect(lastFrame()).toMatch(/no command output/i);
 			});
@@ -101,14 +102,14 @@ describe('<Command/>', () => {
 			};
 
 			it('shows input prompt', () => {
-				const {lastFrame} = render(<Command {...defaultProps} command={commandWaitingForInput}/>);
+				const {lastFrame} = render(<Command {...defaultProps} currentCommand={commandWaitingForInput}/>);
 
 				expect(lastFrame()).toMatch(/⚠️ {2}input required >_/i);
 			});
 
 			describe('when user provides input', () => {
 				it('shows user input', () => {
-					const {lastFrame, stdin} = render(<Command {...defaultProps} command={commandWaitingForInput}/>);
+					const {lastFrame, stdin} = render(<Command {...defaultProps} currentCommand={commandWaitingForInput}/>);
 
 					stdin.write('test user input');
 
@@ -118,7 +119,7 @@ describe('<Command/>', () => {
 				describe('when user submits input', () => {
 					it('submits input on <enter>', () => {
 						const submit = jest.fn();
-						const {stdin} = render(<Command {...defaultProps} command={commandWaitingForInput} submit={submit}/>);
+						const {stdin} = render(<Command {...defaultProps} currentCommand={commandWaitingForInput} submit={submit}/>);
 
 						stdin.write('test user input');
 						stdin.write(ENTER);
@@ -139,19 +140,19 @@ describe('<Command/>', () => {
 		};
 
 		it('shows output', () => {
-			const {lastFrame} = render(<Command {...defaultProps} command={finishedCommand}/>);
+			const {lastFrame} = render(<Command {...defaultProps} currentCommand={finishedCommand}/>);
 
 			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*/i);
 		});
 
 		it('shows it has finished', () => {
-			const {lastFrame} = render(<Command {...defaultProps} command={finishedCommand}/>);
+			const {lastFrame} = render(<Command {...defaultProps} currentCommand={finishedCommand}/>);
 
 			expect(lastFrame()).toMatch(/✅ finished/i);
 		});
 
 		it('shows prompt to complete', () => {
-			const {lastFrame} = render(<Command {...defaultProps} command={finishedCommand}/>);
+			const {lastFrame} = render(<Command {...defaultProps} currentCommand={finishedCommand}/>);
 
 			expect(lastFrame()).toMatch(/done. press <space> to complete./i);
 		});
@@ -159,7 +160,7 @@ describe('<Command/>', () => {
 		describe('when pressing <space>', () => {
 			it('completes the command', () => {
 				const complete = jest.fn();
-				const {stdin} = render(<Command {...defaultProps} command={finishedCommand} complete={complete}/>);
+				const {stdin} = render(<Command {...defaultProps} currentCommand={finishedCommand} complete={complete}/>);
 
 				stdin.write(SPACE);
 

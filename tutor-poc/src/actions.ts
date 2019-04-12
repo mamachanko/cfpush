@@ -2,6 +2,9 @@
 export const RUN_COMMAND = 'RUN_COMMAND';
 export interface RunCommand {
 	type: typeof RUN_COMMAND;
+	payload: {
+		command: string;
+	};
 }
 
 export const STARTED = 'STARTED';
@@ -56,7 +59,7 @@ export type Action =
 	| Completed
 	| ExitApp;
 
-export const runCommand = (): RunCommand => ({type: RUN_COMMAND});
+export const runCommand = (command: string): RunCommand => ({type: RUN_COMMAND, payload: {command}});
 export const started = (): Started => ({type: STARTED});
 export const outputReceived = (text: string, uid: string): OutputReceived => ({type: OUTPUT_RECEIVED, payload: {text, uid}});
 export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
