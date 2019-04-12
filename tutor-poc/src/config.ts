@@ -20,29 +20,26 @@ const getMode = (): Mode => {
 	switch (`${ci} ${dry}`) {
 		case ('true false'):
 		case ('true true'):
-			logger.debug('CI IT IS');
 			return Ci;
 		case ('false true'):
-			logger.debug('DRY IT IS');
 			return Dry;
 		default:
-			logger.debug('TUTORIAL IT IS');
 			return Tutorial;
 	}
 };
 
 const commands = [
 	'cf login -a api.run.pivotal.io --sso',
-	// 'cf create-space cfpush-tutorial',
-	// 'cf target -s cfpush-tutorial',
-	// 'cf push chat-app -p ../builds/chat-app.zip -b staticfile_buildpack --random-route',
-	// // UpdateChatAppUrlAndHostname
-	// 'cf app chat-app',
-	// 'cf scale chat-app -m 64M -k 128M -f',
-	// 'cf push message-service -p builds/message-service.jar --random-route',
+	'cf create-space cfpush-tutorial',
+	'cf target -s cfpush-tutorial',
+	'cf push chat-app -p ../builds/chat-app.zip -b staticfile_buildpack --random-route',
+	// UpdateChatAppUrlAndHostname
+	'cf app chat-app',
+	'cf scale chat-app -m 64M -k 128M -f',
+	'cf push message-service -p ../builds/message-service.jar --random-route',
 	// // UpdateMessageServiceUrl
-	// 'cf routes',
-	// 'cf map-route message-service cfapps.io --hostname ${CHAT_APP_HOSTNAME} --path /api',
+	'cf routes',
+	'cf map-route message-service cfapps.io --hostname ${CHAT_APP_HOSTNAME} --path /api',
 	// 'cf scale message-service -i 3',
 	// 'cf marketplace',
 	// 'cf marketplace -s elephantsql',
