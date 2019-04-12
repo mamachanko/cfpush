@@ -1,6 +1,6 @@
 import {configureStore, Store} from 'redux-starter-kit';
 import {Action} from './actions'; // eslint-disable-line import/named
-import {createCommandRuntimeMiddleware} from './command-runtime';
+import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
 import {config, Ci, Dry} from './config';
 import {loggingMiddleware} from './logging-middleware';
 import {initialState as defaultInitialState, reducer, State} from './reducer';

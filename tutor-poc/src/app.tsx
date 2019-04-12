@@ -4,7 +4,7 @@ import {Dispatch} from 'redux';
 import {Action, configureStore, Middleware, Store} from 'redux-starter-kit';
 import {ciMiddleware} from './ci-middleware';
 import {CurrentCommand} from './command';
-import {createCommandRuntimeMiddleware} from './command-runtime';
+import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
 import {Ci, Config, Dry, Mode, Tutorial} from './config'; // eslint-disable-line import/named
 import {createDryMiddleware} from './dry-middleware';
 import {ExitMessage} from './exit-message';
