@@ -1,3 +1,5 @@
+import {logger} from './logging';
+
 export const Tutorial = 'TUTORIAL';
 export const Dry = 'DRY';
 export const Ci = 'CI';
@@ -11,17 +13,23 @@ export interface Config {
 	commands: ReadonlyArray<string>;
 }
 
-const ci = process.env.CI === 'true';
-const dry = process.env.DRY === 'true';
+const getMode = (): Mode => {
+	const ci = process.env.CI === 'true';
+	const dry = process.env.DRY === 'true';
 
-let mode: Mode = Tutorial;
-if (dry) {
-	mode = Dry;
-}
-
-if (ci) {
-	mode = Ci;
-}
+	switch (`${ci} ${dry}`) {
+		case ('true false'):
+		case ('true true'):
+			logger.debug('CI IT IS');
+			return Ci;
+		case ('false true'):
+			logger.debug('DRY IT IS');
+			return Dry;
+		default:
+			logger.debug('TUTORIAL IT IS');
+			return Tutorial;
+	}
+};
 
 const commands = [
 	'cf login -a api.run.pivotal.io --sso',
@@ -48,4 +56,7 @@ const commands = [
 	'cf logout'
 ];
 
-export const config: Config = {mode, commands};
+export const config: Config = {
+	mode: getMode(),
+	commands
+};
