@@ -1,5 +1,5 @@
 import {Reducer} from 'redux';
-import {Action, COMPLETED, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, RUN_COMMAND, EXIT_APP} from './actions'; // eslint-disable-line import/named
+import {Action, COMPLETED, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, RUN_COMMAND, EXIT_APP, STARTED} from './actions'; // eslint-disable-line import/named
 import * as CommandStatus from './command-status';
 
 type Command = string;
@@ -57,7 +57,7 @@ export const initialState: State = {
 export const reducer: Reducer = (state: State = initialState, action: Action): State => {
 	switch (action.type) {
 		case (INPUT_RECEIVED):
-		case (RUN_COMMAND): {
+		case (STARTED): {
 			return {
 				...state,
 				commands: {

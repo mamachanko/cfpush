@@ -4,6 +4,11 @@ export interface RunCommand {
 	type: typeof RUN_COMMAND;
 }
 
+export const STARTED = 'STARTED';
+export interface Started {
+	type: typeof STARTED;
+}
+
 export const OUTPUT_RECEIVED = 'OUTPUT_RECEIVED';
 export interface OutputReceived {
 	type: typeof OUTPUT_RECEIVED;
@@ -43,6 +48,7 @@ export interface ExitApp {
 
 export type Action =
 	| RunCommand
+	| Started
 	| OutputReceived
 	| InputRequired
 	| InputReceived
@@ -51,6 +57,7 @@ export type Action =
 	| ExitApp;
 
 export const runCommand = (): RunCommand => ({type: RUN_COMMAND});
+export const started = (): Started => ({type: STARTED});
 export const outputReceived = (text: string, uid: string): OutputReceived => ({type: OUTPUT_RECEIVED, payload: {text, uid}});
 export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
 export const inputReceived = (input: string): InputReceived => ({type: INPUT_RECEIVED, payload: {input}});

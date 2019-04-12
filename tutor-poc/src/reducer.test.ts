@@ -1,6 +1,6 @@
+import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, outputReceived, started} from './actions';
+import {FINISHED, RUNNING, UNSTARTED} from './command-status';
 import {reducer, State} from './reducer';
-import {runCommand, inputRequired, finished, outputReceived, INPUT_REQUIRED, inputReceived, completed, exitApp} from './actions';
-import {UNSTARTED, RUNNING, FINISHED} from './command-status';
 
 const defaultState: State = {
 	app: {
@@ -22,7 +22,7 @@ const defaultState: State = {
 describe('reducer', () => {
 	describe('when a command starts', () => {
 		it('changes the current command\'s status to "RUNNING"', () => {
-			const nextState = reducer(defaultState, runCommand());
+			const nextState = reducer(defaultState, started());
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
