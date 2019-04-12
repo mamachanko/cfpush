@@ -42,7 +42,7 @@ describe('CommandRuntimeMiddleware', () => {
 		beforeEach(() => {
 			storeMock = createStoreMock({
 				app: {
-					ci: false,
+					waitForTrigger: false,
 					exit: false
 				},
 				commands: {

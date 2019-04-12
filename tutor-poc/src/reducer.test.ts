@@ -4,8 +4,7 @@ import {reducer, State} from './reducer';
 
 const defaultState: State = {
 	app: {
-		ci: false,
-		dry: false,
+		waitForTrigger: false,
 		exit: false
 	},
 	commands: {

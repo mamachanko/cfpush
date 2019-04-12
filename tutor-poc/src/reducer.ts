@@ -27,7 +27,7 @@ interface Commands {
 }
 
 type App = {
-	ci: boolean;
+	waitForTrigger: boolean;
 	exit: boolean;
 }
 
@@ -38,7 +38,7 @@ export interface State {
 
 export const initialState: State = {
 	app: {
-		ci: false,
+		waitForTrigger: true,
 		exit: false
 	},
 	commands: {

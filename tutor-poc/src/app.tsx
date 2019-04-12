@@ -34,7 +34,7 @@ export const createApp = (config: Config): React.ReactElement => {
 	const initialState: State = {
 		app: {
 			exit: false,
-			ci: config.mode === Ci
+			waitForTrigger: config.mode !== Ci
 		},
 		commands: {
 			completed: [],
