@@ -1,10 +1,11 @@
 import * as React from 'react';
 import {Provider} from 'react-redux';
-import {Action, configureStore, Store} from 'redux-starter-kit';
+import {Dispatch} from 'redux';
+import {Action, configureStore, Middleware, Store} from 'redux-starter-kit';
 import {ciMiddleware} from './ci-middleware';
 import {CurrentCommand} from './command';
 import {createCommandRuntimeMiddleware} from './command-runtime';
-import {Ci, Config, Dry} from './config';
+import {Ci, Config, Dry, Mode, Tutorial} from './config'; // eslint-disable-line import/named
 import {createDryMiddleware} from './dry-middleware';
 import {ExitMessage} from './exit-message';
 import {loggingMiddleware} from './logging-middleware';
@@ -28,13 +29,13 @@ const App: React.FC<AppProps> = ({store}): React.ReactElement => (
 	</Provider>
 );
 
-export const createApp = (config: Config): React.ReactElement => {
-	const [firstCommand, ...next] = config.commands;
+export const createApp = ({commands, mode}: Config): React.ReactElement => {
+	const [firstCommand, ...next] = commands;
 
 	const initialState: State = {
 		app: {
 			exit: false,
-			waitForTrigger: config.mode !== Ci
+			waitForTrigger: mode !== Ci
 		},
 		commands: {
 			completed: [],
@@ -51,10 +52,29 @@ export const createApp = (config: Config): React.ReactElement => {
 		reducer,
 		preloadedState: initialState,
 		middleware: [
-			...(config.mode === Ci ? [ciMiddleware] : []),
-			...(config.mode === Dry ? [createDryMiddleware()] : [createCommandRuntimeMiddleware()]),
+			...createMiddleware(mode),
 			loggingMiddleware
 		]});
 
 	return <App store={store}/>;
 };
+
+const createMiddleware = (mode: Mode): ReadonlyArray<Middleware<{}, State, Dispatch<Action>>> => {
+	switch (mode) {
+		case (Tutorial): {
+			return [createCommandRuntimeMiddleware()];
+		}
+
+		case (Ci): {
+			return [ciMiddleware, createCommandRuntimeMiddleware()];
+		}
+
+		case (Dry): {
+			return [createDryMiddleware()];
+		}
+
+		default:
+			throw new Error(`unknown mode ${mode}`);
+	}
+};
+
