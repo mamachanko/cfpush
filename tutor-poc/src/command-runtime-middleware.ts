@@ -10,11 +10,15 @@ const parseCommand = (command: string): CommandOptions => {
 	return {filename, args};
 };
 
+const unparseCommand = (command: CommandOptions): string => {
+	return [command.filename, ...command.args].join(' ');
+};
+
 export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid): Middleware<{}, State, Dispatch<Action>> => {
 	return store => {
 		let runningCommand: RunningCommand;
 
-		const stdoutHandler: StdoutHandler = (data: any): void => {
+		const stdoutHandler: StdoutHandler = (data: string): void => {
 			const output = String(data);
 			store.dispatch(outputReceived(output, uid()));
 			if (output.endsWith('> ')) {
@@ -22,12 +26,12 @@ export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid):
 			}
 		};
 
-		const stderrHandler: StderrHandler = (data: any): void => {
+		const stderrHandler: StderrHandler = (data: string): void => {
 			logger.error(`command stderr: ${data}`);
 		};
 
-		const exitHandler: ExitHandler = (): void => {
-			store.dispatch(finished());
+		const exitHandler: ExitHandler = (command: CommandOptions): void => {
+			store.dispatch(finished(unparseCommand(command)));
 		};
 
 		const handlers = {
@@ -39,8 +43,10 @@ export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid):
 		return next => (action: Action) => {
 			switch (action.type) {
 				case (RUN_COMMAND): {
-					const commandOptions = parseCommand(action.payload.command);
-					runningCommand = run(commandOptions, handlers);
+					runningCommand = run(
+						parseCommand(action.payload.command),
+						handlers
+					);
 					store.dispatch(started());
 					break;
 				}

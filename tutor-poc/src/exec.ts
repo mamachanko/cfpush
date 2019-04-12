@@ -1,8 +1,8 @@
 import * as execa from 'execa';
 
-export type StdoutHandler = (data: any) => void;
-export type ExitHandler = () => void;
-export type StderrHandler = (data: any) => void;
+export type StdoutHandler = (data: string) => void;
+export type ExitHandler = (command: CommandOptions) => void;
+export type StderrHandler = (data: string) => void;
 
 export type StdHandlers = {
 	stdout: ReadonlyArray<StdoutHandler>;
@@ -35,7 +35,7 @@ export const execute: CommandRunner = (command: CommandOptions, handlers: StdHan
 
 	handlers.stdout.map(stdoutHandler => stdout.on('data', stdoutHandler));
 	handlers.stderr.map(stderrHandler => stderr.on('data', stderrHandler));
-	handlers.exit.map(exit => childProcess.on('exit', exit));
+	handlers.exit.map(exitHandler => childProcess.on('exit', () => exitHandler(command)));
 
 	return {
 		write: (input: string) => stdin.write(input),

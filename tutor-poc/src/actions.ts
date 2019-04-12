@@ -37,6 +37,9 @@ export interface InputReceived {
 export const FINISHED = 'FINISHED';
 export interface Finished {
 	type: typeof FINISHED;
+	payload: {
+		command: string;
+	};
 }
 
 export const COMPLETED = 'COMPLETED';
@@ -64,6 +67,6 @@ export const started = (): Started => ({type: STARTED});
 export const outputReceived = (text: string, uid: string): OutputReceived => ({type: OUTPUT_RECEIVED, payload: {text, uid}});
 export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
 export const inputReceived = (input: string): InputReceived => ({type: INPUT_RECEIVED, payload: {input}});
-export const finished = (): Finished => ({type: FINISHED});
+export const finished = (command: string): Finished => ({type: FINISHED, payload: {command}});
 export const completed = (): Completed => ({type: COMPLETED});
 export const exitApp = (): ExitApp => ({type: EXIT_APP});

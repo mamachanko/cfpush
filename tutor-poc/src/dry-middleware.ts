@@ -9,7 +9,7 @@ export const createDryMiddleware = (uid = defaultUid): Middleware<{}, State, Dis
 		if (action.type === RUN_COMMAND) {
 			store.dispatch(started());
 			store.dispatch(outputReceived(`pretending to run "${action.payload.command}"`, uid()));
-			store.dispatch(finished());
+			store.dispatch(finished(action.payload.command));
 		} else {
 			next(action);
 		}

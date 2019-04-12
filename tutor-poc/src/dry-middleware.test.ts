@@ -23,7 +23,7 @@ describe('Dry Middleware', () => {
 		it('pretends running the command', () => {
 			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, started());
 			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived('pretending to run "test command"', 'test-uid'));
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(3, finished());
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(3, finished('test command'));
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(3);
 			expect(nextMiddlewareMock).not.toHaveBeenCalled();
 		});
