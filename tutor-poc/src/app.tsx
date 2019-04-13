@@ -1,11 +1,10 @@
 import * as React from 'react';
 import {Provider} from 'react-redux';
-import {Dispatch} from 'redux';
-import {Action, configureStore, Middleware, Store} from 'redux-starter-kit';
-import {ciMiddleware} from './ci-middleware';
+import {Action, configureStore, Store} from 'redux-starter-kit';
+import {createCfContextMiddleware} from './cf-context-middleware';
 import {CurrentCommand} from './command';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
-import {Ci, Config, Dry, Mode, Tutorial} from './config'; // eslint-disable-line import/named
+import {Ci, Config, Dry} from './config';
 import {createDryMiddleware} from './dry-middleware';
 import {ExitMessage} from './exit-message';
 import {loggingMiddleware} from './logging-middleware';
@@ -13,7 +12,6 @@ import {Quitable} from './quitable';
 import {reducer, State} from './reducer';
 import {Title} from './title';
 import {WhileCommands} from './while-commands';
-import {createCfContextMiddleware} from './cf-context-middleware';
 
 type AppProps = {
 	store: Store;
@@ -53,29 +51,11 @@ export const createApp = ({commands, mode}: Config): React.ReactElement => {
 		reducer,
 		preloadedState: initialState,
 		middleware: [
-			...createMiddleware(mode),
+			createCfContextMiddleware(),
+			mode === Dry ? createDryMiddleware() : createCommandRuntimeMiddleware(),
 			loggingMiddleware
 		]});
 
 	return <App store={store}/>;
-};
-
-const createMiddleware = (mode: Mode): ReadonlyArray<Middleware<{}, State, Dispatch<Action>>> => {
-	switch (mode) {
-		case (Tutorial): {
-			return [createCfContextMiddleware(), createCommandRuntimeMiddleware()];
-		}
-
-		case (Ci): {
-			return [createCfContextMiddleware(), ciMiddleware, createCommandRuntimeMiddleware()];
-		}
-
-		case (Dry): {
-			return [createDryMiddleware()];
-		}
-
-		default:
-			throw new Error(`unknown mode ${mode}`);
-	}
 };
 
