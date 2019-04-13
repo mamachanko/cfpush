@@ -3,7 +3,6 @@ import {Dispatch, Middleware} from 'redux';
 import {Action, FINISHED, runCommand, RUN_COMMAND} from './actions'; // eslint-disable-line import/named
 import {CloudFoundryApi, cloudFoundryApi as defaultCloudFoundryApi} from './cloud-foundry';
 import {State} from './reducer';
-import {logger} from './logging';
 
 const isCfPush = (command: string): boolean => Boolean(command.match(/cf\s+push/));
 const parseAppName = (command: string): string => {
@@ -16,12 +15,8 @@ export const createCfContextMiddleware = (cloudFoundryApi: CloudFoundryApi = def
 
 	const process = async (command: string): Promise<void> => {
 		if (isCfPush(command)) {
-			logger.info('it is a cf-push');
 			const appName = parseAppName(command);
-			logger.info(`app name is ${appName}`);
 			context[appName] = {hostname: await cloudFoundryApi.getHostname(appName)};
-		} else {
-			logger.info('it is not a cf-push');
 		}
 	};
 
@@ -30,20 +25,17 @@ export const createCfContextMiddleware = (cloudFoundryApi: CloudFoundryApi = def
 		switch (action.type) {
 			case (RUN_COMMAND): {
 				const command = Mustache.render(action.payload.command, context);
-				logger.info(`rendered command: "${command}" by using context "${JSON.stringify(context)}"`);
 				next(runCommand(command));
 				break;
 			}
 
 			case (FINISHED): {
 				await process(action.payload.command);
-				logger.info(`processed command. new context "${JSON.stringify(context)}"`);
 				next(action);
 				break;
 			}
 
 			default:
-				logger.info('cf-context-middleware just passing through');
 				next(action);
 		}
 	};

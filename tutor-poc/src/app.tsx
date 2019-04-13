@@ -51,8 +51,8 @@ export const createApp = ({commands, mode}: Config): React.ReactElement => {
 		reducer,
 		preloadedState: initialState,
 		middleware: [
-			createCfContextMiddleware(),
 			mode === Dry ? createDryMiddleware() : createCommandRuntimeMiddleware(),
+			createCfContextMiddleware(),
 			loggingMiddleware
 		]});
 
