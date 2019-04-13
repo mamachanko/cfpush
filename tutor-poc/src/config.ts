@@ -11,9 +11,9 @@ export interface Config {
 	commands: ReadonlyArray<string>;
 }
 
-const getMode = (): Mode => {
-	const ci = process.env.CI === 'true';
-	const dry = process.env.DRY === 'true';
+export const parseMode = (env: any): Mode => {
+	const ci = env.CI === 'true';
+	const dry = env.DRY === 'true';
 
 	switch (`${ci} ${dry}`) {
 		case ('true false'):
@@ -26,31 +26,22 @@ const getMode = (): Mode => {
 	}
 };
 
-const commands = [
-	'cf login -a api.run.pivotal.io --sso',
-	'cf create-space cfpush-tutorial',
-	'cf target -s cfpush-tutorial',
-	'cf push chat-app -p ../builds/chat-app.zip -b staticfile_buildpack --random-route',
-	'echo {{chat-app.hostname}}',
-	'cf app chat-app',
-	'cf scale chat-app -m 64M -k 128M -f',
-	'cf push message-service -p ../builds/message-service.jar --random-route',
-	'cf routes',
-	'cf map-route message-service cfapps.io --hostname {{chat-app.hostname}} --path /api',
-	'cf scale message-service -i 3',
-	'cf marketplace',
-	'cf marketplace -s elephantsql',
-	'cf create-service elephantsql turtle database'
-	// // Wait for service to be created
-	// 'cf bind-service message-service database',
-	// 'cf restart message-service',
-	// // Smoke tests
-	// 'cf logs --recent message-service', // | grep GET | grep '\[APP\/PROC\/WEB\/\d\+\]'',
-	// 'cf delete-space cfpush-tutorial -f',
-	// 'cf logout'
-];
+const cfCiLogin = (): string => ['cf', 'login', '-a', 'api.run.pivotal.io', '-u', process.env.CF_USERNAME, '-p', process.env.CF_PASSWORD, '-o', process.env.CF_ORG, '-s', process.env.CF_SPACE]
+	.join(' ');
 
-export const config: Config = {
-	mode: getMode(),
-	commands
+export const parseCommands = (commands: ReadonlyArray<string>, mode: Mode): ReadonlyArray<string> => {
+	switch (mode) {
+		case (Ci): return commands.map(command => command.match(/cf\s+login/) ? cfCiLogin() : command);
+		case (Dry):
+		case (Tutorial):
+		default: return commands;
+	}
+};
+
+export const parseConfig = (commands: ReadonlyArray<string>, env: any): Config => {
+	const mode = parseMode(env);
+	return {
+		mode,
+		commands: parseCommands(commands, mode)
+	};
 };
