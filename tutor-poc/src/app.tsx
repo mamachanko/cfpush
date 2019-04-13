@@ -13,6 +13,7 @@ import {Quitable} from './quitable';
 import {reducer, State} from './reducer';
 import {Title} from './title';
 import {WhileCommands} from './while-commands';
+import {createCfContextMiddleware} from './cf-context-middleware';
 
 type AppProps = {
 	store: Store;
@@ -62,11 +63,11 @@ export const createApp = ({commands, mode}: Config): React.ReactElement => {
 const createMiddleware = (mode: Mode): ReadonlyArray<Middleware<{}, State, Dispatch<Action>>> => {
 	switch (mode) {
 		case (Tutorial): {
-			return [createCommandRuntimeMiddleware()];
+			return [createCfContextMiddleware(), createCommandRuntimeMiddleware()];
 		}
 
 		case (Ci): {
-			return [ciMiddleware, createCommandRuntimeMiddleware()];
+			return [createCfContextMiddleware(), ciMiddleware, createCommandRuntimeMiddleware()];
 		}
 
 		case (Dry): {

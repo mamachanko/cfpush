@@ -140,7 +140,7 @@ describe('reducer', () => {
 
 	describe('when a command finishes', () => {
 		it('changes the current command\'s status to "FINISHED"', () => {
-			const nextState = reducer(defaultState, finished());
+			const nextState = reducer(defaultState, finished('this is currently ignored'));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,

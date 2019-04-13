@@ -1,5 +1,3 @@
-/* eslint-disable max-nested-callbacks */
-
 import {MiddlewareAPI} from 'redux';
 import {finished, inputReceived, inputRequired, outputReceived, runCommand, exitApp, started} from './actions';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
