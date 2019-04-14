@@ -15,14 +15,13 @@ const commands = [
 	'cf scale message-service -i 3',
 	'cf marketplace',
 	'cf marketplace -s elephantsql',
-	'cf create-service elephantsql turtle database'
-	// // Wait for service to be created
-	// 'cf bind-service message-service database',
-	// 'cf restart message-service',
-	// // Smoke tests
-	// 'cf logs --recent message-service', // | grep GET | grep '\[APP\/PROC\/WEB\/\d\+\]'',
-	// 'cf delete-space cfpush-tutorial -f',
-	// 'cf logout'
+	'cf create-service elephantsql turtle database',
+	'cf bind-service message-service database',
+	'cf restart message-service',
+	// Smoke tests
+	'cf logs --recent message-service', // | grep GET | grep '\[APP\/PROC\/WEB\/\d\+\]'',
+	'cf delete-space cfpush-tutorial -f',
+	'cf logout'
 ];
 
 const config = parseConfig(commands, process.env);
