@@ -24,7 +24,8 @@ export const createCfContextMiddleware = (cloudFoundryApi: CloudFoundryApi = def
 	const cfContextMiddleware: Middleware<{}, State, Dispatch<Action>> = store => next => async action => {
 		switch (action.type) {
 			case (FINISHED): {
-				const cfContextUpdate = await update(action.payload.command);
+				const {command} = store.getState().commands.current;
+				const cfContextUpdate = await update(command);
 				store.dispatch(updateCfContext(cfContextUpdate));
 			}
 			// Falls through

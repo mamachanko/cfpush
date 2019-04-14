@@ -41,7 +41,6 @@ describe('<Command/>', () => {
 
 			stdin.write(SPACE);
 
-			expect(run).toHaveBeenCalledWith('test command');
 			expect(run).toHaveBeenCalledTimes(1);
 		});
 

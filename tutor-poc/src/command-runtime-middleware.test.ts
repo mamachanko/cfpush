@@ -28,7 +28,7 @@ describe('CommandRuntimeMiddleware', () => {
 				handlers.stdout.map((stdoutHandler: StdoutHandler) => stdoutHandler(text));
 
 			exitCommand = () =>
-				handlers.exit.map((exitHandler: ExitHandler) => exitHandler(command));
+				handlers.exit.map((exitHandler: ExitHandler) => exitHandler());
 
 			return {write: writeStub, cancel: cancelStub};
 		};
@@ -57,7 +57,7 @@ describe('CommandRuntimeMiddleware', () => {
 
 	describe('when running a command', () => {
 		beforeEach(() => {
-			sut(runCommand('test-command --flag --positional arg'));
+			sut(runCommand());
 		});
 
 		it('starts to run a command', () => {
@@ -71,7 +71,7 @@ describe('CommandRuntimeMiddleware', () => {
 		});
 
 		it('calls the next middleware', () => {
-			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand('test-command --flag --positional arg'));
+			expect(nextMiddlewareMock).toHaveBeenCalledWith(runCommand());
 			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
 		});
 
@@ -120,7 +120,7 @@ describe('CommandRuntimeMiddleware', () => {
 			});
 
 			it('emits command finished', () => {
-				expect(storeMock.dispatch).toHaveBeenCalledWith(finished('test-command --flag --positional arg'));
+				expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
 				expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // Previous calls exist
 			});
 		});

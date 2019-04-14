@@ -12,15 +12,13 @@ import {Output} from './output';
 import * as reducer from './reducer';
 
 const CommandTrigger = ({currentCommand: {command}, run, waitForTrigger}): React.ReactElement => {
-	const runCommand = React.useCallback(() => run(command), [run, command]);
-
 	React.useLayoutEffect(() => {
 		if (!waitForTrigger) {
-			runCommand();
+			run();
 		}
-	}, [waitForTrigger, runCommand]);
+	}, [waitForTrigger, run]);
 
-	useOnSpace(runCommand);
+	useOnSpace(run);
 
 	return <Text>{`press <space> to run "${command}"`}</Text>;
 };
@@ -111,7 +109,7 @@ const mapStateToProps = (state: reducer.State): StateProps => ({
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch): DispatchProps => ({
-	run: (command: string) => dispatch(runCommand(command)),
+	run: () => dispatch(runCommand()),
 	complete: () => dispatch(completed()),
 	submit: (input: string) => dispatch(inputReceived(input))
 });

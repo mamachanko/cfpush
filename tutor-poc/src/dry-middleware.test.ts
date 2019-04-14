@@ -1,6 +1,7 @@
 import {runCommand, started, outputReceived, finished} from './actions';
 import {createStoreMock} from './test-utils';
 import {createDryMiddleware} from './dry-middleware';
+import {UNSTARTED} from './command-status';
 
 describe('Dry Middleware', () => {
 	let storeMock;
@@ -8,7 +9,15 @@ describe('Dry Middleware', () => {
 	let sut;
 
 	beforeEach(() => {
-		storeMock = createStoreMock();
+		storeMock = createStoreMock({
+			commands: {
+				current: {
+					command: 'a real command',
+					status: UNSTARTED,
+					output: []
+				}
+			}
+		});
 		nextMiddlewareMock = jest.fn();
 		sut = createDryMiddleware(() => 'test-uid')(storeMock)(nextMiddlewareMock);
 	});
@@ -17,13 +26,13 @@ describe('Dry Middleware', () => {
 
 	describe('when running a command', () => {
 		beforeEach(() => {
-			sut(runCommand('test command'));
+			sut(runCommand());
 		});
 
-		it('pretends running the command', () => {
+		it('pretends to run the command', () => {
 			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, started());
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived('pretending to run "test command"', 'test-uid'));
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(3, finished('test command'));
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived('pretending to run "a real command"', 'test-uid'));
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(3, finished());
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(3);
 			expect(nextMiddlewareMock).not.toHaveBeenCalled();
 		});

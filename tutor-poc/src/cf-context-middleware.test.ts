@@ -13,16 +13,22 @@ describe('CF Context Middleware', () => {
 		cloudFoundryApiMock = {
 			getHostname: jest.fn().mockResolvedValueOnce('test-app-hostname')
 		};
-		storeMock = createStoreMock();
+		storeMock = createStoreMock({
+			commands: {
+				current: {
+					command: 'cf push test-app --more args --go --here'
+				}
+			}
+		});
 		nextMiddlewareMock = jest.fn();
 		sut = createCfContextMiddleware(cloudFoundryApiMock)(storeMock)(nextMiddlewareMock);
 	});
 
 	afterEach(jest.resetAllMocks);
 
-	describe('when command "cf push" finishes', () => {
+	describe('when current command "cf push" finishes', () => {
 		beforeEach(async () => {
-			await sut(finished('cf push test-app --more args --go --here'));
+			await sut(finished());
 		});
 
 		it('updates CF context with the app hostname', () => {
@@ -34,7 +40,7 @@ describe('CF Context Middleware', () => {
 		});
 
 		it('calls the next middleware', () => {
-			expect(nextMiddlewareMock).toHaveBeenCalledWith(finished('cf push test-app --more args --go --here'));
+			expect(nextMiddlewareMock).toHaveBeenCalledWith(finished());
 			expect(nextMiddlewareMock).toHaveBeenCalledTimes(1);
 		});
 	});
