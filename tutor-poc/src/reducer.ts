@@ -1,5 +1,7 @@
 import {Reducer} from 'redux';
-import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, STARTED} from './actions'; // eslint-disable-line import/named
+import * as Mustache from 'mustache';
+import * as deepmerge from 'deepmerge';
+import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions'; // eslint-disable-line import/named
 import * as CommandStatus from './command-status';
 
 type Command = string;
@@ -33,6 +35,7 @@ type App = {
 
 export interface State {
 	app: App;
+	cfContext: any;
 	commands: Commands;
 }
 
@@ -41,6 +44,7 @@ export const initialState: State = {
 		waitForTrigger: true,
 		exit: false
 	},
+	cfContext: {},
 	commands: {
 		completed: [],
 		current: {
@@ -119,12 +123,19 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 						output: state.commands.current.output
 					}],
 					current: state.commands.next[0] ? {
-						command: state.commands.next[0],
+						command: Mustache.render(state.commands.next[0], state.cfContext),
 						status: CommandStatus.UNSTARTED,
 						output: []
 					} : undefined,
 					next: state.commands.next.slice(1)
 				}
+			};
+		}
+
+		case (UPDATE_CF_CONTEXT): {
+			return {
+				...state,
+				cfContext: deepmerge(state.cfContext, action.payload)
 			};
 		}
 

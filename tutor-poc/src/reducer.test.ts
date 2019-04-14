@@ -1,4 +1,4 @@
-import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, outputReceived, started} from './actions';
+import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, outputReceived, started, updateCfContext} from './actions';
 import {FINISHED, RUNNING, UNSTARTED} from './command-status';
 import {reducer, State} from './reducer';
 
@@ -7,6 +7,7 @@ const defaultState: State = {
 		waitForTrigger: false,
 		exit: false
 	},
+	cfContext: {},
 	commands: {
 		completed: [],
 		current: {
@@ -155,40 +156,6 @@ describe('reducer', () => {
 		});
 	});
 
-	describe('when completing the first command', () => {
-		it('completes the current command and sets the next current command', () => {
-			const nextState = reducer({
-				...defaultState,
-				commands: {
-					...defaultState.commands,
-					current: {
-						...defaultState.commands.current,
-						status: FINISHED,
-						output: ['existing command output 1', 'existing command output 2']
-					}
-				}
-			}, completed());
-
-			expect(nextState).toStrictEqual({
-				...defaultState,
-				commands: {
-					...defaultState.commands,
-					completed: [{
-						command: 'command one',
-						output: ['existing command output 1', 'existing command output 2']
-					}],
-					current: {
-						...defaultState.commands.current,
-						command: 'command two',
-						output: [],
-						status: UNSTARTED
-					},
-					next: ['command three']
-				}
-			});
-		});
-	});
-
 	describe('when completing a command', () => {
 		it('completes the current command and sets the next current command', () => {
 			const nextState = reducer({
@@ -228,34 +195,132 @@ describe('reducer', () => {
 				}
 			});
 		});
+
+		describe('when completing the first command', () => {
+			it('completes the current command and sets the next current command', () => {
+				const nextState = reducer({
+					...defaultState,
+					commands: {
+						...defaultState.commands,
+						current: {
+							...defaultState.commands.current,
+							status: FINISHED,
+							output: ['existing command output 1', 'existing command output 2']
+						}
+					}
+				}, completed());
+
+				expect(nextState).toStrictEqual({
+					...defaultState,
+					commands: {
+						...defaultState.commands,
+						completed: [{
+							command: 'command one',
+							output: ['existing command output 1', 'existing command output 2']
+						}],
+						current: {
+							...defaultState.commands.current,
+							command: 'command two',
+							output: [],
+							status: UNSTARTED
+						},
+						next: ['command three']
+					}
+				});
+			});
+		});
+
+		describe('when completing the last command', () => {
+			it('completes the current command and sets the current command to undefined', () => {
+				const nextState = reducer({
+					...defaultState,
+					commands: {
+						...defaultState.commands,
+						current: {
+							...defaultState.commands.current,
+							status: FINISHED,
+							output: ['existing command output 1', 'existing command output 2']
+						},
+						next: []
+					}
+				}, completed());
+
+				expect(nextState).toStrictEqual({
+					...defaultState,
+					commands: {
+						...defaultState.commands,
+						completed: [{
+							command: 'command one',
+							output: ['existing command output 1', 'existing command output 2']
+						}],
+						current: undefined,
+						next: []
+					}
+				});
+			});
+		});
+
+		describe('when the next command contains a placeholder', () => {
+			it('completes the current command, renders the next command it using the cf context and sets it as current', () => {
+				const nextState = reducer({
+					...defaultState,
+					cfContext: {
+						here: {
+							is: {
+								some: 'context'
+							}
+						}
+					},
+					commands: {
+						...defaultState.commands,
+						next: ['this command needs {{here.is.some}} to be rendered']
+					}
+				}, completed());
+
+				expect(nextState).toStrictEqual({
+					...defaultState,
+					cfContext: {
+						here: {
+							is: {
+								some: 'context'
+							}
+						}
+					},
+					commands: {
+						completed: [{command: 'command one', output: []}],
+						current: {
+							command: 'this command needs context to be rendered',
+							status: 'UNSTARTED',
+							output: []
+						},
+						next: []
+					}
+				});
+			});
+		});
 	});
 
-	describe('when completing the last command', () => {
-		it('completes the current command and sets the current command to undefined', () => {
-			const nextState = reducer({
-				...defaultState,
-				commands: {
-					...defaultState.commands,
-					current: {
-						...defaultState.commands.current,
-						status: FINISHED,
-						output: ['existing command output 1', 'existing command output 2']
-					},
-					next: []
-				}
-			}, completed());
+	describe('when cf context is updated', () => {
+		it('updates the cf context', () => {
+			const nextState = reducer(defaultState, updateCfContext({this: {is: {a: {cf: {context: 'update'}}}}}));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
-					completed: [{
-						command: 'command one',
-						output: ['existing command output 1', 'existing command output 2']
-					}],
-					current: undefined,
-					next: []
-				}
+				cfContext: {this: {is: {a: {cf: {context: 'update'}}}}}
+			});
+		});
+
+		describe('when cf context exists already', () => {
+			it('merges the cf context update', () => {
+				const nextState = reducer({
+					...defaultState,
+					cfContext: {test: {numbers: {1: 'one', 3: 'three'}}}
+				}, updateCfContext({test: {numbers: {2: 'two'}}}));
+
+				expect(nextState).toStrictEqual({
+					...defaultState,
+					cfContext: {test: {numbers: {1: 'one', 2: 'two', 3: 'three'}}}
+				});
 			});
 		});
 	});

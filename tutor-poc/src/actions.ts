@@ -47,6 +47,12 @@ export interface Completed {
 	type: typeof COMPLETED;
 }
 
+export const UPDATE_CF_CONTEXT = 'UPDATE_CF_CONTEXT';
+export interface UpdateCfContext {
+	type: typeof UPDATE_CF_CONTEXT;
+	payload: any;
+}
+
 export const EXIT_APP = 'EXIT_APP';
 export interface ExitApp {
 	type: typeof EXIT_APP;
@@ -60,6 +66,7 @@ export type Action =
 	| InputReceived
 	| Finished
 	| Completed
+	| UpdateCfContext
 	| ExitApp;
 
 export const runCommand = (command: string): RunCommand => ({type: RUN_COMMAND, payload: {command}});
@@ -69,4 +76,5 @@ export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
 export const inputReceived = (input: string): InputReceived => ({type: INPUT_RECEIVED, payload: {input}});
 export const finished = (command: string): Finished => ({type: FINISHED, payload: {command}});
 export const completed = (): Completed => ({type: COMPLETED});
+export const updateCfContext = (contextUpdate: any): UpdateCfContext => ({type: UPDATE_CF_CONTEXT, payload: contextUpdate});
 export const exitApp = (): ExitApp => ({type: EXIT_APP});

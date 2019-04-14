@@ -40,6 +40,7 @@ describe('CommandRuntimeMiddleware', () => {
 				waitForTrigger: false,
 				exit: false
 			},
+			cfContext: {},
 			commands: {
 				completed: [],
 				current: {

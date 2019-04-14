@@ -1,6 +1,5 @@
-import * as Mustache from 'mustache';
 import {Dispatch, Middleware} from 'redux';
-import {Action, FINISHED, runCommand, RUN_COMMAND} from './actions'; // eslint-disable-line import/named
+import {Action, FINISHED, updateCfContext} from './actions'; // eslint-disable-line import/named
 import {CloudFoundryApi, cloudFoundryApi as defaultCloudFoundryApi} from './cloud-foundry';
 import {State} from './reducer';
 
@@ -11,29 +10,24 @@ const parseAppName = (command: string): string => {
 };
 
 export const createCfContextMiddleware = (cloudFoundryApi: CloudFoundryApi = defaultCloudFoundryApi): Middleware<{}, State, Dispatch<Action>> => {
-	const context: any = {};
-
-	const process = async (command: string): Promise<void> => {
+	const update = async (command: string): Promise<any> => {
 		if (isCfPush(command)) {
 			const appName = parseAppName(command);
-			context[appName] = {hostname: await cloudFoundryApi.getHostname(appName)};
+			const hostname = await cloudFoundryApi.getHostname(appName);
+			return {[appName]: {hostname}};
 		}
+
+		return {};
 	};
 
 	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-	const cfContextMiddleware: Middleware<{}, State, Dispatch<Action>> = _ => next => async action => {
+	const cfContextMiddleware: Middleware<{}, State, Dispatch<Action>> = store => next => async action => {
 		switch (action.type) {
-			case (RUN_COMMAND): {
-				const command = Mustache.render(action.payload.command, context);
-				next(runCommand(command));
-				break;
-			}
-
 			case (FINISHED): {
-				await process(action.payload.command);
-				next(action);
-				break;
+				const cfContextUpdate = await update(action.payload.command);
+				store.dispatch(updateCfContext(cfContextUpdate));
 			}
+			// Falls through
 
 			default:
 				next(action);
