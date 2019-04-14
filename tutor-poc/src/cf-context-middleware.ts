@@ -1,39 +1,24 @@
 import {Dispatch, Middleware} from 'redux';
 import {Action, FINISHED, updateCfContext} from './actions'; // eslint-disable-line import/named
-import {CloudFoundryApi, cloudFoundryApi as defaultCloudFoundryApi} from './cloud-foundry';
 import {State} from './reducer';
+import {CfContextUpdater, createCfContextUpdater} from './cf-context-updater'; // eslint-disable-line import/named
 
-const isCfPush = (command: string): boolean => Boolean(command.match(/cf\s+push/));
-const parseAppName = (command: string): string => {
-	const {appName} = command.match(/\s*cf\s+push\s+(?<appName>[a-z-]+)/i).groups;
-	return appName;
-};
-
-export const createCfContextMiddleware = (cloudFoundryApi: CloudFoundryApi = defaultCloudFoundryApi): Middleware<{}, State, Dispatch<Action>> => {
-	const update = async (command: string): Promise<any> => {
-		if (isCfPush(command)) {
-			const appName = parseAppName(command);
-			const hostname = await cloudFoundryApi.getHostname(appName);
-			return {[appName]: {hostname}};
-		}
-
-		return {};
-	};
-
-	// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-	const cfContextMiddleware: Middleware<{}, State, Dispatch<Action>> = store => next => async action => {
-		switch (action.type) {
-			case (FINISHED): {
-				const {command} = store.getState().commands.current;
-				const cfContextUpdate = await update(command);
-				store.dispatch(updateCfContext(cfContextUpdate));
-			}
-			// Falls through
-
-			default:
-				next(action);
+export const createCfContextMiddleware = (cfContextUpdater: CfContextUpdater = createCfContextUpdater()): Middleware<{}, State, Dispatch<Action>> => store => next => async action => {
+	const updateMaybe = async (): Promise<void> => {
+		const {command} = store.getState().commands.current;
+		const update = await cfContextUpdater(command);
+		if (update) {
+			store.dispatch(updateCfContext(update));
 		}
 	};
 
-	return cfContextMiddleware;
+	switch (action.type) {
+		case (FINISHED): {
+			await updateMaybe();
+		}
+		// Falls through
+
+		default:
+			next(action);
+	}
 };

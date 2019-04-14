@@ -6,10 +6,9 @@ export interface CloudFoundryApi {
 	getHostname: GetHostname;
 }
 
-const getAppStatus = async (appName: string): Promise<string> =>
-	(await execa('cf', ['app', appName])).stdout;
+const appStatus = async (appName: string): Promise<string> => (await execa('cf', ['app', appName])).stdout;
 
-export const createCloudFoundryApi = (getAppStatus): CloudFoundryApi => ({
+export const createCloudFoundryApi = (getAppStatus = appStatus): CloudFoundryApi => ({
 	getHostname: async (appName: string): Promise<string> => {
 		const appStatus = await getAppStatus(appName);
 		return appStatus
@@ -18,5 +17,3 @@ export const createCloudFoundryApi = (getAppStatus): CloudFoundryApi => ({
 			.hostname;
 	}
 });
-
-export const cloudFoundryApi: CloudFoundryApi = createCloudFoundryApi(getAppStatus);
