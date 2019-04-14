@@ -1,10 +1,11 @@
+import {CfContextUpdater, createCfContextUpdater} from './cf-context-updater'; // eslint-disable-line import/named
 import {CloudFoundryApi} from './cloud-foundry';
-import {createCfContextUpdater, CfContextUpdater} from './cf-context-updater'; // eslint-disable-line import/named
 
 describe('CfContextUpdater', () => {
 	let sut: CfContextUpdater;
 	const cloudFoundryApiMock: CloudFoundryApi = {
-		getHostname: jest.fn()
+		getHostname: jest.fn(),
+		untilServiceCreated: jest.fn()
 	};
 
 	beforeEach(() => {
@@ -27,7 +28,16 @@ describe('CfContextUpdater', () => {
 		});
 	});
 
-	describe('when the command is not a "cf push"', () => {
+	describe('when the command is "cf create-service"', () => {
+		it('waits until the service is created', async () => {
+			await sut('cf create-service service-name plan-name service-instance-name');
+
+			expect(cloudFoundryApiMock.untilServiceCreated).toHaveBeenCalledWith('service-instance-name');
+			expect(cloudFoundryApiMock.untilServiceCreated).toHaveBeenCalledTimes(1);
+		});
+	});
+
+	describe('when the command is not interesting', () => {
 		it('returns an empty object', async () => {
 			const update = await sut('some command');
 

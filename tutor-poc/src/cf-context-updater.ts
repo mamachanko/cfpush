@@ -16,5 +16,10 @@ export const createCfContextUpdater = (cloudFoundryApi: CloudFoundryApi = create
 		return {[appName]: {hostname}};
 	}
 
+	if (command.match(/cf\s+create-service/i)) {
+		const {serviceInstanceName} = command.match(/cf\s+create-service\s+(?<serviceName>[a-z-]+)\s+(?<planName>[a-z-]+)\s+(?<serviceInstanceName>[a-z-]+)/).groups;
+		await cloudFoundryApi.untilServiceCreated(serviceInstanceName);
+	}
+
 	return null;
 };

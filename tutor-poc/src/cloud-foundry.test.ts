@@ -15,19 +15,82 @@ state     since                  cpu    memory        disk           details
 #0   running   2019-04-11T13:53:25Z   0.2%   8.4M of 64M   6.7M of 128M
 `;
 
-describe('CloudFoundry', () => {
-	const getAppStatus = jest.fn().mockResolvedValueOnce(appStatus);
-	const cloudFoundry: CloudFoundryApi = createCloudFoundryApi(getAppStatus);
+const serviceStatusCreateSucceeded = `
+Showing info of service database in org cfpush / space cfpush-tutorial as user@example.com...
 
-	afterEach(() => {
-		jest.resetAllMocks();
+name:            database
+service:         elephantsql
+tags:
+plan:            turtle
+description:     PostgreSQL as a Service
+documentation:   http://docs.run.pivotal.io/marketplace/services/elephantsql.html
+dashboard:       https://cloudfoundry.appdirect.com/api/custom/cloudfoundry/v2/sso/start?serviceUuid=123
+
+Showing status of last operation from service database...
+
+status:    create succeeded
+message:
+started:   2019-04-14T15:32:13Z
+updated:   2019-04-14T15:32:13Z
+
+There are no bound apps for this service.
+`;
+
+const serviceStatusPending = `
+Showing info of service database in org cfpush / space cfpush-tutorial as user@example.com...
+
+name:            database
+service:         elephantsql
+tags:
+plan:            turtle
+description:     PostgreSQL as a Service
+documentation:   http://docs.run.pivotal.io/marketplace/services/elephantsql.html
+dashboard:       https://cloudfoundry.appdirect.com/api/custom/cloudfoundry/v2/sso/start?serviceUuid=123
+
+Showing status of last operation from service database...
+
+status:    create pending
+message:
+started:   2019-04-14T15:32:13Z
+updated:   2019-04-14T15:32:13Z
+
+There are no bound apps for this service.
+`;
+
+describe('CloudFoundry', () => {
+	const getAppStatus = jest.fn();
+	const getServiceStatus = jest.fn();
+	const cloudFoundry: CloudFoundryApi = createCloudFoundryApi(getAppStatus, getServiceStatus);
+
+	afterEach(jest.resetAllMocks);
+
+	describe('when getting an app\'s hostname', () => {
+		beforeEach(() => {
+			getAppStatus
+				.mockResolvedValueOnce(appStatus);
+		});
+		it('returns app\'s first hostname', async () => {
+			const hostname = await cloudFoundry.getHostname('test-app');
+
+			expect(hostname).toEqual('app-hostname-1');
+			expect(getAppStatus).toHaveBeenCalledWith('test-app');
+			expect(getAppStatus).toHaveBeenCalledTimes(1);
+		});
 	});
 
-	it('returns app\'s first hostname', async () => {
-		const hostname = await cloudFoundry.getHostname('test-app');
+	describe('when waiting for a service to be created', () => {
+		beforeEach(() => {
+			getServiceStatus
+				.mockResolvedValueOnce(serviceStatusPending)
+				.mockResolvedValueOnce(serviceStatusPending)
+				.mockResolvedValueOnce(serviceStatusCreateSucceeded);
+		});
 
-		expect(hostname).toEqual('app-hostname-1');
-		expect(getAppStatus).toHaveBeenCalledWith('test-app');
-		expect(getAppStatus).toHaveBeenCalledTimes(1);
+		it('blocks until the service is created and returns its status', async () => {
+			await cloudFoundry.untilServiceCreated('service-instance-name');
+
+			expect(getServiceStatus).toHaveBeenCalledWith('service-instance-name');
+			expect(getServiceStatus).toHaveBeenCalledTimes(3);
+		});
 	});
 });

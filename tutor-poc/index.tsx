@@ -7,7 +7,6 @@ const commands = [
 	'cf create-space cfpush-tutorial',
 	'cf target -s cfpush-tutorial',
 	'cf push chat-app -p ../builds/chat-app.zip -b staticfile_buildpack --random-route',
-	'echo {{chat-app.hostname}}',
 	'cf app chat-app',
 	'cf scale chat-app -m 64M -k 128M -f',
 	'cf push message-service -p ../builds/message-service.jar --random-route',
