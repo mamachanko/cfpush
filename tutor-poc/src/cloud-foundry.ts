@@ -21,15 +21,13 @@ export const createCloudFoundryApi = (getAppStatus = appStatus, getServiceStatus
 			.hostname;
 	},
 	untilServiceCreated: async (serviceInstanceName: string): Promise<void> => {
-		for (;;) {
-			// eslint-disable-next-line no-await-in-loop
-			const serviceStatus = await getServiceStatus(serviceInstanceName);
-			if (serviceStatus.match(/create succeeded/i)) {
-				break;
-			}
-
-			// eslint-disable-next-line no-await-in-loop
+		let serviceStatus = '';
+		do {
+			/* eslint-disable no-await-in-loop */
+			serviceStatus = await getServiceStatus(serviceInstanceName);
 			await sleep(1000);
+			/* eslint-enable */
 		}
+		while (!serviceStatus.match(/create succeeded/i));
 	}
 });
