@@ -16,5 +16,5 @@ export const createCfContextUpdater = (cloudFoundryApi: CloudFoundryApi = create
 		return {[appName]: {hostname}};
 	}
 
-	return {};
+	return null;
 };

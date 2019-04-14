@@ -31,7 +31,7 @@ describe('CfContextUpdater', () => {
 		it('returns an empty object', async () => {
 			const update = await sut('some command');
 
-			expect(update).toStrictEqual({});
+			expect(update).toBeNull();
 			expect(cloudFoundryApiMock.getHostname).not.toHaveBeenCalled();
 		});
 	});

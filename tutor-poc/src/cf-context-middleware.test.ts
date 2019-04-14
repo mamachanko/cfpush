@@ -48,6 +48,7 @@ describe('CF Context Middleware', () => {
 
 		describe('when there is no update to the cf context', () => {
 			beforeEach(async () => {
+				cfContextUpdater.mockResolvedValueOnce(null);
 				await sut(finished());
 			});
 
