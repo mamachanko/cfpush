@@ -61,7 +61,7 @@ export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid):
 					break;
 				}
 
-				default: break;
+				// No default
 			}
 
 			next(action);
