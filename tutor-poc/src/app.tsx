@@ -11,9 +11,9 @@ import {loggingMiddleware} from './logging-middleware';
 import {Middlewares} from './middleware'; // eslint-disable-line import/named
 import {Quitable} from './quitable';
 import {reducer} from './reducer';
-import {State} from './state';
+import {State, UNSTARTED} from './state';
 import {Title} from './title';
-import {WhileCommands} from './while-commands';
+import {WhilePages} from './while-pages';
 
 type AppProps = {
 	store: Store;
@@ -21,12 +21,12 @@ type AppProps = {
 
 const App: React.FC<AppProps> = ({store}): React.ReactElement => (
 	<Provider store={store}>
-		<WhileCommands>
+		<WhilePages>
 			<Quitable exitDisplay={<ExitMessage/>}>
 				<Title/>
 				<CurrentCommand/>
 			</Quitable>
-		</WhileCommands>
+		</WhilePages>
 	</Provider>
 );
 
@@ -53,7 +53,7 @@ const createInitialState = ({pages, mode}: Config): State => {
 			completed: [],
 			current: {
 				...first,
-				status: 'UNSTARTED',
+				commandStatus: UNSTARTED,
 				output: []
 			},
 			next

@@ -3,14 +3,14 @@ import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
 import {Provider} from 'react-redux';
 import {createStoreMock} from './test-utils';
-import {WhileCommands} from './while-commands';
+import {WhilePages} from './while-pages';
 
-describe('<WhileCommands>', () => {
+describe('<WhilePages>', () => {
 	afterEach(() => {
 		cleanup();
 	});
 
-	describe('when there is a current command', () => {
+	describe('when there is a current page', () => {
 		const store = createStoreMock({
 			pages: {
 				completed: [],
@@ -27,17 +27,17 @@ describe('<WhileCommands>', () => {
 		it('renders children', () => {
 			const {lastFrame} = render(
 				<Provider store={store}>
-					<WhileCommands>
+					<WhilePages>
 						<Text>test child 1</Text>
 						<Text>test child 2</Text>
-					</WhileCommands>
+					</WhilePages>
 				</Provider>
 			);
 
 			expect(lastFrame()).toMatch(/test child 1\s*test child 2/);
 		});
 	});
-	describe('when there is no more current command', () => {
+	describe('when there is no more current page', () => {
 		const store = createStoreMock({
 			pages: {
 				completed: [],
@@ -49,10 +49,10 @@ describe('<WhileCommands>', () => {
 		it('renders nothing', () => {
 			const {lastFrame} = render(
 				<Provider store={store}>
-					<WhileCommands>
+					<WhilePages>
 						<Text>test child 1</Text>
 						<Text>test child 2</Text>
-					</WhileCommands>
+					</WhilePages>
 				</Provider>
 			);
 
