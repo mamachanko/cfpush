@@ -6,8 +6,8 @@ import {CTRL_C, sleep, SPACE} from './test-utils';
 
 describe('<App />', () => {
 	const pages = [
-		{text: '', command: 'echo hi this is the first command'},
-		{text: '', command: 'echo hello this is the second command'}
+		{text: 'Let us run the first command', command: 'echo hi this is the first command'},
+		{text: 'Now, let us run the second command', command: 'echo hello this is the second command'}
 	];
 
 	afterEach(() => {
@@ -15,9 +15,10 @@ describe('<App />', () => {
 	});
 
 	describe('when in tutorial mode', () => {
-		it('runs commands one after another by pressing <space>', async () => {
+		it('pages and runs commands one after another by pressing <space>', async () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
+			expect(stripAnsi(lastFrame())).toContain('Let us run the first command');
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
 			stdin.write(SPACE);
@@ -28,6 +29,7 @@ describe('<App />', () => {
 			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
 
 			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toContain('Now, let us run the second command');
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello this is the second command"');
 
 			stdin.write(SPACE);
@@ -46,6 +48,7 @@ describe('<App />', () => {
 		it('quits on "ctrl-c"', async () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
+			expect(stripAnsi(lastFrame())).toContain('Let us run the first command');
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
 			stdin.write(SPACE);
@@ -64,9 +67,10 @@ describe('<App />', () => {
 	});
 
 	describe('when in dry mode', () => {
-		it('pretends to run commands on <space>', async () => {
+		it('pages and pretends to run commands on <space>', async () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Dry}));
 
+			expect(stripAnsi(lastFrame())).toContain('Let us run the first command');
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
 			stdin.write(SPACE);
@@ -74,6 +78,7 @@ describe('<App />', () => {
 			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
 
 			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toContain('Now, let us run the second command');
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello this is the second command"');
 
 			stdin.write(SPACE);

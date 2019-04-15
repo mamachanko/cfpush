@@ -71,6 +71,7 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 		case (RUNNING): {
 			return (
 				<Column>
+					<Text>{props.text}</Text>
 					<Output {...props}/>
 					<Running/>
 				</Column>
@@ -80,6 +81,7 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 		case (INPUT_REQUIRED): {
 			return (
 				<Column>
+					<Text>{props.text}</Text>
 					<Output {...props}/>
 					<InputPrompt {...props} prompt="⚠️  input required >_"/>
 				</Column>
@@ -89,6 +91,7 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 		case (FINISHED): {
 			return (
 				<Column>
+					<Text>{props.text}</Text>
 					<Output {...props}/>
 					<CompletePrompt {...props}/>
 				</Column>
@@ -98,6 +101,7 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 		default: {
 			return (
 				<Column>
+					<Text>{props.text}</Text>
 					<CommandTrigger {...props}/>
 				</Column>
 			);

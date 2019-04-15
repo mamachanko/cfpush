@@ -10,7 +10,11 @@ describe('<Page/>', () => {
 	const ENTER = '\r';
 	const SPACE = ' ';
 	const defaultProps: PageProps = {
-		text: '',
+		text: `
+This is
+
+a test page
+`,
 		command: 'test command',
 		commandStatus: UNSTARTED,
 		output: [],
@@ -25,6 +29,12 @@ describe('<Page/>', () => {
 	});
 
 	describe('when command has not yet been run', () => {
+		it('shows text', () => {
+			const {lastFrame} = render(<Page {...defaultProps}/>);
+
+			expect(lastFrame()).toMatch(/this is\s+a test page/i);
+		});
+
 		it('shows which command can be run', () => {
 			const {lastFrame} = render(<Page {...defaultProps}/>);
 
@@ -54,10 +64,21 @@ describe('<Page/>', () => {
 	});
 
 	describe('when command is running', () => {
+		it('shows text', () => {
+			const runningCommand: PageProps = {
+				...defaultProps,
+				command: 'test command',
+				commandStatus: RUNNING,
+				output: []
+			};
+			const {lastFrame} = render(<Page {...runningCommand}/>);
+
+			expect(lastFrame()).toMatch(/this is\s+a test page/i);
+		});
+
 		it('shows a spinner', () => {
 			const runningCommand: PageProps = {
 				...defaultProps,
-				text: '',
 				command: 'test command',
 				commandStatus: RUNNING,
 				output: []
@@ -100,11 +121,16 @@ describe('<Page/>', () => {
 		describe('when input is required', () => {
 			const commandWaitingForInput: PageProps = {
 				...defaultProps,
-				text: '',
 				command: 'test command',
 				commandStatus: INPUT_REQUIRED,
 				output: []
 			};
+
+			it('shows text', () => {
+				const {lastFrame} = render(<Page {...commandWaitingForInput}/>);
+
+				expect(lastFrame()).toMatch(/this is\s+a test page/i);
+			});
 
 			it('shows input prompt', () => {
 				const {lastFrame} = render(<Page {...commandWaitingForInput}/>);
@@ -140,11 +166,16 @@ describe('<Page/>', () => {
 	describe('when the command has finished', () => {
 		const finishedCommand: PageProps = {
 			...defaultProps,
-			text: '',
 			command: 'test command',
 			commandStatus: FINISHED,
 			output: [{text: 'test output 1', uid: '1'}, {text: 'test output 2', uid: '2'}]
 		};
+
+		it('shows text', () => {
+			const {lastFrame} = render(<Page {...finishedCommand}/>);
+
+			expect(lastFrame()).toMatch(/this is\s+a test page/i);
+		});
 
 		it('shows output', () => {
 			const {lastFrame} = render(<Page {...finishedCommand}/>);
