@@ -3,9 +3,8 @@
 import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
 import {Command, CommandProps} from './command'; // eslint-disable-line import/named
-import {RUNNING, INPUT_REQUIRED} from './command-status';
 import {FINISHED} from './actions';
-import {CurrentPage} from './state';
+import {CurrentPage, UNSTARTED, RUNNING, INPUT_REQUIRED} from './state';
 
 describe('<Command/>', () => {
 	const ENTER = '\r';
@@ -14,7 +13,7 @@ describe('<Command/>', () => {
 		currentPage: {
 			text: '',
 			command: 'test command',
-			status: 'UNSTARTED',
+			commandStatus: UNSTARTED,
 			output: []
 		},
 		waitForTrigger: true,
@@ -61,7 +60,7 @@ describe('<Command/>', () => {
 			const runningCommand: CurrentPage = {
 				text: '',
 				command: 'test command',
-				status: RUNNING,
+				commandStatus: RUNNING,
 				output: []
 			};
 			const {lastFrame} = render(<Command {...defaultProps} currentPage={runningCommand}/>);
@@ -74,7 +73,7 @@ describe('<Command/>', () => {
 				const runningCommandWithOutput: CurrentPage = {
 					text: '',
 					command: 'test command',
-					status: RUNNING,
+					commandStatus: RUNNING,
 					output: [{text: 'test command output 1', uid: '1'}, {text: 'test command output 2', uid: '2'}]
 				};
 				const {lastFrame} = render(<Command {...defaultProps} currentPage={runningCommandWithOutput}/>);
@@ -88,7 +87,7 @@ describe('<Command/>', () => {
 				const runningCommandWithoutOutput: CurrentPage = {
 					text: '',
 					command: 'test command',
-					status: RUNNING,
+					commandStatus: RUNNING,
 					output: []
 				};
 				const {lastFrame} = render(<Command {...defaultProps} currentPage={runningCommandWithoutOutput}/>);
@@ -101,7 +100,7 @@ describe('<Command/>', () => {
 			const commandWaitingForInput: CurrentPage = {
 				text: '',
 				command: 'test command',
-				status: INPUT_REQUIRED,
+				commandStatus: INPUT_REQUIRED,
 				output: []
 			};
 
@@ -140,7 +139,7 @@ describe('<Command/>', () => {
 		const finishedCommand: CurrentPage = {
 			text: '',
 			command: 'test command',
-			status: FINISHED,
+			commandStatus: FINISHED,
 			output: [{text: 'test output 1', uid: '1'}, {text: 'test output 2', uid: '2'}]
 		};
 

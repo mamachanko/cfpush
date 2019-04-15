@@ -1,7 +1,6 @@
 import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, outputReceived, started, updateCfContext} from './actions';
-import {FINISHED, RUNNING, UNSTARTED} from './command-status';
 import {reducer} from './reducer';
-import {State} from './state';
+import {State, UNSTARTED, RUNNING, FINISHED} from './state';
 
 const defaultState: State = {
 	app: {
@@ -14,7 +13,7 @@ const defaultState: State = {
 		current: {
 			text: 'The first page',
 			command: 'command one',
-			status: UNSTARTED,
+			commandStatus: UNSTARTED,
 			output: []
 		},
 		next: [
@@ -35,7 +34,7 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						status: RUNNING
+						commandStatus: RUNNING
 					}
 				}
 			});
@@ -120,7 +119,7 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						status: INPUT_REQUIRED
+						commandStatus: INPUT_REQUIRED
 					}
 				}
 			});
@@ -137,7 +136,7 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						status: RUNNING
+						commandStatus: RUNNING
 					}
 				}
 			});
@@ -154,7 +153,7 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						status: FINISHED
+						commandStatus: FINISHED
 					}
 				}
 			});
@@ -174,7 +173,7 @@ describe('reducer', () => {
 					}],
 					current: {
 						...defaultState.pages.current,
-						status: FINISHED,
+						commandStatus: FINISHED,
 						output: ['existing command output 1', 'existing command output 2']
 					}
 				}
@@ -198,7 +197,7 @@ describe('reducer', () => {
 						text: 'The second page',
 						command: 'command two',
 						output: [],
-						status: UNSTARTED
+						commandStatus: UNSTARTED
 					},
 					next: [{text: 'The third page', command: 'command three'}]
 				}
@@ -213,7 +212,7 @@ describe('reducer', () => {
 						...defaultState.pages,
 						current: {
 							...defaultState.pages.current,
-							status: FINISHED,
+							commandStatus: FINISHED,
 							output: ['existing command output 1', 'existing command output 2']
 						}
 					}
@@ -233,7 +232,7 @@ describe('reducer', () => {
 							text: 'The second page',
 							command: 'command two',
 							output: [],
-							status: UNSTARTED
+							commandStatus: UNSTARTED
 						},
 						next: [{text: 'The third page', command: 'command three'}]
 					}
@@ -249,7 +248,7 @@ describe('reducer', () => {
 						...defaultState.pages,
 						current: {
 							...defaultState.pages.current,
-							status: FINISHED,
+							commandStatus: FINISHED,
 							output: ['existing command output 1', 'existing command output 2']
 						},
 						next: []
@@ -306,7 +305,7 @@ describe('reducer', () => {
 						current: {
 							text: 'This page\'s command needs rendering',
 							command: 'this command needs context to be rendered',
-							status: 'UNSTARTED',
+							commandStatus: 'UNSTARTED',
 							output: []
 						},
 						next: []

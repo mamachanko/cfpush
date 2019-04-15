@@ -5,11 +5,10 @@ import {connect} from 'react-redux';
 import * as Redux from 'redux';
 import {completed, inputReceived, runCommand} from './actions';
 import {Column} from './column';
-import * as CommandStatus from './command-status';
 import {useOnSpace} from './input';
 import {InputPrompt} from './input-prompt';
 import {Output} from './output';
-import {State, CurrentPage} from './state';
+import {State, CurrentPage, RUNNING, INPUT_REQUIRED, FINISHED} from './state';
 
 const CommandTrigger = ({currentPage: {command}, run, waitForTrigger}): React.ReactElement => {
 	React.useLayoutEffect(() => {
@@ -65,8 +64,8 @@ export type CommandProps =
 	& DispatchProps;
 
 export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
-	switch (props.currentPage.status) {
-		case (CommandStatus.RUNNING): {
+	switch (props.currentPage.commandStatus) {
+		case (RUNNING): {
 			return (
 				<Column>
 					<Output {...props.currentPage}/>
@@ -75,7 +74,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 			);
 		}
 
-		case (CommandStatus.INPUT_REQUIRED): {
+		case (INPUT_REQUIRED): {
 			return (
 				<Column>
 					<Output {...props.currentPage}/>
@@ -84,7 +83,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 			);
 		}
 
-		case (CommandStatus.FINISHED): {
+		case (FINISHED): {
 			return (
 				<Column>
 					<Output {...props.currentPage}/>

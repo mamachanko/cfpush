@@ -1,4 +1,3 @@
-import * as CommandStatus from './command-status';
 
 type Command = string;
 type Text = string;
@@ -17,8 +16,19 @@ interface CompletedPage extends Page {
 	output: ReadonlyArray<Output>;
 }
 
+export const UNSTARTED = 'UNSTARTED';
+export const RUNNING = 'RUNNING';
+export const INPUT_REQUIRED = 'INPUT_REQUIRED';
+export const FINISHED = 'FINISHED';
+
+export type CommandStatus =
+	| typeof UNSTARTED
+	| typeof RUNNING
+	| typeof INPUT_REQUIRED
+	| typeof FINISHED;
+
 export interface CurrentPage extends Page {
-	status: CommandStatus.CommandStatus;
+	commandStatus: CommandStatus;
 	output: ReadonlyArray<Output>;
 }
 
