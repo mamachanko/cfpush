@@ -1,43 +1,9 @@
-import {Reducer} from 'redux';
-import * as Mustache from 'mustache';
 import * as deepmerge from 'deepmerge';
+import * as Mustache from 'mustache';
+import {Reducer} from 'redux';
 import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions'; // eslint-disable-line import/named
 import * as CommandStatus from './command-status';
-
-type Command = string;
-
-export type Output = {
-	text: string;
-	uid: string;
-}
-
-interface CompletedCommand {
-	command: Command;
-	output: ReadonlyArray<Output>;
-}
-
-export interface CurrentCommand {
-	command: Command;
-	status: CommandStatus.CommandStatus;
-	output: ReadonlyArray<Output>;
-}
-
-interface Commands {
-	completed: ReadonlyArray<CompletedCommand>;
-	current: CurrentCommand;
-	next: ReadonlyArray<Command>;
-}
-
-type App = {
-	waitForTrigger: boolean;
-	exit: boolean;
-}
-
-export interface State {
-	app: App;
-	cfContext: any;
-	commands: Commands;
-}
+import {State} from './state';
 
 export const initialState: State = {
 	app: {

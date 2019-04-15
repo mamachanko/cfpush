@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {exitApp} from './actions';
 import {useOnCtrlC} from './input';
-import {State} from './reducer';
+import {State} from './state';
 
 type OwnProps = {
 	exitDisplay: React.ReactElement;

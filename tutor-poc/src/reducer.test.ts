@@ -1,6 +1,7 @@
 import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, outputReceived, started, updateCfContext} from './actions';
 import {FINISHED, RUNNING, UNSTARTED} from './command-status';
-import {reducer, State} from './reducer';
+import {reducer} from './reducer';
+import {State} from './state';
 
 const defaultState: State = {
 	app: {

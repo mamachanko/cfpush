@@ -1,7 +1,8 @@
-import {Store} from 'redux';
 import * as deepmerge from 'deepmerge';
+import {Store} from 'redux';
 import {Action} from './actions'; // eslint-disable-line import/named
-import {State, initialState} from './reducer';
+import {initialState} from './reducer';
+import {State} from './state';
 
 export const createStoreMock = (partialState: any = {}): Store<State, Action> => ({
 	dispatch: jest.fn(),

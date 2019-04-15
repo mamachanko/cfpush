@@ -4,8 +4,8 @@ import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
 import {Command, CommandProps} from './command'; // eslint-disable-line import/named
 import {RUNNING, INPUT_REQUIRED} from './command-status';
-import {CurrentCommand} from './reducer';
 import {FINISHED} from './actions';
+import {CurrentCommand} from './state';
 
 describe('<Command/>', () => {
 	const ENTER = '\r';

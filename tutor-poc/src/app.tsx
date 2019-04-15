@@ -9,7 +9,8 @@ import {createDryMiddleware} from './dry-middleware';
 import {ExitMessage} from './exit-message';
 import {loggingMiddleware} from './logging-middleware';
 import {Quitable} from './quitable';
-import {reducer, State} from './reducer';
+import {reducer} from './reducer';
+import {State} from './state';
 import {Title} from './title';
 import {WhileCommands} from './while-commands';
 

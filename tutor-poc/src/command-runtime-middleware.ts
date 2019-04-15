@@ -1,8 +1,8 @@
-import {Middleware, Dispatch} from 'redux';
+import {Dispatch, Middleware} from 'redux';
 import {Action, EXIT_APP, finished, inputRequired, INPUT_RECEIVED, outputReceived, RUN_COMMAND, started} from './actions'; // eslint-disable-line import/named
 import {CommandOptions, execute, ExitHandler, RunningCommand, StderrHandler, StdoutHandler} from './exec'; // eslint-disable-line import/named
 import {logger} from './logging';
-import {State} from './reducer';
+import {State} from './state';
 import {uid as defaultUid} from './uid';
 
 const parseCommand = (command: string): CommandOptions => {

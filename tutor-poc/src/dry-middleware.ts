@@ -1,6 +1,6 @@
-import {Middleware, Dispatch, Action} from 'redux';
-import {State} from './reducer';
-import {started, outputReceived, finished, RUN_COMMAND} from './actions';
+import {Action, Dispatch, Middleware} from 'redux';
+import {finished, outputReceived, RUN_COMMAND, started} from './actions';
+import {State} from './state';
 import {uid as defaultUid} from './uid';
 
 export const createDryMiddleware = (uid = defaultUid): Middleware<{}, State, Dispatch<Action>> => {
