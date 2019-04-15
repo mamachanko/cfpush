@@ -2,20 +2,18 @@
 
 import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
-import {Command, CommandProps} from './command'; // eslint-disable-line import/named
 import {FINISHED} from './actions';
-import {CurrentPage, UNSTARTED, RUNNING, INPUT_REQUIRED} from './state';
+import {Page, PageProps} from './page'; // eslint-disable-line import/named
+import {INPUT_REQUIRED, RUNNING, UNSTARTED} from './state';
 
-describe('<Command/>', () => {
+describe('<Page/>', () => {
 	const ENTER = '\r';
 	const SPACE = ' ';
-	const defaultProps: CommandProps = {
-		currentPage: {
-			text: '',
-			command: 'test command',
-			commandStatus: UNSTARTED,
-			output: []
-		},
+	const defaultProps: PageProps = {
+		text: '',
+		command: 'test command',
+		commandStatus: UNSTARTED,
+		output: [],
 		waitForTrigger: true,
 		run: () => {},
 		complete: () => {},
@@ -28,14 +26,14 @@ describe('<Command/>', () => {
 
 	describe('when command has not yet been run', () => {
 		it('shows which command can be run', () => {
-			const {lastFrame} = render(<Command {...defaultProps}/>);
+			const {lastFrame} = render(<Page {...defaultProps}/>);
 
 			expect(lastFrame()).toMatch(/press <space> to run "test command"/i);
 		});
 
 		it('runs command on <space>', () => {
 			const run = jest.fn();
-			const {stdin} = render(<Command {...defaultProps} run={run}/>);
+			const {stdin} = render(<Page {...defaultProps} run={run}/>);
 
 			expect(run).toHaveBeenCalledTimes(0);
 
@@ -48,7 +46,7 @@ describe('<Command/>', () => {
 			it('runs command right away', () => {
 				const run = jest.fn();
 
-				render(<Command {...defaultProps} waitForTrigger={false} run={run}/>);
+				render(<Page {...defaultProps} waitForTrigger={false} run={run}/>);
 
 				expect(run).toHaveBeenCalledTimes(1);
 			});
@@ -57,26 +55,28 @@ describe('<Command/>', () => {
 
 	describe('when command is running', () => {
 		it('shows a spinner', () => {
-			const runningCommand: CurrentPage = {
+			const runningCommand: PageProps = {
+				...defaultProps,
 				text: '',
 				command: 'test command',
 				commandStatus: RUNNING,
 				output: []
 			};
-			const {lastFrame} = render(<Command {...defaultProps} currentPage={runningCommand}/>);
+			const {lastFrame} = render(<Page {...runningCommand}/>);
 
 			expect(lastFrame()).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] running/i);
 		});
 
 		describe('when there is output', () => {
 			it('shows output', () => {
-				const runningCommandWithOutput: CurrentPage = {
+				const runningCommandWithOutput: PageProps = {
+					...defaultProps,
 					text: '',
 					command: 'test command',
 					commandStatus: RUNNING,
 					output: [{text: 'test command output 1', uid: '1'}, {text: 'test command output 2', uid: '2'}]
 				};
-				const {lastFrame} = render(<Command {...defaultProps} currentPage={runningCommandWithOutput}/>);
+				const {lastFrame} = render(<Page {...runningCommandWithOutput}/>);
 
 				expect(lastFrame()).toMatch(/test command output 1\ntest command output 2/i);
 			});
@@ -84,20 +84,22 @@ describe('<Command/>', () => {
 
 		describe('when there is no output', () => {
 			it('shows no output', () => {
-				const runningCommandWithoutOutput: CurrentPage = {
+				const runningCommandWithoutOutput: PageProps = {
+					...defaultProps,
 					text: '',
 					command: 'test command',
 					commandStatus: RUNNING,
 					output: []
 				};
-				const {lastFrame} = render(<Command {...defaultProps} currentPage={runningCommandWithoutOutput}/>);
+				const {lastFrame} = render(<Page {...runningCommandWithoutOutput}/>);
 
 				expect(lastFrame()).toMatch(/no command output/i);
 			});
 		});
 
 		describe('when input is required', () => {
-			const commandWaitingForInput: CurrentPage = {
+			const commandWaitingForInput: PageProps = {
+				...defaultProps,
 				text: '',
 				command: 'test command',
 				commandStatus: INPUT_REQUIRED,
@@ -105,14 +107,14 @@ describe('<Command/>', () => {
 			};
 
 			it('shows input prompt', () => {
-				const {lastFrame} = render(<Command {...defaultProps} currentPage={commandWaitingForInput}/>);
+				const {lastFrame} = render(<Page {...commandWaitingForInput}/>);
 
 				expect(lastFrame()).toMatch(/⚠️ {2}input required >_/i);
 			});
 
 			describe('when user provides input', () => {
 				it('shows user input', () => {
-					const {lastFrame, stdin} = render(<Command {...defaultProps} currentPage={commandWaitingForInput}/>);
+					const {lastFrame, stdin} = render(<Page {...commandWaitingForInput}/>);
 
 					stdin.write('test user input');
 
@@ -122,7 +124,7 @@ describe('<Command/>', () => {
 				describe('when user submits input', () => {
 					it('submits input on <enter>', () => {
 						const submit = jest.fn();
-						const {stdin} = render(<Command {...defaultProps} currentPage={commandWaitingForInput} submit={submit}/>);
+						const {stdin} = render(<Page {...commandWaitingForInput} submit={submit}/>);
 
 						stdin.write('test user input');
 						stdin.write(ENTER);
@@ -136,7 +138,8 @@ describe('<Command/>', () => {
 	});
 
 	describe('when the command has finished', () => {
-		const finishedCommand: CurrentPage = {
+		const finishedCommand: PageProps = {
+			...defaultProps,
 			text: '',
 			command: 'test command',
 			commandStatus: FINISHED,
@@ -144,19 +147,19 @@ describe('<Command/>', () => {
 		};
 
 		it('shows output', () => {
-			const {lastFrame} = render(<Command {...defaultProps} currentPage={finishedCommand}/>);
+			const {lastFrame} = render(<Page {...finishedCommand}/>);
 
 			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*/i);
 		});
 
 		it('shows it has finished', () => {
-			const {lastFrame} = render(<Command {...defaultProps} currentPage={finishedCommand}/>);
+			const {lastFrame} = render(<Page {...finishedCommand}/>);
 
 			expect(lastFrame()).toMatch(/✅ finished/i);
 		});
 
 		it('shows prompt to complete', () => {
-			const {lastFrame} = render(<Command {...defaultProps} currentPage={finishedCommand}/>);
+			const {lastFrame} = render(<Page {...finishedCommand}/>);
 
 			expect(lastFrame()).toMatch(/done. press <space> to complete./i);
 		});
@@ -164,7 +167,7 @@ describe('<Command/>', () => {
 		describe('when pressing <space>', () => {
 			it('completes the command', () => {
 				const complete = jest.fn();
-				const {stdin} = render(<Command {...defaultProps} currentPage={finishedCommand} complete={complete}/>);
+				const {stdin} = render(<Page {...finishedCommand} complete={complete}/>);
 
 				stdin.write(SPACE);
 

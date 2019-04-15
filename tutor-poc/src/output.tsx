@@ -6,9 +6,9 @@ import * as state from './state';
 
 const mapToLast = <T extends {}>(array: T[], f: (t: T) => T): T[] => array.map((x: any, i: number) => (array.length === i + 1) ? f(x) : x);
 
-const trimOutput = (output: state.Output): state.Output => ({text: stripFinalNewline(output.text), uid: output.uid});
+const trimOutput = (output: state.CommandOutput): state.CommandOutput => ({text: stripFinalNewline(output.text), uid: output.uid});
 
-const OutputLine = (output: state.Output): React.ReactElement => (
+const OutputLine = (output: state.CommandOutput): React.ReactElement => (
 	<Text key={output.uid}>
 		{output.text}
 	</Text>

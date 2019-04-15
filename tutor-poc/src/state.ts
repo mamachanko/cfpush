@@ -7,13 +7,13 @@ export interface Page {
 	text: Text;
 }
 
-export type Output = {
+export type CommandOutput = {
 	text: Text;
 	uid: string;
 }
 
 interface CompletedPage extends Page {
-	output: ReadonlyArray<Output>;
+	output: ReadonlyArray<CommandOutput>;
 }
 
 export const UNSTARTED = 'UNSTARTED';
@@ -29,7 +29,7 @@ export type CommandStatus =
 
 export interface CurrentPage extends Page {
 	commandStatus: CommandStatus;
-	output: ReadonlyArray<Output>;
+	output: ReadonlyArray<CommandOutput>;
 }
 
 interface Pages {

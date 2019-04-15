@@ -8,9 +8,9 @@ import {Column} from './column';
 import {useOnSpace} from './input';
 import {InputPrompt} from './input-prompt';
 import {Output} from './output';
-import {State, CurrentPage, RUNNING, INPUT_REQUIRED, FINISHED} from './state';
+import {FINISHED, INPUT_REQUIRED, RUNNING, State, CommandStatus, CommandOutput} from './state'; // eslint-disable-line import/named
 
-const CommandTrigger = ({currentPage: {command}, run, waitForTrigger}): React.ReactElement => {
+const CommandTrigger = ({command, run, waitForTrigger}): React.ReactElement => {
 	React.useLayoutEffect(() => {
 		if (!waitForTrigger) {
 			run();
@@ -49,7 +49,10 @@ const Running: React.FC = (): React.ReactElement => (
 );
 
 type StateProps = {
-	currentPage: CurrentPage;
+	command: string;
+	text: string;
+	commandStatus: CommandStatus;
+	output: ReadonlyArray<CommandOutput>;
 	waitForTrigger: boolean;
 };
 
@@ -59,16 +62,16 @@ type DispatchProps = {
 	submit: (input: string) => void;
 }
 
-export type CommandProps =
+export type PageProps =
 	& StateProps
 	& DispatchProps;
 
-export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
-	switch (props.currentPage.commandStatus) {
+export const Page: React.FC<PageProps> = (props): React.ReactElement => {
+	switch (props.commandStatus) {
 		case (RUNNING): {
 			return (
 				<Column>
-					<Output {...props.currentPage}/>
+					<Output {...props}/>
 					<Running/>
 				</Column>
 			);
@@ -77,7 +80,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 		case (INPUT_REQUIRED): {
 			return (
 				<Column>
-					<Output {...props.currentPage}/>
+					<Output {...props}/>
 					<InputPrompt {...props} prompt="⚠️  input required >_"/>
 				</Column>
 			);
@@ -86,7 +89,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 		case (FINISHED): {
 			return (
 				<Column>
-					<Output {...props.currentPage}/>
+					<Output {...props}/>
 					<CompletePrompt {...props}/>
 				</Column>
 			);
@@ -103,7 +106,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 };
 
 const mapStateToProps = (state: State): StateProps => ({
-	currentPage: state.pages.current,
+	...state.pages.current,
 	waitForTrigger: state.app.waitForTrigger
 });
 
@@ -113,4 +116,4 @@ const mapDispatchToProps = (dispatch: Redux.Dispatch): DispatchProps => ({
 	submit: (input: string) => dispatch(inputReceived(input))
 });
 
-export const CurrentCommand = connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps)(Command);
+export const CurrentPage = connect<StateProps, DispatchProps, {}>(mapStateToProps, mapDispatchToProps)(Page);

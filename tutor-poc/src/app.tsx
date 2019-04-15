@@ -2,13 +2,13 @@ import * as React from 'react';
 import {Provider} from 'react-redux';
 import {Action, configureStore, Store} from 'redux-starter-kit';
 import {createCfContextMiddleware} from './cf-context-middleware';
-import {CurrentCommand} from './command';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
 import {Ci, Config, Dry} from './config';
 import {createDryMiddleware} from './dry-middleware';
 import {ExitMessage} from './exit-message';
 import {loggingMiddleware} from './logging-middleware';
 import {Middlewares} from './middleware'; // eslint-disable-line import/named
+import {CurrentPage} from './page';
 import {Quitable} from './quitable';
 import {reducer} from './reducer';
 import {State, UNSTARTED} from './state';
@@ -24,7 +24,7 @@ const App: React.FC<AppProps> = ({store}): React.ReactElement => (
 		<WhilePages>
 			<Quitable exitDisplay={<ExitMessage/>}>
 				<Title/>
-				<CurrentCommand/>
+				<CurrentPage/>
 			</Quitable>
 		</WhilePages>
 	</Provider>
