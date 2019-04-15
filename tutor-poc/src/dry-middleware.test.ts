@@ -10,8 +10,9 @@ describe('Dry Middleware', () => {
 
 	beforeEach(() => {
 		storeMock = createStoreMock({
-			commands: {
+			pages: {
 				current: {
+					text: 'Let us pretend run a real command',
 					command: 'a real command',
 					status: UNSTARTED,
 					output: []

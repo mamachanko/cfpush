@@ -5,7 +5,7 @@ import {State} from './state';
 
 export const createCfContextMiddleware = (cfContextUpdater: CfContextUpdater = createCfContextUpdater()): Middleware<{}, State, Dispatch<Action>> => store => next => async action => {
 	const updateMaybe = async (): Promise<void> => {
-		const {command} = store.getState().commands.current;
+		const {command} = store.getState().pages.current;
 		const update = await cfContextUpdater(command);
 		if (update) {
 			store.dispatch(updateCfContext(update));

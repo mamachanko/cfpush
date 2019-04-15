@@ -36,9 +36,10 @@ describe('CommandRuntimeMiddleware', () => {
 		executeMock = jest.fn().mockImplementationOnce(executeDummy);
 
 		storeMock = createStoreMock({
-			commands: {
+			pages: {
 				completed: [],
 				current: {
+					text: 'Let us run a test command.',
 					command: 'test-command --flag --positional arg',
 					status: 'UNSTARTED',
 					output: []

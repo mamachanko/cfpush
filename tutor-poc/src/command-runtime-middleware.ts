@@ -39,7 +39,7 @@ export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid):
 		return next => (action: Action) => {
 			switch (action.type) {
 				case (RUN_COMMAND): {
-					const {command} = store.getState().commands.current;
+					const {command} = store.getState().pages.current;
 					runningCommand = run(
 						parseCommand(command),
 						handlers

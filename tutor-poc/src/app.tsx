@@ -2,7 +2,6 @@ import * as React from 'react';
 import {Provider} from 'react-redux';
 import {Action, configureStore, Store} from 'redux-starter-kit';
 import {createCfContextMiddleware} from './cf-context-middleware';
-import {CurrentCommand} from './command';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
 import {Ci, Config, Dry} from './config';
 import {createDryMiddleware} from './dry-middleware';
@@ -13,6 +12,7 @@ import {reducer} from './reducer';
 import {State} from './state';
 import {Title} from './title';
 import {WhileCommands} from './while-commands';
+import {CurrentCommand} from './command';
 
 type AppProps = {
 	store: Store;
@@ -38,14 +38,15 @@ export const createApp = ({commands, mode}: Config): React.ReactElement => {
 			waitForTrigger: mode !== Ci
 		},
 		cloudFoundryContext: {},
-		commands: {
+		pages: {
 			completed: [],
 			current: {
+				text: '',
 				command: firstCommand,
 				status: 'UNSTARTED',
 				output: []
 			},
-			next
+			next: next.map(command => ({command, text: ''}))
 		}
 	};
 

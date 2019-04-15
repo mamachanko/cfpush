@@ -7,7 +7,7 @@ type StateProps = {
 };
 
 const mapStateToProps = (state: State): StateProps => ({
-	hasCommands: state.commands.current !== undefined
+	hasCommands: state.pages.current !== undefined
 });
 
 export const WhileCommands = connect<StateProps>(mapStateToProps)(

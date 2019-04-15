@@ -8,7 +8,7 @@ export const createDryMiddleware = (uid = defaultUid): Middleware<{}, State, Dis
 	const dryMiddleware: Middleware<{}, State, Dispatch<Action>> = store => next => action => {
 		if (action.type === RUN_COMMAND) {
 			store.dispatch(started());
-			store.dispatch(outputReceived(`pretending to run "${store.getState().commands.current.command}"`, uid()));
+			store.dispatch(outputReceived(`pretending to run "${store.getState().pages.current.command}"`, uid()));
 			store.dispatch(finished());
 		} else {
 			next(action);

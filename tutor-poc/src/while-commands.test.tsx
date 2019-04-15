@@ -1,10 +1,9 @@
-import * as React from 'react';
-import {render, cleanup} from 'ink-testing-library';
 import {Text} from 'ink';
+import {cleanup, render} from 'ink-testing-library';
+import * as React from 'react';
 import {Provider} from 'react-redux';
-import {WhileCommands} from './while-commands';
-import {initialState} from './reducer';
 import {createStoreMock} from './test-utils';
+import {WhileCommands} from './while-commands';
 
 describe('<WhileCommands>', () => {
 	afterEach(() => {
@@ -13,10 +12,10 @@ describe('<WhileCommands>', () => {
 
 	describe('when there is a current command', () => {
 		const store = createStoreMock({
-			...initialState,
-			commands: {
+			pages: {
 				completed: [],
 				current: {
+					text: 'Let us run a test command',
 					command: 'test command',
 					status: 'UNSTARTED',
 					output: []
@@ -40,8 +39,7 @@ describe('<WhileCommands>', () => {
 	});
 	describe('when there is no more current command', () => {
 		const store = createStoreMock({
-			...initialState,
-			commands: {
+			pages: {
 				completed: [],
 				current: undefined,
 				next: []

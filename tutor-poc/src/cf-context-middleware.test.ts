@@ -11,7 +11,7 @@ describe('CF Context Middleware', () => {
 	beforeEach(() => {
 		cfContextUpdater = jest.fn();
 		storeMock = createStoreMock({
-			commands: {
+			pages: {
 				current: {
 					command: 'test command'
 				}

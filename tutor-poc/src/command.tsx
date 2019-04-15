@@ -9,9 +9,9 @@ import * as CommandStatus from './command-status';
 import {useOnSpace} from './input';
 import {InputPrompt} from './input-prompt';
 import {Output} from './output';
-import * as reducer from './reducer';
+import {State, CurrentPage} from './state';
 
-const CommandTrigger = ({currentCommand: {command}, run, waitForTrigger}): React.ReactElement => {
+const CommandTrigger = ({currentPage: {command}, run, waitForTrigger}): React.ReactElement => {
 	React.useLayoutEffect(() => {
 		if (!waitForTrigger) {
 			run();
@@ -50,7 +50,7 @@ const Running: React.FC = (): React.ReactElement => (
 );
 
 type StateProps = {
-	currentCommand: reducer.CurrentCommand;
+	currentPage: CurrentPage;
 	waitForTrigger: boolean;
 };
 
@@ -65,11 +65,11 @@ export type CommandProps =
 	& DispatchProps;
 
 export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
-	switch (props.currentCommand.status) {
+	switch (props.currentPage.status) {
 		case (CommandStatus.RUNNING): {
 			return (
 				<Column>
-					<Output {...props.currentCommand}/>
+					<Output {...props.currentPage}/>
 					<Running/>
 				</Column>
 			);
@@ -78,7 +78,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 		case (CommandStatus.INPUT_REQUIRED): {
 			return (
 				<Column>
-					<Output {...props.currentCommand}/>
+					<Output {...props.currentPage}/>
 					<InputPrompt {...props} prompt="⚠️  input required >_"/>
 				</Column>
 			);
@@ -87,7 +87,7 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 		case (CommandStatus.FINISHED): {
 			return (
 				<Column>
-					<Output {...props.currentCommand}/>
+					<Output {...props.currentPage}/>
 					<CompletePrompt {...props}/>
 				</Column>
 			);
@@ -103,8 +103,8 @@ export const Command: React.FC<CommandProps> = (props): React.ReactElement => {
 	}
 };
 
-const mapStateToProps = (state: reducer.State): StateProps => ({
-	currentCommand: state.commands.current,
+const mapStateToProps = (state: State): StateProps => ({
+	currentPage: state.pages.current,
 	waitForTrigger: state.app.waitForTrigger
 });
 

@@ -9,14 +9,18 @@ const defaultState: State = {
 		exit: false
 	},
 	cloudFoundryContext: {},
-	commands: {
+	pages: {
 		completed: [],
 		current: {
+			text: 'The first page',
 			command: 'command one',
 			status: UNSTARTED,
 			output: []
 		},
-		next: ['command two', 'command three']
+		next: [
+			{text: 'The second page', command: 'command two'},
+			{text: 'The third page', command: 'command three'}
+		]
 	}
 };
 
@@ -27,10 +31,10 @@ describe('reducer', () => {
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						status: RUNNING
 					}
 				}
@@ -44,10 +48,10 @@ describe('reducer', () => {
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						output: [{text: 'new command output', uid: 'uid 123'}]
 					}
 				}
@@ -57,10 +61,10 @@ describe('reducer', () => {
 		it('appends to the current command\'s output', () => {
 			const nextState = reducer({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						output: [{text: 'existing command output', uid: 'uid 0'}]
 					}
 				}
@@ -68,10 +72,10 @@ describe('reducer', () => {
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						output: [
 							{text: 'existing command output', uid: 'uid 0'},
 							{text: 'new command output', uid: 'uid 1'}
@@ -84,10 +88,10 @@ describe('reducer', () => {
 		it('initialises from null', () => {
 			const nextState = reducer({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						output: null
 					}
 				}
@@ -95,10 +99,10 @@ describe('reducer', () => {
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						output: [{text: 'new command output', uid: 'uid 123'}]
 					}
 				}
@@ -112,10 +116,10 @@ describe('reducer', () => {
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						status: INPUT_REQUIRED
 					}
 				}
@@ -129,10 +133,10 @@ describe('reducer', () => {
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						status: RUNNING
 					}
 				}
@@ -146,10 +150,10 @@ describe('reducer', () => {
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						status: FINISHED
 					}
 				}
@@ -161,14 +165,15 @@ describe('reducer', () => {
 		it('completes the current command and sets the next current command', () => {
 			const nextState = reducer({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					completed: [{
+						text: 'The zeroth page',
 						command: 'command zero',
 						output: ['existing command output 1', 'existing command output 2']
 					}],
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
 						status: FINISHED,
 						output: ['existing command output 1', 'existing command output 2']
 					}
@@ -177,22 +182,25 @@ describe('reducer', () => {
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				commands: {
-					...defaultState.commands,
+				pages: {
+					...defaultState.pages,
 					completed: [{
+						text: 'The zeroth page',
 						command: 'command zero',
 						output: ['existing command output 1', 'existing command output 2']
 					}, {
+						text: 'The first page',
 						command: 'command one',
 						output: ['existing command output 1', 'existing command output 2']
 					}],
 					current: {
-						...defaultState.commands.current,
+						...defaultState.pages.current,
+						text: 'The second page',
 						command: 'command two',
 						output: [],
 						status: UNSTARTED
 					},
-					next: ['command three']
+					next: [{text: 'The third page', command: 'command three'}]
 				}
 			});
 		});
@@ -201,10 +209,10 @@ describe('reducer', () => {
 			it('completes the current command and sets the next current command', () => {
 				const nextState = reducer({
 					...defaultState,
-					commands: {
-						...defaultState.commands,
+					pages: {
+						...defaultState.pages,
 						current: {
-							...defaultState.commands.current,
+							...defaultState.pages.current,
 							status: FINISHED,
 							output: ['existing command output 1', 'existing command output 2']
 						}
@@ -213,19 +221,21 @@ describe('reducer', () => {
 
 				expect(nextState).toStrictEqual({
 					...defaultState,
-					commands: {
-						...defaultState.commands,
+					pages: {
+						...defaultState.pages,
 						completed: [{
+							text: 'The first page',
 							command: 'command one',
 							output: ['existing command output 1', 'existing command output 2']
 						}],
 						current: {
-							...defaultState.commands.current,
+							...defaultState.pages.current,
+							text: 'The second page',
 							command: 'command two',
 							output: [],
 							status: UNSTARTED
 						},
-						next: ['command three']
+						next: [{text: 'The third page', command: 'command three'}]
 					}
 				});
 			});
@@ -235,10 +245,10 @@ describe('reducer', () => {
 			it('completes the current command and sets the current command to undefined', () => {
 				const nextState = reducer({
 					...defaultState,
-					commands: {
-						...defaultState.commands,
+					pages: {
+						...defaultState.pages,
 						current: {
-							...defaultState.commands.current,
+							...defaultState.pages.current,
 							status: FINISHED,
 							output: ['existing command output 1', 'existing command output 2']
 						},
@@ -248,9 +258,10 @@ describe('reducer', () => {
 
 				expect(nextState).toStrictEqual({
 					...defaultState,
-					commands: {
-						...defaultState.commands,
+					pages: {
+						...defaultState.pages,
 						completed: [{
+							text: 'The first page',
 							command: 'command one',
 							output: ['existing command output 1', 'existing command output 2']
 						}],
@@ -272,9 +283,9 @@ describe('reducer', () => {
 							}
 						}
 					},
-					commands: {
-						...defaultState.commands,
-						next: ['this command needs {{here.is.some}} to be rendered']
+					pages: {
+						...defaultState.pages,
+						next: [{text: 'This page\'s command needs rendering', command: 'this command needs {{here.is.some}} to be rendered'}]
 					}
 				}, completed());
 
@@ -287,9 +298,13 @@ describe('reducer', () => {
 							}
 						}
 					},
-					commands: {
-						completed: [{command: 'command one', output: []}],
+					pages: {
+						completed: [{
+							text: 'The first page',
+							command: 'command one',
+							output: []}],
 						current: {
+							text: 'This page\'s command needs rendering',
 							command: 'this command needs context to be rendered',
 							status: 'UNSTARTED',
 							output: []

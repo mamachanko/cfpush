@@ -11,14 +11,15 @@ export const initialState: State = {
 		exit: false
 	},
 	cloudFoundryContext: {},
-	commands: {
+	pages: {
 		completed: [],
 		current: {
+			text: '',
 			command: 'date',
 			status: 'UNSTARTED',
 			output: []
 		},
-		next: ['date']
+		next: [{text: '', command: 'date'}]
 	}
 };
 
@@ -28,10 +29,10 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		case (STARTED): {
 			return {
 				...state,
-				commands: {
-					...state.commands,
+				pages: {
+					...state.pages,
 					current: {
-						...state.commands.current,
+						...state.pages.current,
 						status: CommandStatus.RUNNING
 					}
 				}
@@ -41,10 +42,10 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		case (INPUT_REQUIRED): {
 			return {
 				...state,
-				commands: {
-					...state.commands,
+				pages: {
+					...state.pages,
 					current: {
-						...state.commands.current,
+						...state.pages.current,
 						status: CommandStatus.INPUT_REQUIRED
 					}
 				}
@@ -54,10 +55,10 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		case (FINISHED): {
 			return {
 				...state,
-				commands: {
-					...state.commands,
+				pages: {
+					...state.pages,
 					current: {
-						...state.commands.current,
+						...state.pages.current,
 						status: CommandStatus.FINISHED
 					}
 				}
@@ -67,12 +68,12 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		case (OUTPUT_RECEIVED): {
 			return {
 				...state,
-				commands: {
-					...state.commands,
+				pages: {
+					...state.pages,
 					current: {
-						...state.commands.current,
-						output: state.commands.current.output ?
-							[...state.commands.current.output, action.payload] :
+						...state.pages.current,
+						output: state.pages.current.output ?
+							[...state.pages.current.output, action.payload] :
 							[action.payload]
 					}
 				}
@@ -82,18 +83,20 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		case (COMPLETED): {
 			return {
 				...state,
-				commands: {
-					...state.commands,
-					completed: [...state.commands.completed, {
-						command: state.commands.current.command,
-						output: state.commands.current.output
+				pages: {
+					...state.pages,
+					completed: [...state.pages.completed, {
+						text: state.pages.current.text,
+						command: state.pages.current.command,
+						output: state.pages.current.output
 					}],
-					current: state.commands.next[0] ? {
-						command: Mustache.render(state.commands.next[0], state.cloudFoundryContext),
+					current: state.pages.next[0] ? {
+						text: state.pages.next[0].text,
+						command: Mustache.render(state.pages.next[0].command, state.cloudFoundryContext),
 						status: CommandStatus.UNSTARTED,
 						output: []
 					} : undefined,
-					next: state.commands.next.slice(1)
+					next: state.pages.next.slice(1)
 				}
 			};
 		}

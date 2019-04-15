@@ -1,27 +1,31 @@
 import * as CommandStatus from './command-status';
 
 type Command = string;
+type Text = string;
+
+interface Page {
+	command: Command;
+	text: Text;
+}
 
 export type Output = {
-	text: string;
+	text: Text;
 	uid: string;
 }
 
-interface CompletedCommand {
-	command: Command;
+interface CompletedPage extends Page {
 	output: ReadonlyArray<Output>;
 }
 
-export interface CurrentCommand {
-	command: Command;
+export interface CurrentPage extends Page {
 	status: CommandStatus.CommandStatus;
 	output: ReadonlyArray<Output>;
 }
 
-interface Commands {
-	completed: ReadonlyArray<CompletedCommand>;
-	current: CurrentCommand;
-	next: ReadonlyArray<Command>;
+interface Pages {
+	completed: ReadonlyArray<CompletedPage>;
+	current: CurrentPage;
+	next: ReadonlyArray<Page>;
 }
 
 type App = {
@@ -34,5 +38,5 @@ type CloudFoundryContext = any;
 export interface State {
 	app: App;
 	cloudFoundryContext: CloudFoundryContext;
-	commands: Commands;
+	pages: Pages;
 }
