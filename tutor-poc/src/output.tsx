@@ -2,13 +2,13 @@ import {Static, Text} from 'ink';
 import * as React from 'react';
 import * as stripFinalNewline from 'strip-final-newline';
 import {Column} from './column';
-import * as reducer from './reducer';
+import * as state from './state';
 
 const mapToLast = <T extends {}>(array: T[], f: (t: T) => T): T[] => array.map((x: any, i: number) => (array.length === i + 1) ? f(x) : x);
 
-const trimOutput = (output: reducer.Output): reducer.Output => ({text: stripFinalNewline(output.text), uid: output.uid});
+const trimOutput = (output: state.Output): state.Output => ({text: stripFinalNewline(output.text), uid: output.uid});
 
-const OutputLine = (output: reducer.Output): React.ReactElement => (
+const OutputLine = (output: state.Output): React.ReactElement => (
 	<Text key={output.uid}>
 		{output.text}
 	</Text>
