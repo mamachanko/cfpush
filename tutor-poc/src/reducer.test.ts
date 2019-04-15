@@ -8,7 +8,7 @@ const defaultState: State = {
 		waitForTrigger: false,
 		exit: false
 	},
-	cfContext: {},
+	cloudFoundryContext: {},
 	commands: {
 		completed: [],
 		current: {
@@ -265,7 +265,7 @@ describe('reducer', () => {
 			it('completes the current command, renders the next command it using the cf context and sets it as current', () => {
 				const nextState = reducer({
 					...defaultState,
-					cfContext: {
+					cloudFoundryContext: {
 						here: {
 							is: {
 								some: 'context'
@@ -280,7 +280,7 @@ describe('reducer', () => {
 
 				expect(nextState).toStrictEqual({
 					...defaultState,
-					cfContext: {
+					cloudFoundryContext: {
 						here: {
 							is: {
 								some: 'context'
@@ -307,7 +307,7 @@ describe('reducer', () => {
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
-				cfContext: {this: {is: {a: {cf: {context: 'update'}}}}}
+				cloudFoundryContext: {this: {is: {a: {cf: {context: 'update'}}}}}
 			});
 		});
 
@@ -315,12 +315,12 @@ describe('reducer', () => {
 			it('merges the cf context update', () => {
 				const nextState = reducer({
 					...defaultState,
-					cfContext: {test: {numbers: {1: 'one', 3: 'three'}}}
+					cloudFoundryContext: {test: {numbers: {1: 'one', 3: 'three'}}}
 				}, updateCfContext({test: {numbers: {2: 'two'}}}));
 
 				expect(nextState).toStrictEqual({
 					...defaultState,
-					cfContext: {test: {numbers: {1: 'one', 2: 'two', 3: 'three'}}}
+					cloudFoundryContext: {test: {numbers: {1: 'one', 2: 'two', 3: 'three'}}}
 				});
 			});
 		});

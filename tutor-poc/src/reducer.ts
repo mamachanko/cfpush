@@ -10,7 +10,7 @@ export const initialState: State = {
 		waitForTrigger: true,
 		exit: false
 	},
-	cfContext: {},
+	cloudFoundryContext: {},
 	commands: {
 		completed: [],
 		current: {
@@ -89,7 +89,7 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 						output: state.commands.current.output
 					}],
 					current: state.commands.next[0] ? {
-						command: Mustache.render(state.commands.next[0], state.cfContext),
+						command: Mustache.render(state.commands.next[0], state.cloudFoundryContext),
 						status: CommandStatus.UNSTARTED,
 						output: []
 					} : undefined,
@@ -101,7 +101,7 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		case (UPDATE_CF_CONTEXT): {
 			return {
 				...state,
-				cfContext: deepmerge(state.cfContext, action.payload)
+				cloudFoundryContext: deepmerge(state.cloudFoundryContext, action.payload)
 			};
 		}
 

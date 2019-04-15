@@ -37,7 +37,7 @@ export const createApp = ({commands, mode}: Config): React.ReactElement => {
 			exit: false,
 			waitForTrigger: mode !== Ci
 		},
-		cfContext: {},
+		cloudFoundryContext: {},
 		commands: {
 			completed: [],
 			current: {

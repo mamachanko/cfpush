@@ -29,8 +29,10 @@ type App = {
 	exit: boolean;
 }
 
+type CloudFoundryContext = any;
+
 export interface State {
 	app: App;
-	cfContext: any;
+	cloudFoundryContext: CloudFoundryContext;
 	commands: Commands;
 }

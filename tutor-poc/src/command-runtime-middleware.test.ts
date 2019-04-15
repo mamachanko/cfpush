@@ -36,11 +36,6 @@ describe('CommandRuntimeMiddleware', () => {
 		executeMock = jest.fn().mockImplementationOnce(executeDummy);
 
 		storeMock = createStoreMock({
-			app: {
-				waitForTrigger: false,
-				exit: false
-			},
-			cfContext: {},
 			commands: {
 				completed: [],
 				current: {
