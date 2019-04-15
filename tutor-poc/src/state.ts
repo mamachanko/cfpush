@@ -3,7 +3,7 @@ import * as CommandStatus from './command-status';
 type Command = string;
 type Text = string;
 
-interface Page {
+export interface Page {
 	command: Command;
 	text: Text;
 }

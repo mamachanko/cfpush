@@ -2,17 +2,18 @@ import * as React from 'react';
 import {Provider} from 'react-redux';
 import {Action, configureStore, Store} from 'redux-starter-kit';
 import {createCfContextMiddleware} from './cf-context-middleware';
+import {CurrentCommand} from './command';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
 import {Ci, Config, Dry} from './config';
 import {createDryMiddleware} from './dry-middleware';
 import {ExitMessage} from './exit-message';
 import {loggingMiddleware} from './logging-middleware';
+import {Middlewares} from './middleware'; // eslint-disable-line import/named
 import {Quitable} from './quitable';
 import {reducer} from './reducer';
 import {State} from './state';
 import {Title} from './title';
 import {WhileCommands} from './while-commands';
-import {CurrentCommand} from './command';
 
 type AppProps = {
 	store: Store;
@@ -29,10 +30,20 @@ const App: React.FC<AppProps> = ({store}): React.ReactElement => (
 	</Provider>
 );
 
-export const createApp = ({commands, mode}: Config): React.ReactElement => {
-	const [firstCommand, ...next] = commands;
+export const createApp = (config: Config): React.ReactElement => {
+	const store = configureStore<State, Action>({
+		reducer,
+		middleware: createMiddleware(config),
+		preloadedState: createInitialState(config)
+	});
 
-	const initialState: State = {
+	return <App store={store}/>;
+};
+
+const createInitialState = ({pages, mode}: Config): State => {
+	const [first, ...next] = pages;
+
+	return {
 		app: {
 			exit: false,
 			waitForTrigger: mode !== Ci
@@ -41,23 +52,23 @@ export const createApp = ({commands, mode}: Config): React.ReactElement => {
 		pages: {
 			completed: [],
 			current: {
-				text: '',
-				command: firstCommand,
+				...first,
 				status: 'UNSTARTED',
 				output: []
 			},
-			next: next.map(command => ({command, text: ''}))
+			next
 		}
 	};
-
-	const store = configureStore<State, Action>({
-		reducer,
-		preloadedState: initialState,
-		middleware: [
-			...(mode === Dry ? [createDryMiddleware()] : [createCommandRuntimeMiddleware(), createCfContextMiddleware()]),
-			loggingMiddleware
-		]});
-
-	return <App store={store}/>;
 };
 
+const createMiddleware = ({mode}: Config): Middlewares =>
+	mode === Dry ?
+		[
+			createDryMiddleware(),
+			loggingMiddleware
+		] :
+		[
+			createCommandRuntimeMiddleware(),
+			createCfContextMiddleware(),
+			loggingMiddleware
+		];

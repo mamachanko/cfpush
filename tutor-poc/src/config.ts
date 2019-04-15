@@ -1,3 +1,5 @@
+import {Page} from './state';
+
 export const Tutorial = 'TUTORIAL';
 export const Dry = 'DRY';
 export const Ci = 'CI';
@@ -8,7 +10,7 @@ export type Mode =
 
 export interface Config {
 	mode: Mode;
-	commands: ReadonlyArray<string>;
+	pages: ReadonlyArray<Page>;
 }
 
 export const parseMode = (env: any): Mode => {
@@ -29,19 +31,19 @@ export const parseMode = (env: any): Mode => {
 const cfCiLogin = (): string => ['cf', 'login', '-a', 'api.run.pivotal.io', '-u', process.env.CF_USERNAME, '-p', process.env.CF_PASSWORD, '-o', process.env.CF_ORG, '-s', process.env.CF_SPACE]
 	.join(' ');
 
-export const parseCommands = (commands: ReadonlyArray<string>, mode: Mode): ReadonlyArray<string> => {
+const parsePages = (pages: ReadonlyArray<Page>, mode: Mode): ReadonlyArray<Page> => {
 	switch (mode) {
-		case (Ci): return commands.map(command => command.match(/cf\s+login/) ? cfCiLogin() : command);
+		case (Ci): return pages.map(page => page.command.match(/cf\s+login/) ? {...page, command: cfCiLogin()} : page);
 		case (Dry):
 		case (Tutorial):
-		default: return commands;
+		default: return pages;
 	}
 };
 
-export const parseConfig = (commands: ReadonlyArray<string>, env: any): Config => {
+export const parseConfig = (commands: ReadonlyArray<Page>, env: any): Config => {
 	const mode = parseMode(env);
 	return {
 		mode,
-		commands: parseCommands(commands, mode)
+		pages: parsePages(commands, mode)
 	};
 };

@@ -4,8 +4,11 @@ import {createApp} from './app';
 import {Ci, Dry, Tutorial} from './config';
 import {CTRL_C, sleep, SPACE} from './test-utils';
 
-describe('<Command />', () => {
-	const commands = ['echo hi this is the first command', 'echo hello this is the second command'];
+describe('<App />', () => {
+	const pages = [
+		{text: '', command: 'echo hi this is the first command'},
+		{text: '', command: 'echo hello this is the second command'}
+	];
 
 	afterEach(() => {
 		cleanup();
@@ -13,7 +16,7 @@ describe('<Command />', () => {
 
 	describe('when in tutorial mode', () => {
 		it('runs commands one after another by pressing <space>', async () => {
-			const {lastFrame, stdin} = render(createApp({commands, mode: Tutorial}));
+			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
@@ -41,7 +44,7 @@ describe('<Command />', () => {
 		});
 
 		it('quits on "ctrl-c"', async () => {
-			const {lastFrame, stdin} = render(createApp({commands, mode: Tutorial}));
+			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
@@ -62,7 +65,7 @@ describe('<Command />', () => {
 
 	describe('when in dry mode', () => {
 		it('pretends to run commands on <space>', async () => {
-			const {lastFrame, stdin} = render(createApp({commands, mode: Dry}));
+			const {lastFrame, stdin} = render(createApp({pages, mode: Dry}));
 
 			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
 
@@ -86,7 +89,7 @@ describe('<Command />', () => {
 
 	describe('when in ci mode', () => {
 		it('runs commands one after another without prompt', async () => {
-			const {lastFrame} = render(createApp({commands, mode: Ci}));
+			const {lastFrame} = render(createApp({pages, mode: Ci}));
 
 			await sleep(50);
 

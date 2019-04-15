@@ -1,9 +1,8 @@
-import {Dispatch, Middleware} from 'redux';
-import {Action, FINISHED, updateCfContext} from './actions'; // eslint-disable-line import/named
+import {FINISHED, updateCfContext} from './actions';
 import {CfContextUpdater, createCfContextUpdater} from './cf-context-updater'; // eslint-disable-line import/named
-import {State} from './state';
+import {Middleware} from './middleware'; // eslint-disable-line import/named
 
-export const createCfContextMiddleware = (cfContextUpdater: CfContextUpdater = createCfContextUpdater()): Middleware<{}, State, Dispatch<Action>> => store => next => async action => {
+export const createCfContextMiddleware = (cfContextUpdater: CfContextUpdater = createCfContextUpdater()): Middleware => store => next => async action => {
 	const updateMaybe = async (): Promise<void> => {
 		const {command} = store.getState().pages.current;
 		const update = await cfContextUpdater(command);

@@ -10,40 +10,22 @@ describe('Config', () => {
 		});
 	});
 
-	describe('when given a list of commands', () => {
-		describe('when in Tutorial mode', () => {
-			it('returns commands', () => {
-				expect(config.parseCommands([], config.Tutorial)).toEqual([]);
-				expect(config.parseCommands(['cf login', 'cf push'], config.Tutorial)).toEqual(['cf login', 'cf push']);
-			});
-		});
-
-		describe('when in Ci mode', () => {
-			beforeEach(() => {
-				process.env.CF_USERNAME = 'cf-user';
-				process.env.CF_PASSWORD = 'cf-password';
-				process.env.CF_ORG = 'cf-org';
-				process.env.CF_SPACE = 'cf-space';
-			});
-
-			afterEach(() => {
-				delete process.env.CF_USERNAME;
-				delete process.env.CF_PASSWORD;
-				delete process.env.CF_ORG;
-				delete process.env.CF_SPACE;
-			});
-
-			it('replaces any "cf login" with a non-interactive "cf login" by taking credentials from the environment', () => {
-				expect(config.parseCommands([], config.Ci)).toEqual([]);
-				expect(config.parseCommands(['cf login', 'cf push'], config.Ci)).toEqual(['cf login -a api.run.pivotal.io -u cf-user -p cf-password -o cf-org -s cf-space', 'cf push']);
-			});
-		});
-	});
-
 	describe('when given an env and a list of commands', () => {
 		describe('when in Tutorial mode', () => {
 			it('parses config', () => {
-				expect(config.parseConfig(['cf login', 'cf push'], {})).toEqual({commands: ['cf login', 'cf push'], mode: config.Tutorial});
+				expect(
+					config.parseConfig([
+						{text: 'let us login', command: 'cf login'},
+						{text: 'let us deploy', command: 'cf push'}
+					], {})
+				).toEqual({
+					pages: [
+						{text: 'let us login', command: 'cf login'},
+						{text: 'let us deploy', command: 'cf push'}
+					],
+					mode: config.Tutorial
+				}
+				);
 			});
 		});
 
@@ -63,13 +45,37 @@ describe('Config', () => {
 			});
 
 			it('parses config and turns any "cf login" non-interactive', () => {
-				expect(config.parseConfig(['cf login', 'cf push'], {CI: 'true'})).toEqual({commands: ['cf login -a api.run.pivotal.io -u cf-user -p cf-password -o cf-org -s cf-space', 'cf push'], mode: config.Ci});
+				expect(
+					config.parseConfig([
+						{text: 'let us login', command: 'cf login'},
+						{text: 'let us deploy', command: 'cf push'}
+					], {CI: 'true'})
+				).toEqual({
+					pages: [
+						{text: 'let us login', command: 'cf login -a api.run.pivotal.io -u cf-user -p cf-password -o cf-org -s cf-space'},
+						{text: 'let us deploy', command: 'cf push'}
+					],
+					mode: config.Ci
+				}
+				);
 			});
 		});
 
 		describe('when in Dry mode', () => {
 			it('parses config', () => {
-				expect(config.parseConfig(['cf login', 'cf push'], {DRY: 'true'})).toEqual({commands: ['cf login', 'cf push'], mode: config.Dry});
+				expect(
+					config.parseConfig([
+						{text: 'let us login', command: 'cf login'},
+						{text: 'let us deploy', command: 'cf push'}
+					], {DRY: 'true'})
+				).toEqual({
+					pages: [
+						{text: 'let us login', command: 'cf login'},
+						{text: 'let us deploy', command: 'cf push'}
+					],
+					mode: config.Dry
+				}
+				);
 			});
 		});
 	});
