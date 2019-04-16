@@ -99,3 +99,16 @@ export const useOnAlnum = (keyHandler: KeyHandler): void => useStdin((key: Key) 
 		keyHandler(key);
 	}
 });
+
+export const useCursor = (): string => {
+	const [showCursor, setShowCursor] = React.useState(true);
+
+	React.useEffect(() => {
+		const timeout = setTimeout(() => setShowCursor(showCursor => !showCursor), 350);
+		return () => {
+			clearTimeout(timeout);
+		};
+	});
+
+	return showCursor ? '█' : ' ';
+};
