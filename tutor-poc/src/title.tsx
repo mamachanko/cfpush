@@ -1,15 +1,9 @@
 import {Box, Color, Text} from 'ink';
 import * as React from 'react';
+import {Div} from './div';
 
 export const Title = (): React.ReactElement => (
-	<Box
-		flexDirection="column"
-		alignItems="center"
-		textWrap="wrap"
-		width={70}
-		marginLeft={4}
-		paddingBottom={2}
-	>
+	<Div>
 		<Box marginY={1}>
 			<Text bold>
 				{'Welcome to '}
@@ -24,5 +18,5 @@ export const Title = (): React.ReactElement => (
 		<Box marginBottom={1} width={70} textWrap="wrap">
 			We will be exploring <Text bold>Cloud Foundry</Text> and cloud-native computing by deploying a real chat application to Cloud Foundry.
 		</Box>
-	</Box>
+	</Div>
 );

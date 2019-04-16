@@ -22,7 +22,7 @@ describe('<InputPrompt/>', () => {
 	});
 
 	it('shows prompt', () => {
-		expect(lastFrame()).toEqual('input goes here >_');
+		expect(lastFrame()).toEqual('input goes here >_ █');
 	});
 
 	describe('when pressing <backspace>', () => {
@@ -31,7 +31,7 @@ describe('<InputPrompt/>', () => {
 		});
 
 		it('nothing changes', () => {
-			expect(lastFrame()).toEqual('input goes here >_');
+			expect(lastFrame()).toEqual('input goes here >_ █');
 		});
 	});
 
@@ -49,7 +49,7 @@ describe('<InputPrompt/>', () => {
 		});
 
 		it('shows alphanumeric input only', () => {
-			expect(lastFrame()).toEqual('input goes here >_ hEllO123');
+			expect(lastFrame()).toEqual('input goes here >_ hEllO123█');
 		});
 
 		describe('when pressing <backspace>', () => {
@@ -58,7 +58,7 @@ describe('<InputPrompt/>', () => {
 			});
 
 			it('removes last character', () => {
-				expect(lastFrame()).toEqual('input goes here >_ hEllO12');
+				expect(lastFrame()).toEqual('input goes here >_ hEllO12█');
 			});
 		});
 
@@ -73,7 +73,7 @@ describe('<InputPrompt/>', () => {
 			});
 
 			it('clears input', () => {
-				expect(lastFrame()).toEqual('input goes here >_');
+				expect(lastFrame()).toEqual('input goes here >_ █');
 			});
 		});
 	});

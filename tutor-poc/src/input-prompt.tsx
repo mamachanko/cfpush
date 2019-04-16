@@ -1,6 +1,6 @@
-import {Text} from 'ink';
+import {Box, Text} from 'ink';
 import * as React from 'react';
-import {Key, useOnAlnum, useOnEnter, useOnBackspace} from './input';
+import {Key, useOnAlnum, useOnBackspace, useOnEnter, useCursor} from './input';
 
 const KEYPRESS = 'KEYPRESS';
 type Keypress = {
@@ -51,6 +51,7 @@ type Props = {
 
 export const InputPrompt: React.FC<Props> = ({submit, prompt}): React.ReactElement => {
 	const [input, dispatch] = React.useReducer(inputReducer, '');
+	const cursor = useCursor();
 
 	const keypress = (key: Key): void => dispatch({type: KEYPRESS, payload: {key}});
 	const removeLast = (): void => dispatch({type: REMOVE_LAST});
@@ -63,5 +64,9 @@ export const InputPrompt: React.FC<Props> = ({submit, prompt}): React.ReactEleme
 		submit(input);
 	});
 
-	return <Text>{`${prompt} ` + input}</Text>;
+	return (
+		<Box>
+			<Text>{`${prompt} ${input}${cursor}`}</Text>
+		</Box>
+	);
 };

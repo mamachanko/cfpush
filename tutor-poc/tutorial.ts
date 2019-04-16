@@ -6,7 +6,7 @@ To begin, we should login.
 
 When logging in we must identify the specific Cloud Foundry that we want to target. All the commands we run after that will run against that Cloud Foundry.
 
-In our case, we'll log into Pivotal Web Services using its Single-Sign On. Once prompted, go to your browser, login and copy the temporary auth code.
+In our case, we'll log into Pivotal Web Services using its Single Sign-On. Once prompted, go to your browser, login and copy the temporary auth code.
 `, command: 'cf login -a api.run.pivotal.io --sso'},
 
 	{text: `

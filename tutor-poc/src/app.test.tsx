@@ -1,7 +1,7 @@
 import {cleanup, render} from 'ink-testing-library';
 import stripAnsi from 'strip-ansi';
 import {createApp} from './app';
-import {Ci, Dry, Tutorial} from './config';
+import {Dry, Tutorial} from './config';
 import {CTRL_C, sleep, SPACE} from './test-utils';
 
 describe('<App />', () => {
@@ -18,50 +18,60 @@ describe('<App />', () => {
 		it('pages and runs commands one after another by pressing <space>', async () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
-			expect(stripAnsi(lastFrame())).toContain('Let us run the first command');
-			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
-
-			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toContain('running');
-
-			await sleep(10);
-			expect(stripAnsi(lastFrame())).toContain('hi this is the first command');
-			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
-
-			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toContain('Now, let us run the second command');
-			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello this is the second command"');
-
-			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toContain('running');
-
-			await sleep(10);
-			expect(stripAnsi(lastFrame())).toContain('hello this is the second command');
-			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
+			);
 
 			stdin.write(SPACE);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/^\s*hi this is the first command\s*hello this is the second command\s*$/
+				/Let us run the first command.*no command output yet.*[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] echo hi this is the first command/si
 			);
+
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command.*output.*hi this is the first command.*✅️ {2}echo hi this is the first command.*\(press <space> to complete\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Now, let us run the second command\s+>_ echo hello this is the second command\s+\(press <space> to run\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Now, let us run the second command.*no command output yet.*[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] echo hello this is the second command/si
+			);
+
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Now, let us run the second command.*output.*hello this is the second command.*✅️ {2}echo hello this is the second command.*\(press <space> to complete\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toEqual('');
 		});
 
 		it('quits on "ctrl-c"', async () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
-			expect(stripAnsi(lastFrame())).toContain('Let us run the first command');
-			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
+			);
 
 			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toContain('running');
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command.*no command output yet.*[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] echo hi this is the first command/si
+			);
 
 			await sleep(10);
-			expect(stripAnsi(lastFrame())).toContain('hi this is the first command');
-			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command.*output.*hi this is the first command.*✅️ {2}echo hi this is the first command.*\(press <space> to complete\)/si
+			);
 
 			stdin.write(CTRL_C);
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/^\s*hi this is the first command\s*oh, i am slain/i
+				/oh, i am slain.*see you/si
 			);
 		});
 	});
@@ -70,37 +80,29 @@ describe('<App />', () => {
 		it('pages and pretends to run commands on <space>', async () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Dry}));
 
-			expect(stripAnsi(lastFrame())).toContain('Let us run the first command');
-			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hi this is the first command"');
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
+			);
 
 			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toContain('pretending to run "echo hi this is the first command"');
-			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
-
-			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toContain('Now, let us run the second command');
-			expect(stripAnsi(lastFrame())).toContain('press <space> to run "echo hello this is the second command"');
-
-			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toContain('pretending to run "echo hello this is the second command"');
-			expect(stripAnsi(lastFrame())).toContain('done. press <space> to complete.');
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command.*output.*pretending to run "echo hi this is the first command".*✅️ {2}echo hi this is the first command.*\(press <space> to complete\)/si
+			);
 
 			stdin.write(SPACE);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/^\s*pretending to run "echo hi this is the first command"\s*pretending to run "echo hello this is the second command"\s*$/
+				/Now, let us run the second command\s+>_ echo hello this is the second command\s+\(press <space> to run\)/si
 			);
-		});
-	});
 
-	describe('when in ci mode', () => {
-		it('runs commands one after another without prompt', async () => {
-			const {lastFrame} = render(createApp({pages, mode: Ci}));
-
-			await sleep(50);
-
+			stdin.write(SPACE);
+			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/^\s*hi this is the first command\s*hello this is the second command\s*$/
+				/Now, let us run the second command.*output.*pretending to run "echo hello this is the second command".*✅️ {2}echo hello this is the second command.*\(press <space> to complete\)/si
 			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toEqual('');
 		});
 	});
 });

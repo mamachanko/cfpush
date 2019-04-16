@@ -2,6 +2,7 @@
 
 import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
+import stripAnsi from 'strip-ansi';
 import {FINISHED} from './actions';
 import {Page, PageProps} from './page'; // eslint-disable-line import/named
 import {INPUT_REQUIRED, RUNNING, UNSTARTED} from './state';
@@ -38,7 +39,7 @@ a test page
 		it('shows which command can be run', () => {
 			const {lastFrame} = render(<Page {...defaultProps}/>);
 
-			expect(lastFrame()).toMatch(/press <space> to run "test command"/i);
+			expect(lastFrame()).toMatch(/>_ test command/i);
 		});
 
 		it('runs command on <space>', () => {
@@ -85,7 +86,7 @@ a test page
 			};
 			const {lastFrame} = render(<Page {...runningCommand}/>);
 
-			expect(lastFrame()).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] running/i);
+			expect(stripAnsi(lastFrame())).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] test command/i);
 		});
 
 		describe('when there is output', () => {
@@ -99,7 +100,7 @@ a test page
 				};
 				const {lastFrame} = render(<Page {...runningCommandWithOutput}/>);
 
-				expect(lastFrame()).toMatch(/test command output 1\ntest command output 2/i);
+				expect(lastFrame()).toMatch(/test command output 1\s*test command output 2/i);
 			});
 		});
 
@@ -135,7 +136,7 @@ a test page
 			it('shows input prompt', () => {
 				const {lastFrame} = render(<Page {...commandWaitingForInput}/>);
 
-				expect(lastFrame()).toMatch(/⚠️ {2}input required >_/i);
+				expect(stripAnsi(lastFrame())).toMatch(/⚠️ {2}test command \(needs input\)/i);
 			});
 
 			describe('when user provides input', () => {
@@ -180,19 +181,19 @@ a test page
 		it('shows output', () => {
 			const {lastFrame} = render(<Page {...finishedCommand}/>);
 
-			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*/i);
+			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*/si);
 		});
 
 		it('shows it has finished', () => {
 			const {lastFrame} = render(<Page {...finishedCommand}/>);
 
-			expect(lastFrame()).toMatch(/✅ finished/i);
+			expect(stripAnsi(lastFrame())).toMatch(/✅️ {2}test command/i);
 		});
 
 		it('shows prompt to complete', () => {
 			const {lastFrame} = render(<Page {...finishedCommand}/>);
 
-			expect(lastFrame()).toMatch(/done. press <space> to complete./i);
+			expect(lastFrame()).toMatch(/press <space> to complete/i);
 		});
 
 		describe('when pressing <space>', () => {
