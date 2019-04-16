@@ -1,28 +1,28 @@
+import {Box, Color, Text} from 'ink';
 import * as React from 'react';
-import {Color, Text, Box} from 'ink';
-import * as BorderedBox from 'ink-box';
 
 export const Title = (): React.ReactElement => (
 	<Box
 		flexDirection="column"
+		alignItems="center"
 		textWrap="wrap"
+		width={70}
+		marginLeft={4}
 		paddingBottom={2}
-		width={80}
 	>
-		<BorderedBox padding={1}>
-			<Text>Welcome to <Color blue bgWhite> cfpush </Color> !</Text>
-		</BorderedBox>
-		<Box marginTop={1}>
-			{'An interactive Cloud Foundry tutorial in your terminal'}
+		<Box marginY={1}>
+			<Text bold>
+				{'Welcome to '}
+				<Color white bgBlue>
+					{' cfpush ☁️  '}
+				</Color>
+			</Text>
 		</Box>
-		<Box marginTop={1}>
-			{'We will be exploring $(bold \'Cloud Foundry\') and cloud-native computing by deploying a real chat application to Cloud Foundry.'}
+		<Box marginBottom={1}>
+			<Text italic>An interactive Cloud Foundry tutorial in your terminal</Text>
 		</Box>
-		<Box marginTop={1}>
-			{'Are you ready? We can\'t wait. Let\'s go!'}
-		</Box>
-		<Box marginTop={1}>
-			{'press <enter> to start'}
+		<Box marginBottom={1} width={70} textWrap="wrap">
+			We will be exploring <Text bold>Cloud Foundry</Text> and cloud-native computing by deploying a real chat application to Cloud Foundry.
 		</Box>
 	</Box>
 );
