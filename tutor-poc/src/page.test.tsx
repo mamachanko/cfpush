@@ -11,6 +11,7 @@ describe('<Page/>', () => {
 	const ENTER = '\r';
 	const SPACE = ' ';
 	const defaultProps: PageProps = {
+		title: 'The Test Page',
 		text: `
 This is
 
@@ -30,7 +31,13 @@ a test page
 	});
 
 	describe('when command has not yet been run', () => {
-		it('shows text', () => {
+		it('shows the title', () => {
+			const {lastFrame} = render(<Page {...defaultProps}/>);
+
+			expect(lastFrame()).toMatch(/The Test Page/);
+		});
+
+		it('shows the page text', () => {
 			const {lastFrame} = render(<Page {...defaultProps}/>);
 
 			expect(lastFrame()).toMatch(/this is\s+a test page/i);

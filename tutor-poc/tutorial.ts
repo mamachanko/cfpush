@@ -1,9 +1,8 @@
 import {Page} from './src/state';
 
 export default [
-	{text: `
-Welcome to cfpush ☁️  
-
+	{title: 'Welcome to cfpush ☁️ ',
+		text: `
 An interactive Cloud Foundry tutorial in your terminal
 
 We will be exploring <Text bold>Cloud Foundry</Text> and cloud-native computing by deploying a real chat application to Cloud Foundry.

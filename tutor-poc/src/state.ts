@@ -1,14 +1,12 @@
 
-type Command = string;
-type Text = string;
-
 export interface Page {
-	command: Command;
-	text: Text;
+	title?: string;
+	text: string;
+	command: string;
 }
 
 export type CommandOutput = {
-	text: Text;
+	text: string;
 	uid: string;
 }
 

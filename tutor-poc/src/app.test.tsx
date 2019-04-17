@@ -3,11 +3,19 @@ import stripAnsi from 'strip-ansi';
 import {createApp} from './app';
 import {Dry, Tutorial} from './config';
 import {CTRL_C, sleep, SPACE} from './test-utils';
+import {Page} from './state';
 
 describe('<App />', () => {
-	const pages = [
-		{text: 'Let us run the first command', command: 'echo hi this is the first command'},
-		{text: 'Now, let us run the second command', command: 'echo hello this is the second command'}
+	const pages: Page[] = [
+		{
+			title: 'The First Page',
+			text: 'Let us run the first command',
+			command: 'echo hi this is the first command'
+		},
+		{
+			text: 'Now, let us run the second command',
+			command: 'echo hello this is the second command'
+		}
 	];
 
 	afterEach(() => {
@@ -19,7 +27,7 @@ describe('<App />', () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toMatch(
-				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
+				/The First Page\s+Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
 			);
 
 			stdin.write(SPACE);

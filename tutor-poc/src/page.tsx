@@ -104,9 +104,27 @@ const Command: React.FC<CommandProps> = ({command, commandStatus}): React.ReactE
 	}
 };
 
+type TitleProps = {
+	readonly title?: string;
+}
+
+const isBlank = (str: string): boolean => str && str.replace(/\s*/, '') === '';
+
+const Title: React.FC<TitleProps> = ({title}): React.ReactElement =>
+	(isBlank(title)) ?
+		null :
+		<Box marginTop={1}>
+			<Text bold>
+				<Color bgBlueBright>
+					{` ${title} `}
+				</Color>
+			</Text>
+		</Box>;
+
 type StateProps = {
-	command: string;
+	title?: string;
 	text: string;
+	command: string;
 	commandStatus: CommandStatus;
 	output: ReadonlyArray<CommandOutput>;
 	waitForTrigger: boolean;
@@ -127,6 +145,7 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 		case (RUNNING): {
 			return (
 				<Div>
+					<Title {...props}/>
 					<Text>{props.text}</Text>
 					<Output {...props}/>
 					<Command {...props}/>
@@ -137,6 +156,7 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 		case (INPUT_REQUIRED): {
 			return (
 				<Div>
+					<Title {...props}/>
 					<Text>{props.text}</Text>
 					<Output {...props}/>
 					<Command {...props}/>
@@ -148,6 +168,7 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 		case (FINISHED): {
 			return (
 				<Div>
+					<Title {...props}/>
 					<Text>{props.text}</Text>
 					<Output {...props}/>
 					<Command {...props}/>
@@ -159,6 +180,7 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 		default: {
 			return (
 				<Div>
+					<Title {...props}/>
 					<Text>{props.text}</Text>
 					<Command {...props}/>
 					<CommandPrompt {...props}/>

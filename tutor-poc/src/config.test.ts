@@ -15,12 +15,12 @@ describe('Config', () => {
 			it('parses config', () => {
 				expect(
 					config.parseConfig([
-						{text: 'let us login', command: 'cf login'},
+						{title: 'Login', text: 'let us login', command: 'cf login'},
 						{text: 'let us deploy', command: 'cf push'}
 					], {})
 				).toEqual({
 					pages: [
-						{text: 'let us login', command: 'cf login'},
+						{title: 'Login', text: 'let us login', command: 'cf login'},
 						{text: 'let us deploy', command: 'cf push'}
 					],
 					mode: config.Tutorial
