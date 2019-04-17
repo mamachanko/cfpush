@@ -9,6 +9,7 @@ describe('<App />', () => {
 	const pages: Page[] = [
 		{
 			title: 'The First Page',
+			subtitle: 'a fine test page',
 			text: 'Let us run the first command',
 			command: 'echo hi this is the first command'
 		},
@@ -27,7 +28,7 @@ describe('<App />', () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toMatch(
-				/The First Page\s+Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
+				/The First Page\s+~ a fine test page ~\s+Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
 			);
 
 			stdin.write(SPACE);

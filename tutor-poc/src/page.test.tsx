@@ -12,6 +12,7 @@ describe('<Page/>', () => {
 	const SPACE = ' ';
 	const defaultProps: PageProps = {
 		title: 'The Test Page',
+		subtitle: 'a test page it is',
 		text: `
 This is
 
@@ -35,6 +36,12 @@ a test page
 			const {lastFrame} = render(<Page {...defaultProps}/>);
 
 			expect(lastFrame()).toMatch(/The Test Page/);
+		});
+
+		it('shows the subtitle', () => {
+			const {lastFrame} = render(<Page {...defaultProps}/>);
+
+			expect(lastFrame()).toMatch(/~ a test page it is ~/);
 		});
 
 		it('shows the page text', () => {

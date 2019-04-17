@@ -1,10 +1,10 @@
 import {Box, Color, Text} from 'ink';
 import * as Link from 'ink-link';
 import * as React from 'react';
-import {Div} from './div';
+import {Column} from './column';
 
 export const ExitMessage = (): React.ReactElement => (
-	<Div>
+	<Column marginLeft={4}>
 		<Box marginY={1}>
 			<Color black bgRed>
 				{' Oh, I am slain... 💀 '}
@@ -25,5 +25,5 @@ export const ExitMessage = (): React.ReactElement => (
 			<Text bold>cf delete-space -f cfpush-tutorial</Text>
 		</Box>
 		<Box marginY={1}>See you! 👋🏽</Box>
-	</Div>
+	</Column>
 );

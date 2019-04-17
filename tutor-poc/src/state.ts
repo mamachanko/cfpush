@@ -1,6 +1,7 @@
 
 export interface Page {
 	title?: string;
+	subtitle?: string;
 	text: string;
 	command: string;
 }

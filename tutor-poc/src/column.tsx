@@ -1,4 +1,16 @@
 import * as React from 'react';
-import {Box} from 'ink';
+import {Box, BoxProps} from 'ink';
 
-export const Column: React.FC = ({children}): React.ReactElement => <Box flexDirection="column">{children}</Box>;
+export const Column: React.FC<BoxProps> = (props): React.ReactElement => {
+	const boxProps = {
+		...props,
+		flexDirection: 'column',
+		textWrap: 'wrap',
+		width: 70
+	};
+	return (
+		<Box {...boxProps as BoxProps}>
+			{boxProps.children}
+		</Box>
+	);
+};

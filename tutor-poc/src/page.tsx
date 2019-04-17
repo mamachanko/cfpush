@@ -5,11 +5,11 @@ import {connect} from 'react-redux';
 import * as Redux from 'redux';
 import {completed, inputReceived, runCommand} from './actions';
 import {Column} from './column';
-import {Div} from './div';
 import {useOnSpace} from './input';
 import {InputPrompt} from './input-prompt';
 import {Output} from './output';
 import {CommandOutput, CommandStatus, FINISHED, INPUT_REQUIRED, RUNNING, State} from './state'; // eslint-disable-line import/named
+import {isBlank} from './utils';
 
 const CommandPrompt = ({run, waitForTrigger}): React.ReactElement => {
 	React.useLayoutEffect(() => {
@@ -108,7 +108,9 @@ type TitleProps = {
 	readonly title?: string;
 }
 
-const isBlank = (str: string): boolean => str && str.replace(/\s*/, '') === '';
+type SubtitleProps = {
+	readonly subtitle?: string;
+};
 
 const Title: React.FC<TitleProps> = ({title}): React.ReactElement =>
 	(isBlank(title)) ?
@@ -121,8 +123,37 @@ const Title: React.FC<TitleProps> = ({title}): React.ReactElement =>
 			</Text>
 		</Box>;
 
+const Subtitle: React.FC<SubtitleProps> = ({subtitle}): React.ReactElement =>
+	(isBlank(subtitle)) ?
+		null :
+		<Box marginTop={1}>
+			<Text italic>
+				{`~ ${subtitle} ~`}
+			</Text>
+		</Box>;
+
+type PageContentProps = {
+	readonly title?: string;
+	readonly subtitle?: string;
+	readonly text: string;
+}
+
+const StaticContent: React.FC<PageContentProps> = ({title, subtitle, text}): React.ReactElement => (
+	<Column marginLeft={0}>
+		<Box
+			flexDirection="column"
+			alignItems="center"
+		>
+			<Title title={title}/>
+			<Subtitle subtitle={subtitle}/>
+		</Box>
+		<Text>{text}</Text>
+	</Column>
+);
+
 type StateProps = {
 	title?: string;
+	subtitle?: string;
 	text: string;
 	command: string;
 	commandStatus: CommandStatus;
@@ -144,47 +175,43 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 	switch (props.commandStatus) {
 		case (RUNNING): {
 			return (
-				<Div>
-					<Title {...props}/>
-					<Text>{props.text}</Text>
+				<Column marginLeft={4}>
+					<StaticContent {...props}/>
 					<Output {...props}/>
 					<Command {...props}/>
-				</Div>
+				</Column>
 			);
 		}
 
 		case (INPUT_REQUIRED): {
 			return (
-				<Div>
-					<Title {...props}/>
-					<Text>{props.text}</Text>
+				<Column marginLeft={4}>
+					<StaticContent {...props}/>
 					<Output {...props}/>
 					<Command {...props}/>
 					<InputPrompt {...props} prompt=">_"/>
-				</Div>
+				</Column>
 			);
 		}
 
 		case (FINISHED): {
 			return (
-				<Div>
-					<Title {...props}/>
-					<Text>{props.text}</Text>
+				<Column marginLeft={4}>
+					<StaticContent {...props}/>
 					<Output {...props}/>
 					<Command {...props}/>
 					<CompletePrompt {...props}/>
-				</Div>
+				</Column>
 			);
 		}
 
 		default: {
 			return (
-				<Div>
-					<Title {...props}/>
-					<Text>{props.text}</Text>
+				<Column marginLeft={4}>
+					<StaticContent {...props}/>
 					<Command {...props}/>
 					<CommandPrompt {...props}/>
-				</Div>
+				</Column>
 			);
 		}
 	}
