@@ -12,7 +12,6 @@ import {CurrentPage} from './page';
 import {Quitable} from './quitable';
 import {reducer} from './reducer';
 import {State, UNSTARTED} from './state';
-import {Title} from './title';
 import {WhilePages} from './while-pages';
 
 type AppProps = {
@@ -23,7 +22,6 @@ const App: React.FC<AppProps> = ({store}): React.ReactElement => (
 	<Provider store={store}>
 		<WhilePages>
 			<Quitable exitDisplay={<ExitMessage/>}>
-				<Title/>
 				<CurrentPage/>
 			</Quitable>
 		</WhilePages>

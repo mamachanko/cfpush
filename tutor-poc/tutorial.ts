@@ -2,6 +2,14 @@ import {Page} from './src/state';
 
 export default [
 	{text: `
+Welcome to cfpush ☁️  
+
+An interactive Cloud Foundry tutorial in your terminal
+
+We will be exploring <Text bold>Cloud Foundry</Text> and cloud-native computing by deploying a real chat application to Cloud Foundry.
+`, command: 'echo ok let\'s go!'},
+
+	{text: `
 To begin, we should login.
 
 When logging in we must identify the specific Cloud Foundry that we want to target. All the commands we run after that will run against that Cloud Foundry.
