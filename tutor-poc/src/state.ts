@@ -18,11 +18,11 @@ export type Pages = {
 	next: Page<Command>[];
 }
 
-export type Page<T extends Command> = {
+export type Page<T = Command | CurrentCommand | CompletedCommand> = {
 	title?: string;
 	subtitle?: string;
 	text: string;
-	command: T;
+	command?: T;
 }
 
 export type Command = {

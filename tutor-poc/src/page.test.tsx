@@ -241,4 +241,31 @@ a test page
 			});
 		});
 	});
+
+	describe('when there is no command', () => {
+		const {command, ...commandLessPage}: PageProps = {...defaultProps, text: 'there is no command here. just text.'};
+
+		it('shows text', () => {
+			const {lastFrame} = render(<Page {...commandLessPage}/>);
+
+			expect(stripAnsi(lastFrame())).toMatch(/the test page\s+~ a test page it is ~\s+there is no command here\. just text\./si);
+		});
+
+		it('shows prompt to complete', () => {
+			const {lastFrame} = render(<Page {...commandLessPage}/>);
+
+			expect(lastFrame()).toMatch(/press <space> to complete/i);
+		});
+
+		describe('when pressing <space>', () => {
+			it('completes the page', () => {
+				const complete = jest.fn();
+				const {stdin} = render(<Page {...{...commandLessPage, complete}}/>);
+
+				stdin.write(SPACE);
+
+				expect(complete).toHaveBeenCalledTimes(1);
+			});
+		});
+	});
 });

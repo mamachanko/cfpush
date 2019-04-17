@@ -2,7 +2,7 @@ import * as deepmerge from 'deepmerge';
 import * as Mustache from 'mustache';
 import {Reducer} from 'redux';
 import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, STDOUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions'; // eslint-disable-line import/named
-import {State, UNSTARTED, RUNNING} from './state'; // eslint-disable-line import/named
+import {State, UNSTARTED, RUNNING, CurrentCommand, Page} from './state'; // eslint-disable-line import/named
 
 export const initialState: State = {
 	app: {
@@ -97,25 +97,38 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 		}
 
 		case (COMPLETED): {
-			return {
-				...state,
-				pages: {
-					...state.pages,
-					completed: [...state.pages.completed, {
-						...state.pages.current,
-						command: {
-							command: state.pages.current.command.command,
-							stdout: state.pages.current.command.stdout
-						}
-					}],
-					current: state.pages.next[0] ? {
-						text: state.pages.next[0].text,
+			let current: Page<CurrentCommand>;
+			if (state.pages.next[0]) {
+				if (state.pages.next[0].command) {
+					current = {
+						...state.pages.next[0],
 						command: {
 							command: Mustache.render(state.pages.next[0].command.command, state.cloudFoundryContext),
 							status: UNSTARTED,
 							stdout: []
 						}
-					} : undefined,
+					};
+				} else {
+					current = (state.pages.next[0] as Page<null>);
+				}
+			} else {
+				current = null;
+			}
+
+			return {
+				...state,
+				pages: {
+					...state.pages,
+					completed: [
+						...state.pages.completed, {
+							...state.pages.current,
+							...(state.pages.current.command ? {command: {
+								command: state.pages.current.command.command,
+								stdout: state.pages.current.command.stdout
+							}} : {})
+						}
+					],
+					current,
 					next: state.pages.next.slice(1)
 				}
 			};

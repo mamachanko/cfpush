@@ -1,3 +1,5 @@
+/* eslint-disable max-nested-callbacks */
+
 import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, stdoutReceived, started, updateCfContext} from './actions';
 import {reducer} from './reducer';
 import {State, UNSTARTED, RUNNING, FINISHED} from './state'; // eslint-disable-line import/named
@@ -189,88 +191,31 @@ describe('reducer', () => {
 		});
 	});
 
-	describe('when completing a command', () => {
-		it('completes the current command and sets the next current command', () => {
-			const nextState = reducer({
-				...defaultState,
-				pages: {
-					...defaultState.pages,
-					completed: [{
-						text: 'The zeroth page',
-						command: {
-							command: 'command zero',
-							stdout: [
-								{text: 'existing command output 1', uid: 'abc'},
-								{text: 'existing command output 2', uid: 'def'}
-							]
-						}
-					}],
-					current: {
-						...defaultState.pages.current,
-						command: {
-							...defaultState.pages.current.command,
-							status: FINISHED,
-							stdout: [
-								{text: 'existing command output 3', uid: 'xyz'},
-								{text: 'existing command output 4', uid: 'urs'}
-							]
-						}
-					}
-				}
-			}, completed());
-
-			expect(nextState).toStrictEqual({
-				...defaultState,
-				pages: {
-					...defaultState.pages,
-					completed: [{
-						text: 'The zeroth page',
-						command: {
-							command: 'command zero',
-							stdout: [
-								{text: 'existing command output 1', uid: 'abc'},
-								{text: 'existing command output 2', uid: 'def'}
-							]
-						}
-					}, {
-						text: 'The first page',
-						command: {
-							command: 'command one',
-							stdout: [
-								{text: 'existing command output 3', uid: 'xyz'},
-								{text: 'existing command output 4', uid: 'urs'}
-							]
-						}
-					}],
-					current: {
-						...defaultState.pages.current,
-						text: 'The second page',
-						command: {
-							...defaultState.pages.current.command,
-							command: 'command two',
-							stdout: [],
-							status: UNSTARTED
-						}
-					},
-					next: [{text: 'The third page', command: {command: 'command three'}}]
-				}
-			});
-		});
-
-		describe('when completing the first command', () => {
-			it('completes the current command and sets the next current command', () => {
+	describe('when completing a page', () => {
+		describe('when it has a command', () => {
+			it('completes the current page and sets the next current page', () => {
 				const nextState = reducer({
 					...defaultState,
 					pages: {
 						...defaultState.pages,
+						completed: [{
+							text: 'The zeroth page',
+							command: {
+								command: 'command zero',
+								stdout: [
+									{text: 'existing command output 1', uid: 'abc'},
+									{text: 'existing command output 2', uid: 'def'}
+								]
+							}
+						}],
 						current: {
 							...defaultState.pages.current,
 							command: {
 								...defaultState.pages.current.command,
 								status: FINISHED,
 								stdout: [
-									{text: 'existing command output 1', uid: 'abc'},
-									{text: 'existing command output 2', uid: 'def'}
+									{text: 'existing command output 3', uid: 'xyz'},
+									{text: 'existing command output 4', uid: 'urs'}
 								]
 							}
 						}
@@ -282,12 +227,21 @@ describe('reducer', () => {
 					pages: {
 						...defaultState.pages,
 						completed: [{
+							text: 'The zeroth page',
+							command: {
+								command: 'command zero',
+								stdout: [
+									{text: 'existing command output 1', uid: 'abc'},
+									{text: 'existing command output 2', uid: 'def'}
+								]
+							}
+						}, {
 							text: 'The first page',
 							command: {
 								command: 'command one',
 								stdout: [
-									{text: 'existing command output 1', uid: 'abc'},
-									{text: 'existing command output 2', uid: 'def'}
+									{text: 'existing command output 3', uid: 'xyz'},
+									{text: 'existing command output 4', uid: 'urs'}
 								]
 							}
 						}],
@@ -295,6 +249,7 @@ describe('reducer', () => {
 							...defaultState.pages.current,
 							text: 'The second page',
 							command: {
+								...defaultState.pages.current.command,
 								command: 'command two',
 								stdout: [],
 								status: UNSTARTED
@@ -304,94 +259,177 @@ describe('reducer', () => {
 					}
 				});
 			});
-		});
 
-		describe('when completing the last command', () => {
-			it('completes the current command and sets the current command to undefined', () => {
-				const nextState = reducer({
-					...defaultState,
-					pages: {
-						...defaultState.pages,
-						current: {
-							...defaultState.pages.current,
-							command: {
-								...defaultState.pages.current.command,
-								status: FINISHED,
-								stdout: [
-									{command: 'existing command output 1', uid: 'abc'},
-									{command: 'existing command output 2', uid: 'def'}
-								]
+			describe('when completing the first page', () => {
+				it('completes the current command and sets the next current command', () => {
+					const nextState = reducer({
+						...defaultState,
+						pages: {
+							...defaultState.pages,
+							current: {
+								...defaultState.pages.current,
+								command: {
+									...defaultState.pages.current.command,
+									status: FINISHED,
+									stdout: [
+										{text: 'existing command output 1', uid: 'abc'},
+										{text: 'existing command output 2', uid: 'def'}
+									]
+								}
+							}
+						}
+					}, completed());
+
+					expect(nextState).toStrictEqual({
+						...defaultState,
+						pages: {
+							...defaultState.pages,
+							completed: [{
+								text: 'The first page',
+								command: {
+									command: 'command one',
+									stdout: [
+										{text: 'existing command output 1', uid: 'abc'},
+										{text: 'existing command output 2', uid: 'def'}
+									]
+								}
+							}],
+							current: {
+								...defaultState.pages.current,
+								text: 'The second page',
+								command: {
+									command: 'command two',
+									stdout: [],
+									status: UNSTARTED
+								}
+							},
+							next: [{text: 'The third page', command: {command: 'command three'}}]
+						}
+					});
+				});
+			});
+
+			describe('when completing the last page', () => {
+				it('completes the current command and sets the current command to undefined', () => {
+					const nextState = reducer({
+						...defaultState,
+						pages: {
+							...defaultState.pages,
+							current: {
+								...defaultState.pages.current,
+								command: {
+									...defaultState.pages.current.command,
+									status: FINISHED,
+									stdout: [
+										{command: 'existing command output 1', uid: 'abc'},
+										{command: 'existing command output 2', uid: 'def'}
+									]
+								}
+							},
+							next: []
+						}
+					}, completed());
+
+					expect(nextState).toStrictEqual({
+						...defaultState,
+						pages: {
+							...defaultState.pages,
+							completed: [{
+								text: 'The first page',
+								command: {
+									command: 'command one',
+									stdout: [
+										{command: 'existing command output 1', uid: 'abc'},
+										{command: 'existing command output 2', uid: 'def'}
+									]
+								}
+							}],
+							current: null,
+							next: []
+						}
+					});
+				});
+			});
+
+			describe('when the next page\'s command contains a placeholder', () => {
+				it('completes the current command, renders the next command it using the cf context and sets it as current', () => {
+					const nextState = reducer({
+						...defaultState,
+						cloudFoundryContext: {
+							here: {
+								is: {
+									some: 'context'
+								}
 							}
 						},
-						next: []
-					}
-				}, completed());
+						pages: {
+							...defaultState.pages,
+							next: [{
+								text: 'This page\'s command needs rendering',
+								command: {command: 'this command needs {{here.is.some}} to be rendered'}
+							}]
+						}
+					}, completed());
 
-				expect(nextState).toStrictEqual({
-					...defaultState,
-					pages: {
-						...defaultState.pages,
-						completed: [{
-							text: 'The first page',
-							command: {
-								command: 'command one',
-								stdout: [
-									{command: 'existing command output 1', uid: 'abc'},
-									{command: 'existing command output 2', uid: 'def'}
-								]
+					expect(nextState).toStrictEqual({
+						...defaultState,
+						cloudFoundryContext: {
+							here: {
+								is: {
+									some: 'context'
+								}
 							}
-						}],
-						current: undefined,
-						next: []
-					}
+						},
+						pages: {
+							completed: [{
+								text: 'The first page',
+								command: {
+									command: 'command one',
+									stdout: []
+								}
+							}],
+							current: {
+								text: 'This page\'s command needs rendering',
+								command: {
+									command: 'this command needs context to be rendered',
+									status: 'UNSTARTED',
+									stdout: []
+								}
+							},
+							next: []
+						}
+					});
 				});
 			});
 		});
 
-		describe('when the next command contains a placeholder', () => {
-			it('completes the current command, renders the next command it using the cf context and sets it as current', () => {
+		describe('when it has no command', () => {
+			it('completes the current page and sets the next current page', () => {
 				const nextState = reducer({
 					...defaultState,
-					cloudFoundryContext: {
-						here: {
-							is: {
-								some: 'context'
-							}
-						}
-					},
 					pages: {
-						...defaultState.pages,
+						completed: [],
+						current: {
+							title: 'current title',
+							text: 'current text'
+						},
 						next: [{
-							text: 'This page\'s command needs rendering',
-							command: {command: 'this command needs {{here.is.some}} to be rendered'}
+							title: 'next title',
+							text: 'next text'
 						}]
 					}
 				}, completed());
 
 				expect(nextState).toStrictEqual({
 					...defaultState,
-					cloudFoundryContext: {
-						here: {
-							is: {
-								some: 'context'
-							}
-						}
-					},
 					pages: {
 						completed: [{
-							text: 'The first page',
-							command: {
-								command: 'command one',
-								stdout: []
-							}
+							title: 'current title',
+							text: 'current text'
 						}],
 						current: {
-							text: 'This page\'s command needs rendering',
-							command: {
-								command: 'this command needs context to be rendered',
-								status: 'UNSTARTED',
-								stdout: []
-							}
+							title: 'next title',
+							text: 'next text'
 						},
 						next: []
 					}

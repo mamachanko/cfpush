@@ -148,25 +148,24 @@ const StaticContent: React.FC<PageContentProps> = ({title, subtitle, text}): Rea
 	</Column>
 );
 
-type StateProps = {
+type StaticPageProps = {
 	title?: string;
 	subtitle?: string;
 	text: string;
-	command: CurrentCommand;
 	waitForTrigger: boolean;
-};
-
-type DispatchProps = {
-	run: (command: string) => void;
 	complete: () => void;
-	submit: (input: string) => void;
 }
 
-export type PageProps =
-	& StateProps
-	& DispatchProps;
+const StaticPage: React.FC<StaticPageProps> = (props): React.ReactElement => (
+	<>
+		<StaticContent {...props}/>
+		<CompletePrompt {...props}/>
+	</>
+);
 
-export const Page: React.FC<PageProps> = (props): React.ReactElement => {
+type CommandPageProps = PageProps;
+
+const CommandPage: React.FC<CommandPageProps> = (props): React.ReactElement => {
 	switch (props.command.status) {
 		case (RUNNING): {
 			return (
@@ -211,6 +210,32 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 		}
 	}
 };
+
+type StateProps = {
+	title?: string;
+	subtitle?: string;
+	text: string;
+	command?: CurrentCommand;
+	waitForTrigger: boolean;
+};
+
+type DispatchProps = {
+	run: (command: string) => void;
+	complete: () => void;
+	submit: (input: string) => void;
+}
+
+export type PageProps =
+	& StateProps
+	& DispatchProps;
+
+export const Page: React.FC<PageProps> = (props): React.ReactElement => (
+	<Column marginLeft={4}>
+		{props.command ?
+			<CommandPage {...props}/> :
+			<StaticPage {...props}/>}
+	</Column>
+);
 
 const mapStateToProps = (state: State): StateProps => ({
 	...state.pages.current,

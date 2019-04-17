@@ -34,9 +34,11 @@ const cfCiLogin = (): Command => ({
 	].join(' ')
 });
 
+const isCfLogin = (command?: Command): boolean => Boolean(command && command.command.match(/cf\s+login/));
+
 const parsePages = (pages: Page<Command>[], mode: Mode): Page<Command>[] => {
 	switch (mode) {
-		case (Ci): return pages.map(page => page.command.command.match(/cf\s+login/) ? {...page, command: cfCiLogin()} : page);
+		case (Ci): return pages.map(page => isCfLogin(page.command) ? {...page, command: cfCiLogin()} : page);
 		case (Dry):
 		case (Tutorial):
 		default: return pages;

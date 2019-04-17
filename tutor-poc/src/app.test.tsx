@@ -8,8 +8,11 @@ import {Page, Command} from './state'; // eslint-disable-line import/named
 describe('<App />', () => {
 	const pages: Page<Command>[] = [
 		{
-			title: 'The First Page',
-			subtitle: 'a fine test page',
+			title: 'The Title Page',
+			subtitle: 'a fine subtitle',
+			text: 'This is the title page and it welcomes you'
+		},
+		{
 			text: 'Let us run the first command',
 			command: {
 				command: 'echo hi this is the first command'
@@ -32,7 +35,12 @@ describe('<App />', () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toMatch(
-				/The First Page\s+~ a fine test page ~\s+Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
+				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to complete\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
 			);
 
 			stdin.write(SPACE);
@@ -68,6 +76,11 @@ describe('<App />', () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toMatch(
+				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to complete\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
 				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
 			);
 
@@ -93,6 +106,11 @@ describe('<App />', () => {
 		it('pages and pretends to run commands on <space>', async () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Dry}));
 
+			expect(stripAnsi(lastFrame())).toMatch(
+				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to complete\)/si
+			);
+
+			stdin.write(SPACE);
 			expect(stripAnsi(lastFrame())).toMatch(
 				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
 			);

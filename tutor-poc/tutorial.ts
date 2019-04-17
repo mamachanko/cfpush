@@ -6,8 +6,7 @@ export default [
 		subtitle: 'an interactive Cloud Foundry tutorial in your terminal',
 		text: `
 We will be exploring <Text bold>Cloud Foundry</Text> and cloud-native computing by deploying a real chat application to Cloud Foundry.
-`,
-		command: {command: 'echo ok let\'s go!'}
+`
 	},
 	{
 		text: `

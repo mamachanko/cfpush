@@ -11,7 +11,7 @@ import {Middlewares} from './middleware'; // eslint-disable-line import/named
 import {CurrentPage} from './page';
 import {Quitable} from './quitable';
 import {reducer} from './reducer';
-import {State, UNSTARTED} from './state'; // eslint-disable-line import/named
+import {State, UNSTARTED, Page, CurrentCommand} from './state'; // eslint-disable-line import/named
 import {WhilePages} from './while-pages';
 
 type AppProps = {
@@ -41,6 +41,15 @@ export const createApp = (config: Config): React.ReactElement => {
 const createInitialState = ({pages, mode}: Config): State => {
 	const [first, ...next] = pages;
 
+	const current: Page<CurrentCommand> = first.command ? {
+		...first,
+		command: {
+			command: first.command.command,
+			status: UNSTARTED,
+			stdout: []
+		}
+	} : {...first, command: null};
+
 	return {
 		app: {
 			exit: false,
@@ -49,14 +58,7 @@ const createInitialState = ({pages, mode}: Config): State => {
 		cloudFoundryContext: {},
 		pages: {
 			completed: [],
-			current: {
-				...first,
-				command: {
-					...first.command,
-					status: UNSTARTED,
-					stdout: []
-				}
-			},
+			current,
 			next
 		}
 	};

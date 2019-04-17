@@ -41,7 +41,7 @@ describe('<WhilePages>', () => {
 		const store = createStoreMock({
 			pages: {
 				completed: [],
-				current: undefined,
+				current: null,
 				next: []
 			}
 		});

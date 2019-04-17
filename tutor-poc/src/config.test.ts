@@ -15,12 +15,14 @@ describe('Config', () => {
 			it('parses config', () => {
 				expect(
 					config.parseConfig([
-						{title: 'Login', text: 'let us login', command: {command: 'cf login'}},
+						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
+						{text: 'let us login', command: {command: 'cf login'}},
 						{text: 'let us deploy', command: {command: 'cf push'}}
 					], {})
 				).toStrictEqual({
 					pages: [
-						{title: 'Login', text: 'let us login', command: {command: 'cf login'}},
+						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
+						{text: 'let us login', command: {command: 'cf login'}},
 						{text: 'let us deploy', command: {command: 'cf push'}}
 					],
 					mode: config.Tutorial
@@ -47,11 +49,13 @@ describe('Config', () => {
 			it('parses config and turns any "cf login" non-interactive', () => {
 				expect(
 					config.parseConfig([
+						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
 						{text: 'let us login', command: {command: 'cf login'}},
 						{text: 'let us deploy', command: {command: 'cf push'}}
 					], {CI: 'true'})
 				).toStrictEqual({
 					pages: [
+						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
 						{text: 'let us login', command: {command: 'cf login -a api.run.pivotal.io -u cf-user -p cf-password -o cf-org -s cf-space'}},
 						{text: 'let us deploy', command: {command: 'cf push'}}
 					],
@@ -65,11 +69,13 @@ describe('Config', () => {
 			it('parses config', () => {
 				expect(
 					config.parseConfig([
+						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
 						{text: 'let us login', command: {command: 'cf login'}},
 						{text: 'let us deploy', command: {command: 'cf push'}}
 					], {DRY: 'true'})
 				).toStrictEqual({
 					pages: [
+						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
 						{text: 'let us login', command: {command: 'cf login'}},
 						{text: 'let us deploy', command: {command: 'cf push'}}
 					],
