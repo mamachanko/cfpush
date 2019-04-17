@@ -1,7 +1,7 @@
-import {runCommand, started, outputReceived, finished} from './actions';
-import {createStoreMock} from './test-utils';
+import {finished, outputReceived, runCommand, started} from './actions';
+import {UNSTARTED} from './state';
 import {createDryMiddleware} from './dry-middleware';
-import {UNSTARTED} from './command-status';
+import {createStoreMock} from './test-utils';
 
 describe('Dry Middleware', () => {
 	let storeMock;
@@ -13,9 +13,11 @@ describe('Dry Middleware', () => {
 			pages: {
 				current: {
 					text: 'Let us pretend run a real command',
-					command: 'a real command',
-					status: UNSTARTED,
-					output: []
+					command: {
+						command: 'a real command',
+						status: UNSTARTED,
+						stdout: []
+					}
 				}
 			}
 		});
@@ -32,7 +34,7 @@ describe('Dry Middleware', () => {
 
 		it('pretends to run the command', () => {
 			expect(storeMock.dispatch).toHaveBeenNthCalledWith(1, started());
-			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived('pretending to run "a real command"', 'test-uid'));
+			expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived({text: 'pretending to run "a real command"', uid: 'test-uid'}));
 			expect(storeMock.dispatch).toHaveBeenNthCalledWith(3, finished());
 			expect(storeMock.dispatch).toHaveBeenCalledTimes(3);
 			expect(nextMiddlewareMock).not.toHaveBeenCalled();

@@ -12,40 +12,54 @@ type App = {
 
 type CloudFoundryContext = any;
 
-type Pages = {
-	completed: CompletedPage[];
-	current: CurrentPage;
-	next: Page[];
+export type Pages = {
+	completed: Page<CompletedCommand>[];
+	current: Page<CurrentCommand>;
+	next: Page<Command>[];
 }
 
-export type Page = {
+export type Page<T extends Command> = {
 	title?: string;
 	subtitle?: string;
 	text: string;
+	command: T;
+}
+
+export type Command = {
 	command: string;
 }
 
-interface CompletedPage extends Page {
-	output: ReadonlyArray<CommandOutput>;
+type CompletedCommand =
+	& Command
+	& HasStdout;
+
+export type CurrentCommand =
+	& Command
+	& HasStdout
+	& HasStatus;
+
+type HasStdout = {
+	stdout: Stdout;
 }
 
-export interface CurrentPage extends Page {
-	commandStatus: CommandStatus;
-	output: ReadonlyArray<CommandOutput>;
+export type Stdout = Output[];
+
+export type Output = {
+	text: string;
+	uid: string;
 }
+
+type HasStatus = {
+	status: Status;
+}
+
+export type Status =
+	| typeof UNSTARTED
+	| typeof RUNNING
+	| typeof INPUT_REQUIRED
+	| typeof FINISHED;
 
 export const UNSTARTED = 'UNSTARTED';
 export const RUNNING = 'RUNNING';
 export const INPUT_REQUIRED = 'INPUT_REQUIRED';
 export const FINISHED = 'FINISHED';
-
-export type CommandStatus =
-| typeof UNSTARTED
-| typeof RUNNING
-| typeof INPUT_REQUIRED
-| typeof FINISHED;
-
-export type CommandOutput = {
-	text: string;
-	uid: string;
-}

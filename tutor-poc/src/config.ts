@@ -1,4 +1,4 @@
-import {Page} from './state';
+import {Page, Command} from './state'; // eslint-disable-line import/named
 
 export const Tutorial = 'TUTORIAL';
 export const Dry = 'DRY';
@@ -8,9 +8,9 @@ export type Mode =
 	| typeof Dry
 	| typeof Ci;
 
-export interface Config {
+export type Config = {
 	mode: Mode;
-	pages: ReadonlyArray<Page>;
+	pages: Page<Command>[];
 }
 
 export const parseMode = (env: any): Mode => {
@@ -28,19 +28,22 @@ export const parseMode = (env: any): Mode => {
 	}
 };
 
-const cfCiLogin = (): string => ['cf', 'login', '-a', 'api.run.pivotal.io', '-u', process.env.CF_USERNAME, '-p', process.env.CF_PASSWORD, '-o', process.env.CF_ORG, '-s', process.env.CF_SPACE]
-	.join(' ');
+const cfCiLogin = (): Command => ({
+	command: [
+		'cf', 'login', '-a', 'api.run.pivotal.io', '-u', process.env.CF_USERNAME, '-p', process.env.CF_PASSWORD, '-o', process.env.CF_ORG, '-s', process.env.CF_SPACE
+	].join(' ')
+});
 
-const parsePages = (pages: ReadonlyArray<Page>, mode: Mode): ReadonlyArray<Page> => {
+const parsePages = (pages: Page<Command>[], mode: Mode): Page<Command>[] => {
 	switch (mode) {
-		case (Ci): return pages.map(page => page.command.match(/cf\s+login/) ? {...page, command: cfCiLogin()} : page);
+		case (Ci): return pages.map(page => page.command.command.match(/cf\s+login/) ? {...page, command: cfCiLogin()} : page);
 		case (Dry):
 		case (Tutorial):
 		default: return pages;
 	}
 };
 
-export const parseConfig = (commands: ReadonlyArray<Page>, env: any): Config => {
+export const parseConfig = (commands: Page<Command>[], env: any): Config => {
 	const mode = parseMode(env);
 	return {
 		mode,

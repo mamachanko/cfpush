@@ -7,8 +7,8 @@ import {completed, inputReceived, runCommand} from './actions';
 import {Column} from './column';
 import {useOnSpace} from './input';
 import {InputPrompt} from './input-prompt';
-import {Output} from './output';
-import {CommandOutput, CommandStatus, FINISHED, INPUT_REQUIRED, RUNNING, State} from './state'; // eslint-disable-line import/named
+import {CurrentCommand, FINISHED, INPUT_REQUIRED, RUNNING, State} from './state'; // eslint-disable-line import/named
+import {Stdout} from './stdout';
 import {isBlank} from './utils';
 
 const CommandPrompt = ({run, waitForTrigger}): React.ReactElement => {
@@ -51,13 +51,10 @@ const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {
 	);
 };
 
-type CommandProps = {
-	command: string;
-	commandStatus: CommandStatus;
-}
+type CommandProps = CurrentCommand;
 
-const Command: React.FC<CommandProps> = ({command, commandStatus}): React.ReactElement => {
-	switch (commandStatus) {
+const Command: React.FC<CommandProps> = ({command, status}): React.ReactElement => {
+	switch (status) {
 		case (RUNNING): {
 			return (
 				<Box flexDirection="column" marginY={1}>
@@ -155,9 +152,7 @@ type StateProps = {
 	title?: string;
 	subtitle?: string;
 	text: string;
-	command: string;
-	commandStatus: CommandStatus;
-	output: ReadonlyArray<CommandOutput>;
+	command: CurrentCommand;
 	waitForTrigger: boolean;
 };
 
@@ -172,13 +167,13 @@ export type PageProps =
 	& DispatchProps;
 
 export const Page: React.FC<PageProps> = (props): React.ReactElement => {
-	switch (props.commandStatus) {
+	switch (props.command.status) {
 		case (RUNNING): {
 			return (
 				<Column marginLeft={4}>
 					<StaticContent {...props}/>
-					<Output {...props}/>
-					<Command {...props}/>
+					<Stdout {...props.command}/>
+					<Command {...props.command}/>
 				</Column>
 			);
 		}
@@ -187,8 +182,8 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 			return (
 				<Column marginLeft={4}>
 					<StaticContent {...props}/>
-					<Output {...props}/>
-					<Command {...props}/>
+					<Stdout {...props.command}/>
+					<Command {...props.command}/>
 					<InputPrompt {...props} prompt=">_"/>
 				</Column>
 			);
@@ -198,8 +193,8 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 			return (
 				<Column marginLeft={4}>
 					<StaticContent {...props}/>
-					<Output {...props}/>
-					<Command {...props}/>
+					<Stdout {...props.command}/>
+					<Command {...props.command}/>
 					<CompletePrompt {...props}/>
 				</Column>
 			);
@@ -209,7 +204,7 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => {
 			return (
 				<Column marginLeft={4}>
 					<StaticContent {...props}/>
-					<Command {...props}/>
+					<Command {...props.command}/>
 					<CommandPrompt {...props}/>
 				</Column>
 			);

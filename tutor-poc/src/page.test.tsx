@@ -18,9 +18,11 @@ This is
 
 a test page
 `,
-		command: 'test command',
-		commandStatus: UNSTARTED,
-		output: [],
+		command: {
+			command: 'test command',
+			status: UNSTARTED,
+			stdout: []
+		},
 		waitForTrigger: true,
 		run: () => {},
 		complete: () => {},
@@ -82,9 +84,11 @@ a test page
 		it('shows text', () => {
 			const runningCommand: PageProps = {
 				...defaultProps,
-				command: 'test command',
-				commandStatus: RUNNING,
-				output: []
+				command: {
+					command: 'test command',
+					status: RUNNING,
+					stdout: []
+				}
 			};
 			const {lastFrame} = render(<Page {...runningCommand}/>);
 
@@ -94,9 +98,11 @@ a test page
 		it('shows a spinner', () => {
 			const runningCommand: PageProps = {
 				...defaultProps,
-				command: 'test command',
-				commandStatus: RUNNING,
-				output: []
+				command: {
+					command: 'test command',
+					status: RUNNING,
+					stdout: []
+				}
 			};
 			const {lastFrame} = render(<Page {...runningCommand}/>);
 
@@ -108,9 +114,14 @@ a test page
 				const runningCommandWithOutput: PageProps = {
 					...defaultProps,
 					text: '',
-					command: 'test command',
-					commandStatus: RUNNING,
-					output: [{text: 'test command output 1', uid: '1'}, {text: 'test command output 2', uid: '2'}]
+					command: {
+						command: 'test command',
+						status: RUNNING,
+						stdout: [
+							{text: 'test command output 1', uid: '1'},
+							{text: 'test command output 2', uid: '2'}
+						]
+					}
 				};
 				const {lastFrame} = render(<Page {...runningCommandWithOutput}/>);
 
@@ -123,9 +134,11 @@ a test page
 				const runningCommandWithoutOutput: PageProps = {
 					...defaultProps,
 					text: '',
-					command: 'test command',
-					commandStatus: RUNNING,
-					output: []
+					command: {
+						command: 'test command',
+						status: RUNNING,
+						stdout: []
+					}
 				};
 				const {lastFrame} = render(<Page {...runningCommandWithoutOutput}/>);
 
@@ -136,9 +149,11 @@ a test page
 		describe('when input is required', () => {
 			const commandWaitingForInput: PageProps = {
 				...defaultProps,
-				command: 'test command',
-				commandStatus: INPUT_REQUIRED,
-				output: []
+				command: {
+					command: 'test command',
+					status: INPUT_REQUIRED,
+					stdout: []
+				}
 			};
 
 			it('shows text', () => {
@@ -181,9 +196,14 @@ a test page
 	describe('when the command has finished', () => {
 		const finishedCommand: PageProps = {
 			...defaultProps,
-			command: 'test command',
-			commandStatus: FINISHED,
-			output: [{text: 'test output 1', uid: '1'}, {text: 'test output 2', uid: '2'}]
+			command: {
+				command: 'test command',
+				status: FINISHED,
+				stdout: [
+					{text: 'test output 1', uid: '1'},
+					{text: 'test output 2', uid: '2'}
+				]
+			}
 		};
 
 		it('shows text', () => {

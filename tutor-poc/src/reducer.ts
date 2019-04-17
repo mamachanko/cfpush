@@ -2,7 +2,7 @@ import * as deepmerge from 'deepmerge';
 import * as Mustache from 'mustache';
 import {Reducer} from 'redux';
 import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions'; // eslint-disable-line import/named
-import {State, UNSTARTED, RUNNING} from './state';
+import {State, UNSTARTED, RUNNING} from './state'; // eslint-disable-line import/named
 
 export const initialState: State = {
 	app: {
@@ -14,11 +14,16 @@ export const initialState: State = {
 		completed: [],
 		current: {
 			text: '',
-			command: 'date',
-			commandStatus: UNSTARTED,
-			output: []
+			command: {
+				command: 'date',
+				status: UNSTARTED,
+				stdout: []
+			}
 		},
-		next: [{text: '', command: 'date'}]
+		next: [{
+			text: '',
+			command: {command: 'date'}
+		}]
 	}
 };
 
@@ -32,7 +37,10 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 					...state.pages,
 					current: {
 						...state.pages.current,
-						commandStatus: RUNNING
+						command: {
+							...state.pages.current.command,
+							status: RUNNING
+						}
 					}
 				}
 			};
@@ -45,7 +53,10 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 					...state.pages,
 					current: {
 						...state.pages.current,
-						commandStatus: INPUT_REQUIRED
+						command: {
+							...state.pages.current.command,
+							status: INPUT_REQUIRED
+						}
 					}
 				}
 			};
@@ -58,7 +69,10 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 					...state.pages,
 					current: {
 						...state.pages.current,
-						commandStatus: FINISHED
+						command: {
+							...state.pages.current.command,
+							status: FINISHED
+						}
 					}
 				}
 			};
@@ -71,9 +85,12 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 					...state.pages,
 					current: {
 						...state.pages.current,
-						output: state.pages.current.output ?
-							[...state.pages.current.output, action.payload] :
-							[action.payload]
+						command: {
+							...state.pages.current.command,
+							stdout: state.pages.current.command.stdout ?
+								[...state.pages.current.command.stdout, action.payload] :
+								[action.payload]
+						}
 					}
 				}
 			};
@@ -85,15 +102,19 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 				pages: {
 					...state.pages,
 					completed: [...state.pages.completed, {
-						text: state.pages.current.text,
-						command: state.pages.current.command,
-						output: state.pages.current.output
+						...state.pages.current,
+						command: {
+							command: state.pages.current.command.command,
+							stdout: state.pages.current.command.stdout
+						}
 					}],
 					current: state.pages.next[0] ? {
 						text: state.pages.next[0].text,
-						command: Mustache.render(state.pages.next[0].command, state.cloudFoundryContext),
-						commandStatus: UNSTARTED,
-						output: []
+						command: {
+							command: Mustache.render(state.pages.next[0].command.command, state.cloudFoundryContext),
+							status: UNSTARTED,
+							stdout: []
+						}
 					} : undefined,
 					next: state.pages.next.slice(1)
 				}

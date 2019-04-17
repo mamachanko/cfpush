@@ -3,9 +3,10 @@ import {CommandOptions, execute, ExitHandler, RunningCommand, StderrHandler, Std
 import {logger} from './logging';
 import {Middleware} from './middleware'; // eslint-disable-line import/named
 import {uid as defaultUid} from './uid';
+import {Command} from './state'; // eslint-disable-line import/named
 
-const parseCommand = (command: string): CommandOptions => {
-	const [filename, ...args] = command.split(' ');
+const parseCommand = (command: Command): CommandOptions => {
+	const [filename, ...args] = command.command.split(' ');
 	return {filename, args};
 };
 
@@ -14,7 +15,7 @@ export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid):
 
 	const stdoutHandler: StdoutHandler = (data: string): void => {
 		const output = String(data);
-		store.dispatch(outputReceived(output, uid()));
+		store.dispatch(outputReceived({text: output, uid: uid()}));
 		if (output.endsWith('> ')) {
 			store.dispatch(inputRequired());
 		}

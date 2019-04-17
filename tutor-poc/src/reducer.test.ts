@@ -1,6 +1,6 @@
 import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, outputReceived, started, updateCfContext} from './actions';
 import {reducer} from './reducer';
-import {State, UNSTARTED, RUNNING, FINISHED} from './state';
+import {State, UNSTARTED, RUNNING, FINISHED} from './state'; // eslint-disable-line import/named
 
 const defaultState: State = {
 	app: {
@@ -12,13 +12,15 @@ const defaultState: State = {
 		completed: [],
 		current: {
 			text: 'The first page',
-			command: 'command one',
-			commandStatus: UNSTARTED,
-			output: []
+			command: {
+				command: 'command one',
+				status: UNSTARTED,
+				stdout: []
+			}
 		},
 		next: [
-			{text: 'The second page', command: 'command two'},
-			{text: 'The third page', command: 'command three'}
+			{text: 'The second page', command: {command: 'command two'}},
+			{text: 'The third page', command: {command: 'command three'}}
 		]
 	}
 };
@@ -34,7 +36,10 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						commandStatus: RUNNING
+						command: {
+							...defaultState.pages.current.command,
+							status: RUNNING
+						}
 					}
 				}
 			});
@@ -43,7 +48,7 @@ describe('reducer', () => {
 
 	describe('when output is received', () => {
 		it('appends to the current command\'s empty output', () => {
-			const nextState = reducer(defaultState, outputReceived('new command output', 'uid 123'));
+			const nextState = reducer(defaultState, outputReceived({text: 'new command output', uid: 'uid 123'}));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
@@ -51,7 +56,10 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						output: [{text: 'new command output', uid: 'uid 123'}]
+						command: {
+							...defaultState.pages.current.command,
+							stdout: [{text: 'new command output', uid: 'uid 123'}]
+						}
 					}
 				}
 			});
@@ -64,10 +72,13 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						output: [{text: 'existing command output', uid: 'uid 0'}]
+						command: {
+							...defaultState.pages.current.command,
+							stdout: [{text: 'existing command output', uid: 'uid 0'}]
+						}
 					}
 				}
-			}, outputReceived('new command output', 'uid 1'));
+			}, outputReceived({text: 'new command output', uid: 'uid 1'}));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
@@ -75,10 +86,13 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						output: [
-							{text: 'existing command output', uid: 'uid 0'},
-							{text: 'new command output', uid: 'uid 1'}
-						]
+						command: {
+							...defaultState.pages.current.command,
+							stdout: [
+								{text: 'existing command output', uid: 'uid 0'},
+								{text: 'new command output', uid: 'uid 1'}
+							]
+						}
 					}
 				}
 			});
@@ -91,10 +105,13 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						output: null
+						command: {
+							...defaultState.pages.current.command,
+							stdout: null
+						}
 					}
 				}
-			}, outputReceived('new command output', 'uid 123'));
+			}, outputReceived({text: 'new command output', uid: 'uid 123'}));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
@@ -102,7 +119,10 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						output: [{text: 'new command output', uid: 'uid 123'}]
+						command: {
+							...defaultState.pages.current.command,
+							stdout: [{text: 'new command output', uid: 'uid 123'}]
+						}
 					}
 				}
 			});
@@ -119,7 +139,10 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						commandStatus: INPUT_REQUIRED
+						command: {
+							...defaultState.pages.current.command,
+							status: INPUT_REQUIRED
+						}
 					}
 				}
 			});
@@ -136,7 +159,10 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						commandStatus: RUNNING
+						command: {
+							...defaultState.pages.current.command,
+							status: RUNNING
+						}
 					}
 				}
 			});
@@ -153,7 +179,10 @@ describe('reducer', () => {
 					...defaultState.pages,
 					current: {
 						...defaultState.pages.current,
-						commandStatus: FINISHED
+						command: {
+							...defaultState.pages.current.command,
+							status: FINISHED
+						}
 					}
 				}
 			});
@@ -168,13 +197,24 @@ describe('reducer', () => {
 					...defaultState.pages,
 					completed: [{
 						text: 'The zeroth page',
-						command: 'command zero',
-						output: ['existing command output 1', 'existing command output 2']
+						command: {
+							command: 'command zero',
+							stdout: [
+								{text: 'existing command output 1', uid: 'abc'},
+								{text: 'existing command output 2', uid: 'def'}
+							]
+						}
 					}],
 					current: {
 						...defaultState.pages.current,
-						commandStatus: FINISHED,
-						output: ['existing command output 1', 'existing command output 2']
+						command: {
+							...defaultState.pages.current.command,
+							status: FINISHED,
+							stdout: [
+								{text: 'existing command output 3', uid: 'xyz'},
+								{text: 'existing command output 4', uid: 'urs'}
+							]
+						}
 					}
 				}
 			}, completed());
@@ -185,21 +225,34 @@ describe('reducer', () => {
 					...defaultState.pages,
 					completed: [{
 						text: 'The zeroth page',
-						command: 'command zero',
-						output: ['existing command output 1', 'existing command output 2']
+						command: {
+							command: 'command zero',
+							stdout: [
+								{text: 'existing command output 1', uid: 'abc'},
+								{text: 'existing command output 2', uid: 'def'}
+							]
+						}
 					}, {
 						text: 'The first page',
-						command: 'command one',
-						output: ['existing command output 1', 'existing command output 2']
+						command: {
+							command: 'command one',
+							stdout: [
+								{text: 'existing command output 3', uid: 'xyz'},
+								{text: 'existing command output 4', uid: 'urs'}
+							]
+						}
 					}],
 					current: {
 						...defaultState.pages.current,
 						text: 'The second page',
-						command: 'command two',
-						output: [],
-						commandStatus: UNSTARTED
+						command: {
+							...defaultState.pages.current.command,
+							command: 'command two',
+							stdout: [],
+							status: UNSTARTED
+						}
 					},
-					next: [{text: 'The third page', command: 'command three'}]
+					next: [{text: 'The third page', command: {command: 'command three'}}]
 				}
 			});
 		});
@@ -212,8 +265,14 @@ describe('reducer', () => {
 						...defaultState.pages,
 						current: {
 							...defaultState.pages.current,
-							commandStatus: FINISHED,
-							output: ['existing command output 1', 'existing command output 2']
+							command: {
+								...defaultState.pages.current.command,
+								status: FINISHED,
+								stdout: [
+									{text: 'existing command output 1', uid: 'abc'},
+									{text: 'existing command output 2', uid: 'def'}
+								]
+							}
 						}
 					}
 				}, completed());
@@ -224,17 +283,24 @@ describe('reducer', () => {
 						...defaultState.pages,
 						completed: [{
 							text: 'The first page',
-							command: 'command one',
-							output: ['existing command output 1', 'existing command output 2']
+							command: {
+								command: 'command one',
+								stdout: [
+									{text: 'existing command output 1', uid: 'abc'},
+									{text: 'existing command output 2', uid: 'def'}
+								]
+							}
 						}],
 						current: {
 							...defaultState.pages.current,
 							text: 'The second page',
-							command: 'command two',
-							output: [],
-							commandStatus: UNSTARTED
+							command: {
+								command: 'command two',
+								stdout: [],
+								status: UNSTARTED
+							}
 						},
-						next: [{text: 'The third page', command: 'command three'}]
+						next: [{text: 'The third page', command: {command: 'command three'}}]
 					}
 				});
 			});
@@ -248,8 +314,14 @@ describe('reducer', () => {
 						...defaultState.pages,
 						current: {
 							...defaultState.pages.current,
-							commandStatus: FINISHED,
-							output: ['existing command output 1', 'existing command output 2']
+							command: {
+								...defaultState.pages.current.command,
+								status: FINISHED,
+								stdout: [
+									{command: 'existing command output 1', uid: 'abc'},
+									{command: 'existing command output 2', uid: 'def'}
+								]
+							}
 						},
 						next: []
 					}
@@ -261,8 +333,13 @@ describe('reducer', () => {
 						...defaultState.pages,
 						completed: [{
 							text: 'The first page',
-							command: 'command one',
-							output: ['existing command output 1', 'existing command output 2']
+							command: {
+								command: 'command one',
+								stdout: [
+									{command: 'existing command output 1', uid: 'abc'},
+									{command: 'existing command output 2', uid: 'def'}
+								]
+							}
 						}],
 						current: undefined,
 						next: []
@@ -284,7 +361,10 @@ describe('reducer', () => {
 					},
 					pages: {
 						...defaultState.pages,
-						next: [{text: 'This page\'s command needs rendering', command: 'this command needs {{here.is.some}} to be rendered'}]
+						next: [{
+							text: 'This page\'s command needs rendering',
+							command: {command: 'this command needs {{here.is.some}} to be rendered'}
+						}]
 					}
 				}, completed());
 
@@ -300,13 +380,18 @@ describe('reducer', () => {
 					pages: {
 						completed: [{
 							text: 'The first page',
-							command: 'command one',
-							output: []}],
+							command: {
+								command: 'command one',
+								stdout: []
+							}
+						}],
 						current: {
 							text: 'This page\'s command needs rendering',
-							command: 'this command needs context to be rendered',
-							commandStatus: 'UNSTARTED',
-							output: []
+							command: {
+								command: 'this command needs context to be rendered',
+								status: 'UNSTARTED',
+								stdout: []
+							}
 						},
 						next: []
 					}

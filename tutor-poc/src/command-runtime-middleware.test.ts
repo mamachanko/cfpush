@@ -40,9 +40,11 @@ describe('CommandRuntimeMiddleware', () => {
 				completed: [],
 				current: {
 					text: 'Let us run a test command.',
-					command: 'test-command --flag --positional arg',
-					status: 'UNSTARTED',
-					output: []
+					command: {
+						command: 'test-command --flag --positional arg',
+						status: 'UNSTARTED',
+						stdout: []
+					}
 				},
 				next: []
 			}
@@ -77,7 +79,7 @@ describe('CommandRuntimeMiddleware', () => {
 			});
 
 			it('emits output with uid', () => {
-				expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived('test command output', 'test-uid'));
+				expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived({text: 'test command output', uid: 'test-uid'}));
 				expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // Previous calls exist
 			});
 		});
@@ -88,7 +90,7 @@ describe('CommandRuntimeMiddleware', () => {
 			});
 
 			it('emits input required, output and assigns uid', () => {
-				expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived('input required > ', 'test-uid'));
+				expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived({text: 'input required > ', uid: 'test-uid'}));
 				expect(storeMock.dispatch).toHaveBeenNthCalledWith(3, inputRequired());
 				expect(storeMock.dispatch).toHaveBeenCalledTimes(3); // Previous calls exist
 			});

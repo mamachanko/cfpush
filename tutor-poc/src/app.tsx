@@ -3,7 +3,7 @@ import {Provider} from 'react-redux';
 import {Action, configureStore, Store} from 'redux-starter-kit';
 import {createCfContextMiddleware} from './cf-context-middleware';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
-import {Ci, Config, Dry} from './config';
+import {Ci, Config, Dry} from './config'; // eslint-disable-line import/named
 import {createDryMiddleware} from './dry-middleware';
 import {ExitMessage} from './exit-message';
 import {loggingMiddleware} from './logging-middleware';
@@ -11,7 +11,7 @@ import {Middlewares} from './middleware'; // eslint-disable-line import/named
 import {CurrentPage} from './page';
 import {Quitable} from './quitable';
 import {reducer} from './reducer';
-import {State, UNSTARTED} from './state';
+import {State, UNSTARTED} from './state'; // eslint-disable-line import/named
 import {WhilePages} from './while-pages';
 
 type AppProps = {
@@ -51,8 +51,11 @@ const createInitialState = ({pages, mode}: Config): State => {
 			completed: [],
 			current: {
 				...first,
-				commandStatus: UNSTARTED,
-				output: []
+				command: {
+					...first.command,
+					status: UNSTARTED,
+					stdout: []
+				}
 			},
 			next
 		}

@@ -3,19 +3,23 @@ import stripAnsi from 'strip-ansi';
 import {createApp} from './app';
 import {Dry, Tutorial} from './config';
 import {CTRL_C, sleep, SPACE} from './test-utils';
-import {Page} from './state';
+import {Page, Command} from './state'; // eslint-disable-line import/named
 
 describe('<App />', () => {
-	const pages: Page[] = [
+	const pages: Page<Command>[] = [
 		{
 			title: 'The First Page',
 			subtitle: 'a fine test page',
 			text: 'Let us run the first command',
-			command: 'echo hi this is the first command'
+			command: {
+				command: 'echo hi this is the first command'
+			}
 		},
 		{
 			text: 'Now, let us run the second command',
-			command: 'echo hello this is the second command'
+			command: {
+				command: 'echo hello this is the second command'
+			}
 		}
 	];
 

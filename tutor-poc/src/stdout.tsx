@@ -6,9 +6,9 @@ import * as state from './state';
 
 const mapToLast = <T extends {}>(array: T[], f: (t: T) => T): T[] => array.map((x: any, i: number) => (array.length === i + 1) ? f(x) : x);
 
-const trimOutput = (output: state.CommandOutput): state.CommandOutput => ({text: stripFinalNewline(output.text), uid: output.uid});
+const trimOutput = (output: state.Output): state.Output => ({...output, text: stripFinalNewline(output.text)});
 
-const OutputLine = (output: state.CommandOutput): React.ReactElement => (
+const Output = (output: state.Output): React.ReactElement => (
 	<Box key={output.uid} marginLeft={2}>
 		<Text>
 			{output.text}
@@ -26,7 +26,11 @@ const NoOutput = (): React.ReactElement => (
 	</Box>
 );
 
-export const Output = ({output}): React.ReactElement => {
+type StdoutProps = {
+	readonly stdout: state.Stdout;
+}
+
+export const Stdout: React.FC<StdoutProps> = ({stdout}): React.ReactElement => {
 	const width = 60;
 	const dividerTop = `┌${new Array(width).fill('─').join('')} output ─┐`;
 	const dividerBottom = `└${new Array(dividerTop.length - 2).fill('─').join('')}┘`;
@@ -35,7 +39,7 @@ export const Output = ({output}): React.ReactElement => {
 			{dividerTop}
 			{'⇣' + ('⇣'.padStart(dividerTop.length - 1, ' '))}
 
-			{(output && output.length > 0) ? mapToLast(output, trimOutput).map(OutputLine) : <NoOutput/>}
+			{(stdout && stdout.length > 0) ? mapToLast(stdout, trimOutput).map(Output) : <NoOutput/>}
 
 			{' '}
 			{dividerBottom}

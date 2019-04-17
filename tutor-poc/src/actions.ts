@@ -1,3 +1,4 @@
+import {Output} from './state'; // eslint-disable-line import/named
 
 export const RUN_COMMAND = 'RUN_COMMAND';
 export interface RunCommand {
@@ -12,10 +13,7 @@ export interface Started {
 export const OUTPUT_RECEIVED = 'OUTPUT_RECEIVED';
 export interface OutputReceived {
 	type: typeof OUTPUT_RECEIVED;
-	payload: {
-		text: string;
-		uid: string;
-	};
+	payload: Output;
 }
 
 export const INPUT_REQUIRED = 'INPUT_REQUIRED';
@@ -65,7 +63,7 @@ export type Action =
 
 export const runCommand = (): RunCommand => ({type: RUN_COMMAND});
 export const started = (): Started => ({type: STARTED});
-export const outputReceived = (text: string, uid: string): OutputReceived => ({type: OUTPUT_RECEIVED, payload: {text, uid}});
+export const outputReceived = (output: Output): OutputReceived => ({type: OUTPUT_RECEIVED, payload: output});
 export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
 export const inputReceived = (input: string): InputReceived => ({type: INPUT_RECEIVED, payload: {input}});
 export const finished = (): Finished => ({type: FINISHED});

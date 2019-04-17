@@ -15,13 +15,13 @@ describe('Config', () => {
 			it('parses config', () => {
 				expect(
 					config.parseConfig([
-						{title: 'Login', text: 'let us login', command: 'cf login'},
-						{text: 'let us deploy', command: 'cf push'}
+						{title: 'Login', text: 'let us login', command: {command: 'cf login'}},
+						{text: 'let us deploy', command: {command: 'cf push'}}
 					], {})
-				).toEqual({
+				).toStrictEqual({
 					pages: [
-						{title: 'Login', text: 'let us login', command: 'cf login'},
-						{text: 'let us deploy', command: 'cf push'}
+						{title: 'Login', text: 'let us login', command: {command: 'cf login'}},
+						{text: 'let us deploy', command: {command: 'cf push'}}
 					],
 					mode: config.Tutorial
 				}
@@ -47,13 +47,13 @@ describe('Config', () => {
 			it('parses config and turns any "cf login" non-interactive', () => {
 				expect(
 					config.parseConfig([
-						{text: 'let us login', command: 'cf login'},
-						{text: 'let us deploy', command: 'cf push'}
+						{text: 'let us login', command: {command: 'cf login'}},
+						{text: 'let us deploy', command: {command: 'cf push'}}
 					], {CI: 'true'})
-				).toEqual({
+				).toStrictEqual({
 					pages: [
-						{text: 'let us login', command: 'cf login -a api.run.pivotal.io -u cf-user -p cf-password -o cf-org -s cf-space'},
-						{text: 'let us deploy', command: 'cf push'}
+						{text: 'let us login', command: {command: 'cf login -a api.run.pivotal.io -u cf-user -p cf-password -o cf-org -s cf-space'}},
+						{text: 'let us deploy', command: {command: 'cf push'}}
 					],
 					mode: config.Ci
 				}
@@ -65,13 +65,13 @@ describe('Config', () => {
 			it('parses config', () => {
 				expect(
 					config.parseConfig([
-						{text: 'let us login', command: 'cf login'},
-						{text: 'let us deploy', command: 'cf push'}
+						{text: 'let us login', command: {command: 'cf login'}},
+						{text: 'let us deploy', command: {command: 'cf push'}}
 					], {DRY: 'true'})
-				).toEqual({
+				).toStrictEqual({
 					pages: [
-						{text: 'let us login', command: 'cf login'},
-						{text: 'let us deploy', command: 'cf push'}
+						{text: 'let us login', command: {command: 'cf login'}},
+						{text: 'let us deploy', command: {command: 'cf push'}}
 					],
 					mode: config.Dry
 				}
