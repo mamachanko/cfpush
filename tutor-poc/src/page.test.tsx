@@ -109,9 +109,9 @@ a test page
 			expect(stripAnsi(lastFrame())).toMatch(/[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] test command/i);
 		});
 
-		describe('when there is output', () => {
-			it('shows output', () => {
-				const runningCommandWithOutput: PageProps = {
+		describe('when there is stdout', () => {
+			it('shows stdout', () => {
+				const runningCommandWithStdout: PageProps = {
 					...defaultProps,
 					text: '',
 					command: {
@@ -123,15 +123,15 @@ a test page
 						]
 					}
 				};
-				const {lastFrame} = render(<Page {...runningCommandWithOutput}/>);
+				const {lastFrame} = render(<Page {...runningCommandWithStdout}/>);
 
 				expect(lastFrame()).toMatch(/test command output 1\s*test command output 2/i);
 			});
 		});
 
-		describe('when there is no output', () => {
-			it('shows no output', () => {
-				const runningCommandWithoutOutput: PageProps = {
+		describe('when there is no stdout', () => {
+			it('shows no stdout', () => {
+				const runningCommandWithoutStdout: PageProps = {
 					...defaultProps,
 					text: '',
 					command: {
@@ -140,7 +140,7 @@ a test page
 						stdout: []
 					}
 				};
-				const {lastFrame} = render(<Page {...runningCommandWithoutOutput}/>);
+				const {lastFrame} = render(<Page {...runningCommandWithoutStdout}/>);
 
 				expect(lastFrame()).toMatch(/no command output/i);
 			});
@@ -212,7 +212,7 @@ a test page
 			expect(lastFrame()).toMatch(/this is\s+a test page/i);
 		});
 
-		it('shows output', () => {
+		it('shows stdout', () => {
 			const {lastFrame} = render(<Page {...finishedCommand}/>);
 
 			expect(lastFrame()).toMatch(/test output 1\s*test output 2\s*/si);

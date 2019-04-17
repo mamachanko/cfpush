@@ -10,9 +10,9 @@ export interface Started {
 	type: typeof STARTED;
 }
 
-export const OUTPUT_RECEIVED = 'OUTPUT_RECEIVED';
-export interface OutputReceived {
-	type: typeof OUTPUT_RECEIVED;
+export const STDOUT_RECEIVED = 'STDOUT_RECEIVED';
+export interface StdoutReceived {
+	type: typeof STDOUT_RECEIVED;
 	payload: Output;
 }
 
@@ -53,7 +53,7 @@ export interface ExitApp {
 export type Action =
 	| RunCommand
 	| Started
-	| OutputReceived
+	| StdoutReceived
 	| InputRequired
 	| InputReceived
 	| Finished
@@ -63,7 +63,7 @@ export type Action =
 
 export const runCommand = (): RunCommand => ({type: RUN_COMMAND});
 export const started = (): Started => ({type: STARTED});
-export const outputReceived = (output: Output): OutputReceived => ({type: OUTPUT_RECEIVED, payload: output});
+export const stdoutReceived = (output: Output): StdoutReceived => ({type: STDOUT_RECEIVED, payload: output});
 export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
 export const inputReceived = (input: string): InputReceived => ({type: INPUT_RECEIVED, payload: {input}});
 export const finished = (): Finished => ({type: FINISHED});

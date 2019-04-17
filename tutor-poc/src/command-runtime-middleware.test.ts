@@ -1,5 +1,5 @@
 import {MiddlewareAPI} from 'redux';
-import {finished, inputReceived, inputRequired, outputReceived, runCommand, exitApp, started} from './actions';
+import {finished, inputReceived, inputRequired, stdoutReceived, runCommand, exitApp, started} from './actions';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
 import {ExitHandler, StdoutHandler, CommandRunner, WriteToStdin, RunningCommand} from './exec'; // eslint-disable-line import/named
 import {createStoreMock} from './test-utils';
@@ -79,7 +79,7 @@ describe('CommandRuntimeMiddleware', () => {
 			});
 
 			it('emits output with uid', () => {
-				expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived({text: 'test command output', uid: 'test-uid'}));
+				expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, stdoutReceived({text: 'test command output', uid: 'test-uid'}));
 				expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // Previous calls exist
 			});
 		});
@@ -90,7 +90,7 @@ describe('CommandRuntimeMiddleware', () => {
 			});
 
 			it('emits input required, output and assigns uid', () => {
-				expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, outputReceived({text: 'input required > ', uid: 'test-uid'}));
+				expect(storeMock.dispatch).toHaveBeenNthCalledWith(2, stdoutReceived({text: 'input required > ', uid: 'test-uid'}));
 				expect(storeMock.dispatch).toHaveBeenNthCalledWith(3, inputRequired());
 				expect(storeMock.dispatch).toHaveBeenCalledTimes(3); // Previous calls exist
 			});

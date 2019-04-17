@@ -1,4 +1,4 @@
-import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, outputReceived, started, updateCfContext} from './actions';
+import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, stdoutReceived, started, updateCfContext} from './actions';
 import {reducer} from './reducer';
 import {State, UNSTARTED, RUNNING, FINISHED} from './state'; // eslint-disable-line import/named
 
@@ -48,7 +48,7 @@ describe('reducer', () => {
 
 	describe('when output is received', () => {
 		it('appends to the current command\'s empty output', () => {
-			const nextState = reducer(defaultState, outputReceived({text: 'new command output', uid: 'uid 123'}));
+			const nextState = reducer(defaultState, stdoutReceived({text: 'new command output', uid: 'uid 123'}));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
@@ -78,7 +78,7 @@ describe('reducer', () => {
 						}
 					}
 				}
-			}, outputReceived({text: 'new command output', uid: 'uid 1'}));
+			}, stdoutReceived({text: 'new command output', uid: 'uid 1'}));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,
@@ -111,7 +111,7 @@ describe('reducer', () => {
 						}
 					}
 				}
-			}, outputReceived({text: 'new command output', uid: 'uid 123'}));
+			}, stdoutReceived({text: 'new command output', uid: 'uid 123'}));
 
 			expect(nextState).toStrictEqual({
 				...defaultState,

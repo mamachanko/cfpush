@@ -1,4 +1,4 @@
-import {Action, EXIT_APP, finished, inputRequired, INPUT_RECEIVED, outputReceived, RUN_COMMAND, started} from './actions'; // eslint-disable-line import/named
+import {Action, EXIT_APP, finished, inputRequired, INPUT_RECEIVED, stdoutReceived, RUN_COMMAND, started} from './actions'; // eslint-disable-line import/named
 import {CommandOptions, execute, ExitHandler, RunningCommand, StderrHandler, StdoutHandler} from './exec'; // eslint-disable-line import/named
 import {logger} from './logging';
 import {Middleware} from './middleware'; // eslint-disable-line import/named
@@ -15,7 +15,7 @@ export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid):
 
 	const stdoutHandler: StdoutHandler = (data: string): void => {
 		const output = String(data);
-		store.dispatch(outputReceived({text: output, uid: uid()}));
+		store.dispatch(stdoutReceived({text: output, uid: uid()}));
 		if (output.endsWith('> ')) {
 			store.dispatch(inputRequired());
 		}

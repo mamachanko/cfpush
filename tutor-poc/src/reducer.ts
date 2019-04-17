@@ -1,7 +1,7 @@
 import * as deepmerge from 'deepmerge';
 import * as Mustache from 'mustache';
 import {Reducer} from 'redux';
-import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, OUTPUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions'; // eslint-disable-line import/named
+import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, STDOUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions'; // eslint-disable-line import/named
 import {State, UNSTARTED, RUNNING} from './state'; // eslint-disable-line import/named
 
 export const initialState: State = {
@@ -78,7 +78,7 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 			};
 		}
 
-		case (OUTPUT_RECEIVED): {
+		case (STDOUT_RECEIVED): {
 			return {
 				...state,
 				pages: {
