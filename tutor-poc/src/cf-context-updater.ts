@@ -5,12 +5,21 @@ export type CfContextUpdater = (command: Command) => Promise<any>;
 
 const isCfPush = (command: Command): boolean => Boolean(command.command.match(/cf\s+push/i));
 
-const parseAppName = (cfpush: Command): string =>
-	cfpush
+const isCfCreateService = (command: Command): boolean => Boolean(command.command.match(/cf\s+create-service/i));
+
+const parseAppName = (cfPush: Command): string =>
+	cfPush
 		.command
 		.match(/\s*cf\s+push\s+(?<appName>[a-z-]+)/i)
 		.groups
 		.appName;
+
+const parseServiceInstanceName = (cfCreateService: Command): string =>
+	cfCreateService
+		.command
+		.match(/cf\s+create-service\s+(?<serviceName>[a-z-]+)\s+(?<planName>[a-z-]+)\s+(?<serviceInstanceName>[a-z-]+)/)
+		.groups
+		.serviceInstanceName;
 
 export const createCfContextUpdater = (cloudFoundryApi: CloudFoundryApi = createCloudFoundryApi()): CfContextUpdater => async (command: Command) => {
 	if (isCfPush(command)) {
@@ -19,8 +28,8 @@ export const createCfContextUpdater = (cloudFoundryApi: CloudFoundryApi = create
 		return {[appName]: {hostname}};
 	}
 
-	if (command.command.match(/cf\s+create-service/i)) {
-		const {serviceInstanceName} = command.command.match(/cf\s+create-service\s+(?<serviceName>[a-z-]+)\s+(?<planName>[a-z-]+)\s+(?<serviceInstanceName>[a-z-]+)/).groups;
+	if (isCfCreateService(command)) {
+		const serviceInstanceName = parseServiceInstanceName(command);
 		await cloudFoundryApi.untilServiceCreated(serviceInstanceName);
 	}
 
