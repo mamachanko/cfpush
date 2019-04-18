@@ -1,7 +1,7 @@
 import * as deepmerge from 'deepmerge';
 import {Reducer} from 'redux';
-import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, STDOUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions'; // eslint-disable-line import/named
-import {State, UNSTARTED, RUNNING, CurrentCommand, Page} from './state'; // eslint-disable-line import/named
+import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, STDOUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions';
+import {State, UNSTARTED, RUNNING, CurrentCommand, Page} from './state';
 import {CommandUtils} from './command-utils';
 
 export const initialState: State = {

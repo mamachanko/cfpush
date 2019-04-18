@@ -1,7 +1,7 @@
 import {MiddlewareAPI} from 'redux';
 import {finished, inputReceived, inputRequired, stdoutReceived, runCommand, exitApp, started} from './actions';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
-import {ExitHandler, StdoutHandler, CommandRunner, WriteToStdin, RunningCommand} from './exec'; // eslint-disable-line import/named
+import {ExitHandler, StdoutHandler, CommandRunner, WriteToStdin, RunningCommand} from './exec';
 import {createStoreMock} from './test-utils';
 import {UNSTARTED} from './state';
 

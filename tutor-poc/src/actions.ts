@@ -1,4 +1,4 @@
-import {Output} from './state'; // eslint-disable-line import/named
+import {Output} from './state';
 
 export const RUN_COMMAND = 'RUN_COMMAND';
 export interface RunCommand {

@@ -1,7 +1,7 @@
-import {Action, EXIT_APP, finished, inputRequired, INPUT_RECEIVED, RUN_COMMAND, started, stdoutReceived} from './actions'; // eslint-disable-line import/named
-import {execute, ExitHandler, RunningCommand, StderrHandler, StdoutHandler} from './exec'; // eslint-disable-line import/named
+import {Action, EXIT_APP, finished, inputRequired, INPUT_RECEIVED, RUN_COMMAND, started, stdoutReceived} from './actions';
+import {execute, ExitHandler, RunningCommand, StderrHandler, StdoutHandler} from './exec';
 import {logger} from './logging';
-import {Middleware} from './middleware'; // eslint-disable-line import/named
+import {Middleware} from './middleware';
 import {uid as defaultUid} from './uid';
 
 export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid): Middleware => store => {

@@ -1,6 +1,6 @@
 import {finished, RUN_COMMAND, started, stdoutReceived} from './actions';
 import {CommandUtils} from './command-utils';
-import {Middleware} from './middleware'; // eslint-disable-line import/named
+import {Middleware} from './middleware';
 import {uid as defaultUid} from './uid';
 
 export const createDryMiddleware = (uid = defaultUid): Middleware => store => next => action => {

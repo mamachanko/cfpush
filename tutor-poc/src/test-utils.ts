@@ -1,9 +1,9 @@
 import * as deepmerge from 'deepmerge';
 import {Store} from 'redux';
 import {DeepPartial} from 'ts-essentials';
-import {Action} from './actions'; // eslint-disable-line import/named
+import {Action} from './actions';
 import {initialState} from './reducer';
-import {State} from './state'; // eslint-disable-line import/named
+import {State} from './state';
 
 export const createStoreMock = (partialState: DeepPartial<State> = {}): Store<State, Action> => ({
 	dispatch: jest.fn(),

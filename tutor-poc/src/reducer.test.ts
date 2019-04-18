@@ -2,7 +2,7 @@
 
 import {completed, exitApp, finished, inputReceived, inputRequired, INPUT_REQUIRED, stdoutReceived, started, updateCfContext} from './actions';
 import {reducer} from './reducer';
-import {State, UNSTARTED, RUNNING, FINISHED} from './state'; // eslint-disable-line import/named
+import {State, UNSTARTED, RUNNING, FINISHED} from './state';
 
 const defaultState: State = {
 	app: {

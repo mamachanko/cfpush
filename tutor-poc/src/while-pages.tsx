@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
-import {State} from './state'; // eslint-disable-line import/named
+import {State} from './state';
 
 type StateProps = {
 	hasPages: boolean;

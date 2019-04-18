@@ -3,15 +3,15 @@ import {Provider} from 'react-redux';
 import {Action, configureStore, Store} from 'redux-starter-kit';
 import {createCfContextMiddleware} from './cf-context-middleware';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
-import {Ci, Config, Dry} from './config'; // eslint-disable-line import/named
+import {Ci, Config, Dry} from './config';
 import {createDryMiddleware} from './dry-middleware';
 import {ExitMessage} from './exit-message';
 import {loggingMiddleware} from './logging-middleware';
-import {Middlewares} from './middleware'; // eslint-disable-line import/named
+import {Middlewares} from './middleware';
 import {CurrentPage} from './page';
 import {Quitable} from './quitable';
 import {reducer} from './reducer';
-import {State, UNSTARTED, Page, CurrentCommand} from './state'; // eslint-disable-line import/named
+import {State, UNSTARTED, Page, CurrentCommand} from './state';
 import {WhilePages} from './while-pages';
 
 type AppProps = {

@@ -1,4 +1,4 @@
-import {CfContextUpdater, createCfContextUpdater} from './cf-context-updater'; // eslint-disable-line import/named
+import {CfContextUpdater, createCfContextUpdater} from './cf-context-updater';
 import {CloudFoundryApi} from './cloud-foundry';
 
 describe('CfContextUpdater', () => {

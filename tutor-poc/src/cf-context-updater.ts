@@ -1,5 +1,5 @@
 import {CloudFoundryApi, createCloudFoundryApi} from './cloud-foundry';
-import {Command} from './state'; // eslint-disable-line import/named
+import {Command} from './state';
 
 export type CfContextUpdater = (command: Command) => Promise<any>;
 

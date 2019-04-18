@@ -1,4 +1,4 @@
-import {Command, Page} from './state'; // eslint-disable-line import/named
+import {Command, Page} from './state';
 
 export const Tutorial = 'TUTORIAL';
 export const Dry = 'DRY';

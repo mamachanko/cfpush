@@ -1,6 +1,6 @@
 import {FINISHED, updateCfContext} from './actions';
-import {CfContextUpdater, createCfContextUpdater} from './cf-context-updater'; // eslint-disable-line import/named
-import {Middleware} from './middleware'; // eslint-disable-line import/named
+import {CfContextUpdater, createCfContextUpdater} from './cf-context-updater';
+import {Middleware} from './middleware';
 
 export const createCfContextMiddleware = (cfContextUpdater: CfContextUpdater = createCfContextUpdater()): Middleware => store => next => async action => {
 	const updateMaybe = async (): Promise<void> => {

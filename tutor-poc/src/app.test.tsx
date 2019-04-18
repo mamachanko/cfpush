@@ -3,7 +3,7 @@ import stripAnsi from 'strip-ansi';
 import {createApp} from './app';
 import {Dry, Tutorial} from './config';
 import {CTRL_C, sleep, SPACE} from './test-utils';
-import {Page, Command} from './state'; // eslint-disable-line import/named
+import {Page, Command} from './state';
 
 describe('<App />', () => {
 	const pages: Page<Command>[] = [

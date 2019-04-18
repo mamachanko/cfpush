@@ -1,5 +1,5 @@
 import * as Mustache from 'mustache';
-import {Command} from './state'; // eslint-disable-line import/named
+import {Command} from './state';
 
 const render = (command: Command, context: any): Command =>
 	fromString(Mustache.render(toString(command), context));

@@ -1,5 +1,5 @@
 import * as execa from 'execa';
-import {Command} from './state'; // eslint-disable-line import/named
+import {Command} from './state';
 
 export type StdoutHandler = (data: string) => void;
 export type ExitHandler = () => void;

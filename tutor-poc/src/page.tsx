@@ -7,7 +7,7 @@ import {completed, inputReceived, runCommand} from './actions';
 import {Column} from './column';
 import {useOnSpace} from './input';
 import {InputPrompt} from './input-prompt';
-import {CurrentCommand, FINISHED, INPUT_REQUIRED, RUNNING, State} from './state'; // eslint-disable-line import/named
+import {CurrentCommand, FINISHED, INPUT_REQUIRED, RUNNING, State} from './state';
 import {Stdout} from './stdout';
 import {isBlank} from './utils';
 import {CommandUtils} from './command-utils';

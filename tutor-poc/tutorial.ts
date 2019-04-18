@@ -1,4 +1,4 @@
-import {Page, Command} from './src/state'; // eslint-disable-line import/named
+import {Page, Command} from './src/state';
 
 export default [
 	{

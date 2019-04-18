@@ -4,7 +4,7 @@ import {cleanup, render} from 'ink-testing-library';
 import * as React from 'react';
 import stripAnsi from 'strip-ansi';
 import {FINISHED} from './actions';
-import {Page, PageProps} from './page'; // eslint-disable-line import/named
+import {Page, PageProps} from './page';
 import {INPUT_REQUIRED, RUNNING, UNSTARTED} from './state';
 
 describe('<Page/>', () => {
