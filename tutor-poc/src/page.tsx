@@ -44,7 +44,7 @@ const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {
 		<Column>
 			<Text>
 				<Color gray>
-					{'(press <space> to complete)'}
+					{'(press <space> to continue)'}
 				</Color>
 			</Text>
 		</Column>

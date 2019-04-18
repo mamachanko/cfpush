@@ -224,10 +224,10 @@ a test page
 			expect(stripAnsi(lastFrame())).toMatch(/✅️ {2}test command/i);
 		});
 
-		it('shows prompt to complete', () => {
+		it('shows prompt to continue', () => {
 			const {lastFrame} = render(<Page {...finishedCommand}/>);
 
-			expect(lastFrame()).toMatch(/press <space> to complete/i);
+			expect(lastFrame()).toMatch(/press <space> to continue/i);
 		});
 
 		describe('when pressing <space>', () => {
@@ -251,10 +251,10 @@ a test page
 			expect(stripAnsi(lastFrame())).toMatch(/the test page\s+~ a test page it is ~\s+there is no command here\. just text\./si);
 		});
 
-		it('shows prompt to complete', () => {
+		it('shows prompt to continue', () => {
 			const {lastFrame} = render(<Page {...commandLessPage}/>);
 
-			expect(lastFrame()).toMatch(/press <space> to complete/i);
+			expect(lastFrame()).toMatch(/press <space> to continue/i);
 		});
 
 		describe('when pressing <space>', () => {

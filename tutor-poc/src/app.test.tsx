@@ -35,7 +35,7 @@ describe('<App />', () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toMatch(
-				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to complete\)/si
+				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to continue\)/si
 			);
 
 			stdin.write(SPACE);
@@ -50,7 +50,7 @@ describe('<App />', () => {
 
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/Let us run the first command.*output.*hi this is the first command.*✅️ {2}echo hi this is the first command.*\(press <space> to complete\)/si
+				/Let us run the first command.*output.*hi this is the first command.*✅️ {2}echo hi this is the first command.*\(press <space> to continue\)/si
 			);
 
 			stdin.write(SPACE);
@@ -65,7 +65,7 @@ describe('<App />', () => {
 
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/Now, let us run the second command.*output.*hello this is the second command.*✅️ {2}echo hello this is the second command.*\(press <space> to complete\)/si
+				/Now, let us run the second command.*output.*hello this is the second command.*✅️ {2}echo hello this is the second command.*\(press <space> to continue\)/si
 			);
 
 			stdin.write(SPACE);
@@ -76,7 +76,7 @@ describe('<App />', () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
 
 			expect(stripAnsi(lastFrame())).toMatch(
-				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to complete\)/si
+				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to continue\)/si
 			);
 
 			stdin.write(SPACE);
@@ -91,7 +91,7 @@ describe('<App />', () => {
 
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/Let us run the first command.*output.*hi this is the first command.*✅️ {2}echo hi this is the first command.*\(press <space> to complete\)/si
+				/Let us run the first command.*output.*hi this is the first command.*✅️ {2}echo hi this is the first command.*\(press <space> to continue\)/si
 			);
 
 			stdin.write(CTRL_C);
@@ -107,7 +107,7 @@ describe('<App />', () => {
 			const {lastFrame, stdin} = render(createApp({pages, mode: Dry}));
 
 			expect(stripAnsi(lastFrame())).toMatch(
-				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to complete\)/si
+				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to continue\)/si
 			);
 
 			stdin.write(SPACE);
@@ -118,7 +118,7 @@ describe('<App />', () => {
 			stdin.write(SPACE);
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/Let us run the first command.*output.*pretending to run "echo hi this is the first command".*✅️ {2}echo hi this is the first command.*\(press <space> to complete\)/si
+				/Let us run the first command.*output.*pretending to run "echo hi this is the first command".*✅️ {2}echo hi this is the first command.*\(press <space> to continue\)/si
 			);
 
 			stdin.write(SPACE);
@@ -129,7 +129,7 @@ describe('<App />', () => {
 			stdin.write(SPACE);
 			await sleep(10);
 			expect(stripAnsi(lastFrame())).toMatch(
-				/Now, let us run the second command.*output.*pretending to run "echo hello this is the second command".*✅️ {2}echo hello this is the second command.*\(press <space> to complete\)/si
+				/Now, let us run the second command.*output.*pretending to run "echo hello this is the second command".*✅️ {2}echo hello this is the second command.*\(press <space> to continue\)/si
 			);
 
 			stdin.write(SPACE);
