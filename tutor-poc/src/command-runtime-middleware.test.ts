@@ -3,6 +3,7 @@ import {finished, inputReceived, inputRequired, stdoutReceived, runCommand, exit
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
 import {ExitHandler, StdoutHandler, CommandRunner, WriteToStdin, RunningCommand} from './exec'; // eslint-disable-line import/named
 import {createStoreMock} from './test-utils';
+import {UNSTARTED} from './state';
 
 const uidDummy = (): string => 'test-uid';
 
@@ -41,8 +42,9 @@ describe('CommandRuntimeMiddleware', () => {
 				current: {
 					text: 'Let us run a test command.',
 					command: {
-						command: 'test-command --flag --positional arg',
-						status: 'UNSTARTED',
+						filename: 'test-command',
+						args: ['--flag', '--positional', 'arg'],
+						status: UNSTARTED,
 						stdout: []
 					}
 				},

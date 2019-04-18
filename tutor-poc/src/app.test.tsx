@@ -15,13 +15,15 @@ describe('<App />', () => {
 		{
 			text: 'Let us run the first command',
 			command: {
-				command: 'echo hi this is the first command'
+				filename: 'echo',
+				args: ['hi', 'this', 'is', 'the', 'first', 'command']
 			}
 		},
 		{
 			text: 'Now, let us run the second command',
 			command: {
-				command: 'echo hello this is the second command'
+				filename: 'echo',
+				args: ['hello', 'this', 'is', 'the', 'second', 'command']
 			}
 		}
 	];

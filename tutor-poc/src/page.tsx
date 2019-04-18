@@ -10,6 +10,7 @@ import {InputPrompt} from './input-prompt';
 import {CurrentCommand, FINISHED, INPUT_REQUIRED, RUNNING, State} from './state'; // eslint-disable-line import/named
 import {Stdout} from './stdout';
 import {isBlank} from './utils';
+import {CommandUtils} from './command-utils';
 
 const CommandPrompt = ({run, waitForTrigger}): React.ReactElement => {
 	React.useLayoutEffect(() => {
@@ -53,7 +54,8 @@ const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {
 
 type CommandProps = CurrentCommand;
 
-const Command: React.FC<CommandProps> = ({command, status}): React.ReactElement => {
+const Command: React.FC<CommandProps> = ({filename, args, status}): React.ReactElement => {
+	const commandStr = CommandUtils.toString({filename, args});
 	switch (status) {
 		case (RUNNING): {
 			return (
@@ -63,7 +65,7 @@ const Command: React.FC<CommandProps> = ({command, status}): React.ReactElement 
 							<Box width={2}>
 								<Spinner type="dots"/>
 							</Box>
-							{command}
+							{commandStr}
 						</Color>
 					</Text>
 				</Box>
@@ -75,7 +77,7 @@ const Command: React.FC<CommandProps> = ({command, status}): React.ReactElement 
 				<Box marginY={1}>
 					<Text bold>
 						<Color rgb={[255, 165, 0]}>
-							{`⚠️  ${command}`}
+							{`⚠️  ${commandStr}`}
 						</Color>
 					</Text>
 					{' (needs input)'}
@@ -86,7 +88,7 @@ const Command: React.FC<CommandProps> = ({command, status}): React.ReactElement 
 		case (FINISHED): {
 			return (
 				<Box flexDirection="column" marginY={1}>
-					<Text bold><Color greenBright>{`✅️  ${command}`}</Color></Text>
+					<Text bold><Color greenBright>{`✅️  ${commandStr}`}</Color></Text>
 				</Box>
 			);
 		}
@@ -94,7 +96,7 @@ const Command: React.FC<CommandProps> = ({command, status}): React.ReactElement 
 		default: {
 			return (
 				<Box flexDirection="column" marginY={1}>
-					<Text bold><Color blueBright>{`>_ ${command}`}</Color></Text>
+					<Text bold><Color blueBright>{`>_ ${commandStr}`}</Color></Text>
 				</Box>
 			);
 		}

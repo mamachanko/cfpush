@@ -1,8 +1,8 @@
 import * as deepmerge from 'deepmerge';
-import * as Mustache from 'mustache';
 import {Reducer} from 'redux';
 import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, STDOUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions'; // eslint-disable-line import/named
 import {State, UNSTARTED, RUNNING, CurrentCommand, Page} from './state'; // eslint-disable-line import/named
+import {CommandUtils} from './command-utils';
 
 export const initialState: State = {
 	app: {
@@ -15,14 +15,15 @@ export const initialState: State = {
 		current: {
 			text: '',
 			command: {
-				command: 'date',
+				filename: 'date',
+				args: [],
 				status: UNSTARTED,
 				stdout: []
 			}
 		},
 		next: [{
 			text: '',
-			command: {command: 'date'}
+			command: {filename: 'date', args: []}
 		}]
 	}
 };
@@ -103,7 +104,7 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 					current = {
 						...state.pages.next[0],
 						command: {
-							command: Mustache.render(state.pages.next[0].command.command, state.cloudFoundryContext),
+							...CommandUtils.render(state.pages.next[0].command, state.cloudFoundryContext),
 							status: UNSTARTED,
 							stdout: []
 						}
@@ -123,7 +124,8 @@ export const reducer: Reducer = (state: State = initialState, action: Action): S
 						...state.pages.completed, {
 							...state.pages.current,
 							...(state.pages.current.command ? {command: {
-								command: state.pages.current.command.command,
+								filename: state.pages.current.command.filename,
+								args: state.pages.current.command.args,
 								stdout: state.pages.current.command.stdout
 							}} : {})
 						}

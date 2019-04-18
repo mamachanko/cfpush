@@ -20,7 +20,7 @@ describe('CfContextUpdater', () => {
 		});
 
 		it('returns the pushed app\'s hostname', async () => {
-			const update = await sut({command: 'cf push test-app --with more --args'});
+			const update = await sut({filename: 'cf', args: ['push', 'test-app', '--with', 'more', '--args']});
 
 			expect(update).toStrictEqual({'test-app': {hostname: 'test-app-hostname'}});
 			expect(cloudFoundryApiMock.getHostname).toHaveBeenCalledWith('test-app');
@@ -30,7 +30,7 @@ describe('CfContextUpdater', () => {
 
 	describe('when the command is "cf create-service"', () => {
 		it('waits until the service is created', async () => {
-			await sut({command: 'cf create-service service-name plan-name service-instance-name'});
+			await sut({filename: 'cf', args: ['create-service', 'service-name', 'plan-name', 'service-instance-name']});
 
 			expect(cloudFoundryApiMock.untilServiceCreated).toHaveBeenCalledWith('service-instance-name');
 			expect(cloudFoundryApiMock.untilServiceCreated).toHaveBeenCalledTimes(1);
@@ -39,7 +39,7 @@ describe('CfContextUpdater', () => {
 
 	describe('when the command is not interesting', () => {
 		it('returns an empty object', async () => {
-			const update = await sut({command: 'some command'});
+			const update = await sut({filename: 'some', args: ['command']});
 
 			expect(update).toBeNull();
 			expect(cloudFoundryApiMock.getHostname).not.toHaveBeenCalled();

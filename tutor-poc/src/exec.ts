@@ -1,4 +1,5 @@
 import * as execa from 'execa';
+import {Command} from './state'; // eslint-disable-line import/named
 
 export type StdoutHandler = (data: string) => void;
 export type ExitHandler = () => void;
@@ -10,11 +11,6 @@ export type StdHandlers = {
 	exit: ReadonlyArray<ExitHandler>;
 }
 
-export type CommandOptions = {
-	filename: string;
-	args: ReadonlyArray<string>;
-}
-
 export type WriteToStdin = (input: string) => void;
 export type Cancel = () => void;
 
@@ -23,13 +19,13 @@ export type RunningCommand = {
 	cancel: Cancel;
 }
 
-export type CommandRunner = (command: CommandOptions, handlers: StdHandlers) => RunningCommand;
+export type CommandRunner = (command: Command, handlers: StdHandlers) => RunningCommand;
 
 const executionOptions: execa.Options = {
 	cleanup: true
 };
 
-export const execute: CommandRunner = (command: CommandOptions, handlers: StdHandlers): RunningCommand => {
+export const execute: CommandRunner = (command: Command, handlers: StdHandlers): RunningCommand => {
 	const childProcess = execa(command.filename, command.args, executionOptions);
 	const {stdin, stdout, stderr} = childProcess;
 

@@ -15,14 +15,15 @@ const defaultState: State = {
 		current: {
 			text: 'The first page',
 			command: {
-				command: 'command one',
+				filename: 'command',
+				args: ['one'],
 				status: UNSTARTED,
 				stdout: []
 			}
 		},
 		next: [
-			{text: 'The second page', command: {command: 'command two'}},
-			{text: 'The third page', command: {command: 'command three'}}
+			{text: 'The second page', command: {filename: 'command', args: ['two']}},
+			{text: 'The third page', command: {filename: 'command', args: ['three']}}
 		]
 	}
 };
@@ -238,7 +239,8 @@ describe('reducer', () => {
 						}, {
 							text: 'The first page',
 							command: {
-								command: 'command one',
+								filename: 'command',
+								args: ['one'],
 								stdout: [
 									{text: 'existing command output 3', uid: 'xyz'},
 									{text: 'existing command output 4', uid: 'urs'}
@@ -250,12 +252,13 @@ describe('reducer', () => {
 							text: 'The second page',
 							command: {
 								...defaultState.pages.current.command,
-								command: 'command two',
+								filename: 'command',
+								args: ['two'],
 								stdout: [],
 								status: UNSTARTED
 							}
 						},
-						next: [{text: 'The third page', command: {command: 'command three'}}]
+						next: [{text: 'The third page', command: {filename: 'command', args: ['three']}}]
 					}
 				});
 			});
@@ -287,7 +290,8 @@ describe('reducer', () => {
 							completed: [{
 								text: 'The first page',
 								command: {
-									command: 'command one',
+									filename: 'command',
+									args: ['one'],
 									stdout: [
 										{text: 'existing command output 1', uid: 'abc'},
 										{text: 'existing command output 2', uid: 'def'}
@@ -298,12 +302,13 @@ describe('reducer', () => {
 								...defaultState.pages.current,
 								text: 'The second page',
 								command: {
-									command: 'command two',
+									filename: 'command',
+									args: ['two'],
 									stdout: [],
 									status: UNSTARTED
 								}
 							},
-							next: [{text: 'The third page', command: {command: 'command three'}}]
+							next: [{text: 'The third page', command: {filename: 'command', args: ['three']}}]
 						}
 					});
 				});
@@ -337,7 +342,8 @@ describe('reducer', () => {
 							completed: [{
 								text: 'The first page',
 								command: {
-									command: 'command one',
+									filename: 'command',
+									args: ['one'],
 									stdout: [
 										{command: 'existing command output 1', uid: 'abc'},
 										{command: 'existing command output 2', uid: 'def'}
@@ -366,7 +372,7 @@ describe('reducer', () => {
 							...defaultState.pages,
 							next: [{
 								text: 'This page\'s command needs rendering',
-								command: {command: 'this command needs {{here.is.some}} to be rendered'}
+								command: {filename: 'this', args: ['command', 'needs', '{{here.is.some}}', 'to', 'be rendered']}
 							}]
 						}
 					}, completed());
@@ -384,15 +390,17 @@ describe('reducer', () => {
 							completed: [{
 								text: 'The first page',
 								command: {
-									command: 'command one',
+									filename: 'command',
+									args: ['one'],
 									stdout: []
 								}
 							}],
 							current: {
 								text: 'This page\'s command needs rendering',
 								command: {
-									command: 'this command needs context to be rendered',
-									status: 'UNSTARTED',
+									filename: 'this',
+									args: ['command', 'needs', 'context', 'to', 'be', 'rendered'],
+									status: UNSTARTED,
 									stdout: []
 								}
 							},

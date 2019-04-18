@@ -44,7 +44,7 @@ const createInitialState = ({pages, mode}: Config): State => {
 	const current: Page<CurrentCommand> = first.command ? {
 		...first,
 		command: {
-			command: first.command.command,
+			...first.command,
 			status: UNSTARTED,
 			stdout: []
 		}

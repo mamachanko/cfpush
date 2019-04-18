@@ -13,7 +13,10 @@ describe('CF Context Middleware', () => {
 		storeMock = createStoreMock({
 			pages: {
 				current: {
-					command: 'test command'
+					command: {
+						filename: 'test',
+						args: ['command']
+					}
 				}
 			}
 		});
@@ -31,7 +34,7 @@ describe('CF Context Middleware', () => {
 			});
 
 			it('invokes the cf context updater with the current command', () => {
-				expect(cfContextUpdater).toHaveBeenCalledWith('test command');
+				expect(cfContextUpdater).toHaveBeenCalledWith({filename: 'test', args: ['command']});
 				expect(cfContextUpdater).toHaveBeenCalledTimes(1);
 			});
 
@@ -53,7 +56,7 @@ describe('CF Context Middleware', () => {
 			});
 
 			it('invokes the cf context updater with the current command', () => {
-				expect(cfContextUpdater).toHaveBeenCalledWith('test command');
+				expect(cfContextUpdater).toHaveBeenCalledWith({filename: 'test', args: ['command']});
 				expect(cfContextUpdater).toHaveBeenCalledTimes(1);
 			});
 

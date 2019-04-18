@@ -4,8 +4,8 @@ import {Middleware} from './middleware'; // eslint-disable-line import/named
 
 export const createCfContextMiddleware = (cfContextUpdater: CfContextUpdater = createCfContextUpdater()): Middleware => store => next => async action => {
 	const updateMaybe = async (): Promise<void> => {
-		const {command} = store.getState().pages.current;
-		const update = await cfContextUpdater(command);
+		const {filename, args} = store.getState().pages.current.command;
+		const update = await cfContextUpdater({filename, args});
 		if (update) {
 			store.dispatch(updateCfContext(update));
 		}

@@ -4,6 +4,7 @@ import * as React from 'react';
 import {Provider} from 'react-redux';
 import {createStoreMock} from './test-utils';
 import {WhilePages} from './while-pages';
+import {UNSTARTED} from './state';
 
 describe('<WhilePages>', () => {
 	afterEach(() => {
@@ -13,14 +14,15 @@ describe('<WhilePages>', () => {
 	describe('when there is a current page', () => {
 		const store = createStoreMock({
 			pages: {
-				completed: [],
 				current: {
 					text: 'Let us run a test command',
-					command: 'test command',
-					status: 'UNSTARTED',
-					output: []
-				},
-				next: []
+					command: {
+						filename: 'test',
+						args: ['command'],
+						status: UNSTARTED,
+						stdout: []
+					}
+				}
 			}
 		});
 

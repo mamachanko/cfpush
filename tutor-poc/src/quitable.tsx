@@ -3,7 +3,7 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {exitApp} from './actions';
 import {useOnCtrlC} from './input';
-import {State} from './state';
+import {State} from './state'; // eslint-disable-line import/named
 
 type OwnProps = {
 	exitDisplay: React.ReactElement;

@@ -1,4 +1,4 @@
-import {Page, Command} from './src/state'; // eslint-disable-line import/named
+import {PageConfig} from './src/config'; // eslint-disable-line import/named
 
 export default [
 	{
@@ -16,7 +16,7 @@ When logging in we must identify the specific Cloud Foundry that we want to targ
 
 In our case, we'll log into Pivotal Web Services using its Single Sign-On. Once prompted, go to your browser, login and copy the temporary auth code.
 `,
-		command: {command: 'cf login -a api.run.pivotal.io --sso'}
+		command: 'cf login -a api.run.pivotal.io --sso'
 	},
 	{
 		text: `
@@ -24,13 +24,13 @@ We need somewhere to deploy our apps to.
 
 Let's create a new space for this tutorial.
 `,
-		command: {command: 'cf create-space cfpush-tutorial'}
+		command: 'cf create-space cfpush-tutorial'
 	},
 	{
 		text: `
 We have created a new space. But we still have to set it as our current target.
 `,
-		command: {command: 'cf target -s cfpush-tutorial'}
+		command: 'cf target -s cfpush-tutorial'
 	},
 	{
 		text: `
@@ -42,7 +42,7 @@ And like any Javascript browser application, the $(bold "chat-app") is a collect
 
 We push the app by pointing the cli at $(underline "./builds/chat-app.zip"), selecting the buildpack and letting Cloud Foundry pick a random available route for us.
 `,
-		command: {command: 'cf push chat-app -p ../builds/chat-app.zip -b staticfile_buildpack --random-route'}
+		command: 'cf push chat-app -p ../builds/chat-app.zip -b staticfile_buildpack --random-route'
 	},
 	{
 		text: `
@@ -54,7 +54,7 @@ The $(bold "chat-app") is served at
 
 Before we start to use it, let's inspect the app.
 `,
-		command: {command: 'cf app chat-app'}
+		command: 'cf app chat-app'
 	},
 	{
 		text: `
@@ -62,7 +62,7 @@ You can see that 1 instance of the app is running. It has the default 1GB of mem
 
 This is called vertical scaling. Whenever scaling an app vertically Cloud Foundry has to restart it. This involves downtime. For now we're ok with that, so we add '-f'.
 `,
-		command: {command: 'cf scale chat-app -m 64M -k 128M -f'}
+		command: 'cf scale chat-app -m 64M -k 128M -f'
 	},
 	{
 		text: `
@@ -82,7 +82,7 @@ It is packaged into a JAR file located at $(underline "./builds/message-service"
 
 Again, we push by letting Cloud Foundry pick a random available route for us and pointing at the $(bold "message-service") JAR.
 `,
-		command: {command: 'cf push message-service -p ../builds/message-service.jar --random-route'}
+		command: 'cf push message-service -p ../builds/message-service.jar --random-route'
 	},
 	{
 		text: `
@@ -100,7 +100,7 @@ Why is that?
 
 In order to understand we must look at how traffic is currently routed.
 `,
-		command: {command: 'cf routes'}
+		command: 'cf routes'
 	},
 	{
 		text: `
@@ -114,7 +114,7 @@ Cloud Foundry's path-based routing to the rescue.
 
 Let's map the route $(underline {{CHAT_APP_URL}}/api) to the $(bold "message-service").
 `,
-		command: {command: 'cf map-route message-service cfapps.io --hostname {{chat-app.hostname}} --path /api'}
+		command: 'cf map-route message-service cfapps.io --hostname {{chat-app.hostname}} --path /api'
 	},
 	{
 		text: `
@@ -132,7 +132,7 @@ Adding more instances is called horizontal scaling. This does not require a rest
 
 Let's scale out to 3. Planet scale!
 `,
-		command: {command: 'cf scale message-service -i 3'}
+		command: 'cf scale message-service -i 3'
 	},
 	{
 		text: `
@@ -146,7 +146,7 @@ Since Cloud Foundry might relocate instances in the cloud as it sees fit we migh
 
 We need a database. Let's browse the marketplace.
 `,
-		command: {command: 'cf marketplace'}
+		command: 'cf marketplace'
 	},
 	{
 		text: `
@@ -163,7 +163,7 @@ Every service is available with different plans. Some are free, some incur cost.
 
 $(underline Elephantsql.com) offers Postgres as a service and is available in the marketplace. Let's find out more about its plans.
 `,
-		command: {command: 'cf marketplace -s elephantsql'}
+		command: 'cf marketplace -s elephantsql'
 	},
 	{
 		text: `
@@ -171,7 +171,7 @@ The smallest plan - $(bold turtle) - provides 4 concurrent connections, 20MB Sto
 
 Let's create an $(bold elephantsql) instance using the $(bold turtle) plan and name it "$(bold database)".
 `,
-		command: {command: 'cf create-service elephantsql turtle database'}
+		command: 'cf create-service elephantsql turtle database'
 	},
 	{
 		text: `
@@ -181,7 +181,7 @@ We still need to connect it to the $(bold "message-service"). In Cloud Foundry t
 
 When we bind a service to an app Cloud Foundry will provide all the necessary information to the app as environment variables. In this case it will provide a JDBC connection string to the $(bold "message-service").
 `,
-		command: {command: 'cf bind-service message-service database'}
+		command: 'cf bind-service message-service database'
 	},
 	{
 		text: `
@@ -191,7 +191,7 @@ Since we're using Spring Boot it will will automatically pick up the database.
 
 Caveat: In this case it is enough to just restart the application. In other cases we need to restage it for the changes to take effect (see $(underline "https://docs.cloudfoundry.org/devguide/deploy-apps/start-restart-restage.html")).
 `,
-		command: {command: 'cf restart message-service'}
+		command: 'cf restart message-service'
 	},
 
 	// Smoke test
@@ -208,7 +208,7 @@ Luckily, Cloud Foundry's $(bold loggregator) collects all application logs. It a
 
 When inspecting the recent logs with a little help from grep we should see instances 0 - 2 logging equally often.
 `,
-		command: {command: 'cf logs --recent message-service'}
+		command: 'cf logs --recent message-service'
 	}, // | grep GET | grep '\[APP\/PROC\/WEB\/\d\+\]''
 
 	{
@@ -217,7 +217,7 @@ Once you're finished playing with the $(bold chat-app), let's clean up. If we do
 
 The easiest way to achieve that is to delete the entire space.
 `,
-		command: {command: 'cf delete-space cfpush-tutorial -f'}
+		command: 'cf delete-space cfpush-tutorial -f'
 	},
 	{
 		text: `
@@ -233,6 +233,6 @@ There's more: $(underline "https://docs.cloudfoundry.org/#read-the-docs")
 
 Let's log you out. Bye bye!	
 `,
-		command: {command: 'cf logout'}
+		command: 'cf logout'
 	}
-] as Page<Command>[];
+] as PageConfig[];

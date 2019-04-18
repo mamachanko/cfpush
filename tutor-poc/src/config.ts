@@ -1,4 +1,5 @@
 import {Page, Command} from './state'; // eslint-disable-line import/named
+import {CommandUtils} from './command-utils';
 
 export const Tutorial = 'TUTORIAL';
 export const Dry = 'DRY';
@@ -7,6 +8,13 @@ export type Mode =
 	| typeof Tutorial
 	| typeof Dry
 	| typeof Ci;
+
+export type PageConfig = {
+	title?: string;
+	subtitle?: string;
+	text: string;
+	command?: string;
+}
 
 export type Config = {
 	mode: Mode;
@@ -29,26 +37,43 @@ export const parseMode = (env: any): Mode => {
 };
 
 const cfCiLogin = (): Command => ({
-	command: [
-		'cf', 'login', '-a', 'api.run.pivotal.io', '-u', process.env.CF_USERNAME, '-p', process.env.CF_PASSWORD, '-o', process.env.CF_ORG, '-s', process.env.CF_SPACE
-	].join(' ')
+	filename: 'cf',
+	args: ['login', '-a', 'api.run.pivotal.io', '-u', process.env.CF_USERNAME, '-p', process.env.CF_PASSWORD, '-o', process.env.CF_ORG, '-s', process.env.CF_SPACE]
 });
 
-const isCfLogin = (command?: Command): boolean => Boolean(command && command.command.match(/cf\s+login/));
+const isCfLogin = (command?: Command): boolean => Boolean(
+	command &&
+	command.filename === 'cf' &&
+	command.args[0] === 'login'
+);
 
-const parsePages = (pages: Page<Command>[], mode: Mode): Page<Command>[] => {
+const parseCommand = (page: PageConfig): Page<Command> => {
+	if (page.command == null) { // eslint-disable-line no-eq-null, eqeqeq
+		return page as Page<null>;
+	}
+
+	return {
+		...page,
+		command: CommandUtils.fromString(page.command)
+	};
+};
+
+const parsePages = (pages: PageConfig[], mode: Mode): Page<Command>[] => {
+	const parsedPages = pages.map(parseCommand);
 	switch (mode) {
-		case (Ci): return pages.map(page => isCfLogin(page.command) ? {...page, command: cfCiLogin()} : page);
+		case (Ci):
+			return parsedPages.map(page => isCfLogin(page.command) ? {...page, command: cfCiLogin()} : page);
 		case (Dry):
 		case (Tutorial):
-		default: return pages;
+		default:
+			return parsedPages;
 	}
 };
 
-export const parseConfig = (commands: Page<Command>[], env: any): Config => {
+export const parseConfig = (pages: PageConfig[], env: any): Config => {
 	const mode = parseMode(env);
 	return {
 		mode,
-		pages: parsePages(commands, mode)
+		pages: parsePages(pages, mode)
 	};
 };

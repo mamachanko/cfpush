@@ -26,7 +26,8 @@ export type Page<T = Command | CurrentCommand | CompletedCommand> = {
 }
 
 export type Command = {
-	command: string;
+	filename: string;
+	args: string[];
 }
 
 type CompletedCommand =

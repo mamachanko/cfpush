@@ -16,14 +16,14 @@ describe('Config', () => {
 				expect(
 					config.parseConfig([
 						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {command: 'cf login'}},
-						{text: 'let us deploy', command: {command: 'cf push'}}
+						{text: 'let us login', command: 'cf login'},
+						{text: 'let us deploy', command: 'cf push'}
 					], {})
 				).toStrictEqual({
 					pages: [
 						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {command: 'cf login'}},
-						{text: 'let us deploy', command: {command: 'cf push'}}
+						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
+						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
 					],
 					mode: config.Tutorial
 				}
@@ -50,14 +50,14 @@ describe('Config', () => {
 				expect(
 					config.parseConfig([
 						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {command: 'cf login'}},
-						{text: 'let us deploy', command: {command: 'cf push'}}
+						{text: 'let us login', command: 'cf login'},
+						{text: 'let us deploy', command: 'cf push'}
 					], {CI: 'true'})
 				).toStrictEqual({
 					pages: [
 						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {command: 'cf login -a api.run.pivotal.io -u cf-user -p cf-password -o cf-org -s cf-space'}},
-						{text: 'let us deploy', command: {command: 'cf push'}}
+						{text: 'let us login', command: {filename: 'cf', args: ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']}},
+						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
 					],
 					mode: config.Ci
 				}
@@ -70,14 +70,14 @@ describe('Config', () => {
 				expect(
 					config.parseConfig([
 						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {command: 'cf login'}},
-						{text: 'let us deploy', command: {command: 'cf push'}}
+						{text: 'let us login', command: 'cf login'},
+						{text: 'let us deploy', command: 'cf push'}
 					], {DRY: 'true'})
 				).toStrictEqual({
 					pages: [
 						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {command: 'cf login'}},
-						{text: 'let us deploy', command: {command: 'cf push'}}
+						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
+						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
 					],
 					mode: config.Dry
 				}

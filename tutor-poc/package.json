@@ -21,6 +21,7 @@
     "redux": "^4.0.1",
     "redux-starter-kit": "^0.4.3",
     "strip-final-newline": "^2.0.0",
+    "ts-essentials": "^2.0.4",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333",
     "uuid": "^3.3.2",

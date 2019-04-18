@@ -19,7 +19,8 @@ This is
 a test page
 `,
 		command: {
-			command: 'test command',
+			filename: 'test',
+			args: ['command'],
 			status: UNSTARTED,
 			stdout: []
 		},
@@ -85,7 +86,8 @@ a test page
 			const runningCommand: PageProps = {
 				...defaultProps,
 				command: {
-					command: 'test command',
+					filename: 'test',
+					args: ['command'],
 					status: RUNNING,
 					stdout: []
 				}
@@ -99,7 +101,8 @@ a test page
 			const runningCommand: PageProps = {
 				...defaultProps,
 				command: {
-					command: 'test command',
+					filename: 'test',
+					args: ['command'],
 					status: RUNNING,
 					stdout: []
 				}
@@ -115,7 +118,8 @@ a test page
 					...defaultProps,
 					text: '',
 					command: {
-						command: 'test command',
+						filename: 'test',
+						args: ['command'],
 						status: RUNNING,
 						stdout: [
 							{text: 'test command output 1', uid: '1'},
@@ -135,7 +139,8 @@ a test page
 					...defaultProps,
 					text: '',
 					command: {
-						command: 'test command',
+						filename: 'test',
+						args: ['command'],
 						status: RUNNING,
 						stdout: []
 					}
@@ -150,7 +155,8 @@ a test page
 			const commandWaitingForInput: PageProps = {
 				...defaultProps,
 				command: {
-					command: 'test command',
+					filename: 'test',
+					args: ['command'],
 					status: INPUT_REQUIRED,
 					stdout: []
 				}
@@ -197,7 +203,8 @@ a test page
 		const finishedCommand: PageProps = {
 			...defaultProps,
 			command: {
-				command: 'test command',
+				filename: 'test',
+				args: ['command'],
 				status: FINISHED,
 				stdout: [
 					{text: 'test output 1', uid: '1'},

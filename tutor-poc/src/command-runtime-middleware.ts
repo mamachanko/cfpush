@@ -1,14 +1,8 @@
-import {Action, EXIT_APP, finished, inputRequired, INPUT_RECEIVED, stdoutReceived, RUN_COMMAND, started} from './actions'; // eslint-disable-line import/named
-import {CommandOptions, execute, ExitHandler, RunningCommand, StderrHandler, StdoutHandler} from './exec'; // eslint-disable-line import/named
+import {Action, EXIT_APP, finished, inputRequired, INPUT_RECEIVED, RUN_COMMAND, started, stdoutReceived} from './actions'; // eslint-disable-line import/named
+import {execute, ExitHandler, RunningCommand, StderrHandler, StdoutHandler} from './exec'; // eslint-disable-line import/named
 import {logger} from './logging';
 import {Middleware} from './middleware'; // eslint-disable-line import/named
 import {uid as defaultUid} from './uid';
-import {Command} from './state'; // eslint-disable-line import/named
-
-const parseCommand = (command: Command): CommandOptions => {
-	const [filename, ...args] = command.command.split(' ');
-	return {filename, args};
-};
 
 export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid): Middleware => store => {
 	let runningCommand: RunningCommand;
@@ -38,11 +32,8 @@ export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid):
 	return next => (action: Action) => {
 		switch (action.type) {
 			case (RUN_COMMAND): {
-				const {command} = store.getState().pages.current;
-				runningCommand = run(
-					parseCommand(command),
-					handlers
-				);
+				const {filename, args} = store.getState().pages.current.command;
+				runningCommand = run({filename, args}, handlers);
 				store.dispatch(started());
 				break;
 			}

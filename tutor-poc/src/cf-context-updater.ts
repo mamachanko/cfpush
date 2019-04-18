@@ -3,23 +3,19 @@ import {Command} from './state'; // eslint-disable-line import/named
 
 export type CfContextUpdater = (command: Command) => Promise<any>;
 
-const isCfPush = (command: Command): boolean => Boolean(command.command.match(/cf\s+push/i));
+const isCfPush = (command: Command): boolean => Boolean(
+	command.filename === 'cf' &&
+	command.args[0] === 'push'
+);
 
-const isCfCreateService = (command: Command): boolean => Boolean(command.command.match(/cf\s+create-service/i));
+const isCfCreateService = (command: Command): boolean => Boolean(
+	command.filename === 'cf' &&
+	command.args[0] === 'create-service'
+);
 
-const parseAppName = (cfPush: Command): string =>
-	cfPush
-		.command
-		.match(/\s*cf\s+push\s+(?<appName>[a-z-]+)/i)
-		.groups
-		.appName;
+const parseAppName = (cfPush: Command): string => cfPush.args[1];
 
-const parseServiceInstanceName = (cfCreateService: Command): string =>
-	cfCreateService
-		.command
-		.match(/cf\s+create-service\s+(?<serviceName>[a-z-]+)\s+(?<planName>[a-z-]+)\s+(?<serviceInstanceName>[a-z-]+)/)
-		.groups
-		.serviceInstanceName;
+const parseServiceInstanceName = (cfCreateService: Command): string => cfCreateService.args[3];
 
 export const createCfContextUpdater = (cloudFoundryApi: CloudFoundryApi = createCloudFoundryApi()): CfContextUpdater => async (command: Command) => {
 	if (isCfPush(command)) {

@@ -14,7 +14,8 @@ describe('Dry Middleware', () => {
 				current: {
 					text: 'Let us pretend run a real command',
 					command: {
-						command: 'a real command',
+						filename: 'a',
+						args: ['real command'],
 						status: UNSTARTED,
 						stdout: []
 					}
