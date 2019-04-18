@@ -1,5 +1,4 @@
-import {Page, Command} from './state'; // eslint-disable-line import/named
-import {CommandUtils} from './command-utils';
+import {Command, Page} from './state'; // eslint-disable-line import/named
 
 export const Tutorial = 'TUTORIAL';
 export const Dry = 'DRY';
@@ -8,13 +7,6 @@ export type Mode =
 	| typeof Tutorial
 	| typeof Dry
 	| typeof Ci;
-
-export type PageConfig = {
-	title?: string;
-	subtitle?: string;
-	text: string;
-	command?: string;
-}
 
 export type Config = {
 	mode: Mode;
@@ -47,30 +39,18 @@ const isCfLogin = (command?: Command): boolean => Boolean(
 	command.args[0] === 'login'
 );
 
-const parseCommand = (page: PageConfig): Page<Command> => {
-	if (page.command == null) { // eslint-disable-line no-eq-null, eqeqeq
-		return page as Page<null>;
-	}
-
-	return {
-		...page,
-		command: CommandUtils.fromString(page.command)
-	};
-};
-
-const parsePages = (pages: PageConfig[], mode: Mode): Page<Command>[] => {
-	const parsedPages = pages.map(parseCommand);
+const parsePages = (pages: Page<Command>[], mode: Mode): Page<Command>[] => {
 	switch (mode) {
 		case (Ci):
-			return parsedPages.map(page => isCfLogin(page.command) ? {...page, command: cfCiLogin()} : page);
+			return pages.map(page => isCfLogin(page.command) ? {...page, command: cfCiLogin()} : page);
 		case (Dry):
 		case (Tutorial):
 		default:
-			return parsedPages;
+			return pages;
 	}
 };
 
-export const parseConfig = (pages: PageConfig[], env: any): Config => {
+export const parseConfig = (pages: Page<Command>[], env: any): Config => {
 	const mode = parseMode(env);
 	return {
 		mode,

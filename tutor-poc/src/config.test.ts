@@ -16,8 +16,8 @@ describe('Config', () => {
 				expect(
 					config.parseConfig([
 						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: 'cf login'},
-						{text: 'let us deploy', command: 'cf push'}
+						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
+						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
 					], {})
 				).toStrictEqual({
 					pages: [
@@ -50,8 +50,8 @@ describe('Config', () => {
 				expect(
 					config.parseConfig([
 						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: 'cf login'},
-						{text: 'let us deploy', command: 'cf push'}
+						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
+						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
 					], {CI: 'true'})
 				).toStrictEqual({
 					pages: [
@@ -70,8 +70,8 @@ describe('Config', () => {
 				expect(
 					config.parseConfig([
 						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: 'cf login'},
-						{text: 'let us deploy', command: 'cf push'}
+						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
+						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
 					], {DRY: 'true'})
 				).toStrictEqual({
 					pages: [
