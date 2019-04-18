@@ -171,43 +171,43 @@ const CommandPage: React.FC<CommandPageProps> = (props): React.ReactElement => {
 	switch (props.command.status) {
 		case (RUNNING): {
 			return (
-				<Column marginLeft={4}>
+				<>
 					<StaticContent {...props}/>
 					<Stdout {...props.command}/>
 					<Command {...props.command}/>
-				</Column>
+				</>
 			);
 		}
 
 		case (INPUT_REQUIRED): {
 			return (
-				<Column marginLeft={4}>
+				<>
 					<StaticContent {...props}/>
 					<Stdout {...props.command}/>
 					<Command {...props.command}/>
 					<InputPrompt {...props} prompt=">_"/>
-				</Column>
+				</>
 			);
 		}
 
 		case (FINISHED): {
 			return (
-				<Column marginLeft={4}>
+				<>
 					<StaticContent {...props}/>
 					<Stdout {...props.command}/>
 					<Command {...props.command}/>
 					<CompletePrompt {...props}/>
-				</Column>
+				</>
 			);
 		}
 
 		default: {
 			return (
-				<Column marginLeft={4}>
+				<>
 					<StaticContent {...props}/>
 					<Command {...props.command}/>
 					<CommandPrompt {...props}/>
-				</Column>
+				</>
 			);
 		}
 	}
