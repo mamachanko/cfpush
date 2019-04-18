@@ -1,11 +1,12 @@
 import {cleanup, render} from 'ink-testing-library';
 import stripAnsi from 'strip-ansi';
 import {createApp} from './app';
-import {Dry, Tutorial} from './config';
+import * as config from './config';
+import {Command, Page} from './state';
 import {CTRL_C, sleep, SPACE} from './test-utils';
-import {Page, Command} from './state';
 
 describe('<App />', () => {
+	let appConfig: config.Config;
 	const pages: Page<Command>[] = [
 		{
 			title: 'The Title Page',
@@ -33,8 +34,12 @@ describe('<App />', () => {
 	});
 
 	describe('when in tutorial mode', () => {
+		beforeEach(() => {
+			appConfig = config.parse(pages, {});
+		});
+
 		it('pages and runs commands one after another by pressing <space>', async () => {
-			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
+			const {lastFrame, stdin} = render(createApp(appConfig));
 
 			expect(stripAnsi(lastFrame())).toMatch(
 				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to continue\)/si
@@ -75,7 +80,7 @@ describe('<App />', () => {
 		});
 
 		it('quits on "ctrl-c"', async () => {
-			const {lastFrame, stdin} = render(createApp({pages, mode: Tutorial}));
+			const {lastFrame, stdin} = render(createApp(appConfig));
 
 			expect(stripAnsi(lastFrame())).toMatch(
 				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to continue\)/si
@@ -105,8 +110,12 @@ describe('<App />', () => {
 	});
 
 	describe('when in dry mode', () => {
+		beforeEach(() => {
+			appConfig = config.parse(pages, {DRY: 'true'});
+		});
+
 		it('pages and pretends to run commands on <space>', async () => {
-			const {lastFrame, stdin} = render(createApp({pages, mode: Dry}));
+			const {lastFrame, stdin} = render(createApp(appConfig));
 
 			expect(stripAnsi(lastFrame())).toMatch(
 				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to continue\)/si

@@ -1,19 +1,35 @@
-import {Command, Page} from './state';
+import {createCfContextMiddleware} from './cf-context-middleware';
+import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
+import {loggingMiddleware} from './logging-middleware';
+import {Middleware} from './middleware';
+import {Command, Page, State, CurrentCommand, UNSTARTED} from './state';
+import {createDryMiddleware} from './dry-middleware';
 
-export const Tutorial = 'TUTORIAL';
-export const Dry = 'DRY';
-export const Ci = 'CI';
-export type Mode =
-	| typeof Tutorial
-	| typeof Dry
-	| typeof Ci;
+export const parse = (pages: Page<Command>[], env: any): Config => {
+	const mode = parseMode(env);
+	return ({
+		initialState: createInitialState(pages, mode),
+		middleware: createMiddleware(mode)
+	});
+};
 
 export type Config = {
-	mode: Mode;
-	pages: Page<Command>[];
+	initialState: State;
+	middleware: Middleware[];
 }
 
-export const parseMode = (env: any): Mode => {
+export const defaultMiddleware = [
+	createCommandRuntimeMiddleware(),
+	createCfContextMiddleware(),
+	loggingMiddleware
+];
+
+export const dryMiddleware = [
+	createDryMiddleware(),
+	loggingMiddleware
+];
+
+const parseMode = (env: any): Mode => {
 	const ci = env.CI === 'true';
 	const dry = env.DRY === 'true';
 
@@ -28,6 +44,44 @@ export const parseMode = (env: any): Mode => {
 	}
 };
 
+const Tutorial = 'TUTORIAL';
+const Dry = 'DRY';
+const Ci = 'CI';
+type Mode =
+	| typeof Tutorial
+	| typeof Dry
+	| typeof Ci;
+
+const createInitialState = (pages: Page<Command>[], mode: Mode): State => {
+	if (mode === Ci) {
+		pages = pages.map(page => isCfLogin(page.command) ? {...page, command: cfCiLogin()} : page);
+	}
+
+	const [firstPage, ...nextPages] = pages;
+
+	const currentPage = firstPage.command ? {
+		...firstPage,
+		command: {
+			...firstPage.command,
+			status: UNSTARTED,
+			stdout: []
+		}
+	} : firstPage;
+
+	return ({
+		app: {
+			waitForTrigger: mode !== Ci,
+			exit: false
+		},
+		cloudFoundryContext: {},
+		pages: {
+			completed: [],
+			current: (currentPage as Page<CurrentCommand>),
+			next: nextPages
+		}
+	});
+};
+
 const cfCiLogin = (): Command => ({
 	filename: 'cf',
 	args: ['login', '-a', 'api.run.pivotal.io', '-u', process.env.CF_USERNAME, '-p', process.env.CF_PASSWORD, '-o', process.env.CF_ORG, '-s', process.env.CF_SPACE]
@@ -39,21 +93,4 @@ const isCfLogin = (command?: Command): boolean => Boolean(
 	command.args[0] === 'login'
 );
 
-const parsePages = (pages: Page<Command>[], mode: Mode): Page<Command>[] => {
-	switch (mode) {
-		case (Ci):
-			return pages.map(page => isCfLogin(page.command) ? {...page, command: cfCiLogin()} : page);
-		case (Dry):
-		case (Tutorial):
-		default:
-			return pages;
-	}
-};
-
-export const parseConfig = (pages: Page<Command>[], env: any): Config => {
-	const mode = parseMode(env);
-	return {
-		mode,
-		pages: parsePages(pages, mode)
-	};
-};
+const createMiddleware = (mode: Mode): Middleware[] => mode === Dry ? dryMiddleware : defaultMiddleware;

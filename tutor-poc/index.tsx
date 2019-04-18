@@ -1,9 +1,9 @@
 import {render} from 'ink';
 import {createApp} from './src/app';
-import {parseConfig} from './src/config';
+import {parse} from './src/config';
 import tutorial from './tutorial';
 
-const config = parseConfig(tutorial, process.env);
+const config = parse(tutorial, process.env);
 
 const {waitUntilExit} = render(
 	createApp(config),

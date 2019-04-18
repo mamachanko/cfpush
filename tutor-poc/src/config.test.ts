@@ -1,31 +1,70 @@
 import * as config from './config';
+import {Command, Page} from './state';
 
 describe('Config', () => {
-	describe('when given an env', () => {
-		it('parses mode', () => {
-			expect(config.parseMode({})).toBe(config.Tutorial);
-			expect(config.parseMode({CI: 'true'})).toBe(config.Ci);
-			expect(config.parseMode({DRY: 'true'})).toBe(config.Dry);
-			expect(config.parseMode({CI: 'true', DRY: 'true'})).toBe(config.Ci);
-		});
-	});
+	let pages: Page<Command>[];
+	let env: any;
 
-	describe('when given an env and a list of commands', () => {
+	describe('when given a list of pages', () => {
+		beforeEach(() => {
+			pages = [
+				{
+					title: 'Welcome',
+					subtitle: 'welcome indeed',
+					text: 'welcome. welcome. welcome.'
+				},
+				{
+					text: 'let us login',
+					command: {filename: 'cf', args: ['login']}
+				},
+				{
+					text: 'let us deploy',
+					command: {filename: 'cf', args: ['push']}
+				}
+			];
+		});
+
 		describe('when in Tutorial mode', () => {
-			it('parses config', () => {
+			beforeEach(() => {
+				env = {};
+			});
+
+			it('parses into config', () => {
 				expect(
-					config.parseConfig([
-						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
-						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
-					], {})
+					config.parse(pages, env)
 				).toStrictEqual({
-					pages: [
-						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
-						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
-					],
-					mode: config.Tutorial
+					initialState: {
+						app: {
+							waitForTrigger: true,
+							exit: false
+						},
+						cloudFoundryContext: {},
+						pages: {
+							completed: [],
+							current: {
+								title: 'Welcome',
+								subtitle: 'welcome indeed',
+								text: 'welcome. welcome. welcome.'
+							},
+							next: [
+								{
+									text: 'let us login',
+									command: {
+										filename: 'cf',
+										args: ['login']
+									}
+								},
+								{
+									text: 'let us deploy',
+									command: {
+										filename: 'cf',
+										args: ['push']
+									}
+								}
+							]
+						}
+					},
+					middleware: config.defaultMiddleware
 				}
 				);
 			});
@@ -33,6 +72,8 @@ describe('Config', () => {
 
 		describe('when in Ci mode', () => {
 			beforeEach(() => {
+				env = {CI: 'true'};
+
 				process.env.CF_USERNAME = 'cf-user';
 				process.env.CF_PASSWORD = 'cf-password';
 				process.env.CF_ORG = 'cf-org';
@@ -46,40 +87,88 @@ describe('Config', () => {
 				delete process.env.CF_SPACE;
 			});
 
-			it('parses config and turns any "cf login" non-interactive', () => {
+			it('parses into config', () => {
 				expect(
-					config.parseConfig([
-						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
-						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
-					], {CI: 'true'})
+					config.parse(pages, env)
 				).toStrictEqual({
-					pages: [
-						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {filename: 'cf', args: ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']}},
-						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
-					],
-					mode: config.Ci
+					initialState: {
+						app: {
+							waitForTrigger: false,
+							exit: false
+						},
+						cloudFoundryContext: {},
+						pages: {
+							completed: [],
+							current: {
+								title: 'Welcome',
+								subtitle: 'welcome indeed',
+								text: 'welcome. welcome. welcome.'
+							},
+							next: [
+								{
+									text: 'let us login',
+									command: {
+										filename: 'cf',
+										args: ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']
+									}
+								},
+								{
+									text: 'let us deploy',
+									command: {
+										filename: 'cf',
+										args: ['push']
+									}
+								}
+							]
+						}
+					},
+					middleware: config.defaultMiddleware
 				}
 				);
 			});
 		});
 
 		describe('when in Dry mode', () => {
-			it('parses config', () => {
+			beforeEach(() => {
+				env = {DRY: 'true'};
+			});
+
+			it('parses into config', () => {
 				expect(
-					config.parseConfig([
-						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
-						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
-					], {DRY: 'true'})
+					config.parse(pages, env)
 				).toStrictEqual({
-					pages: [
-						{title: 'Welcome', subtitle: 'welcome indeed', text: 'welcome. welcome. welcome.'},
-						{text: 'let us login', command: {filename: 'cf', args: ['login']}},
-						{text: 'let us deploy', command: {filename: 'cf', args: ['push']}}
-					],
-					mode: config.Dry
+					initialState: {
+						app: {
+							waitForTrigger: true,
+							exit: false
+						},
+						cloudFoundryContext: {},
+						pages: {
+							completed: [],
+							current: {
+								title: 'Welcome',
+								subtitle: 'welcome indeed',
+								text: 'welcome. welcome. welcome.'
+							},
+							next: [
+								{
+									text: 'let us login',
+									command: {
+										filename: 'cf',
+										args: ['login']
+									}
+								},
+								{
+									text: 'let us deploy',
+									command: {
+										filename: 'cf',
+										args: ['push']
+									}
+								}
+							]
+						}
+					},
+					middleware: config.dryMiddleware
 				}
 				);
 			});
