@@ -4,6 +4,29 @@ import * as stripFinalNewline from 'strip-final-newline';
 import {Column} from './column';
 import * as state from './state';
 
+export const Stdout: React.FC<StdoutProps> = ({stdout, pin=false}): React.ReactElement => {
+	const output = mapToLast(stdout, trimOutput).map(Output);
+	
+	if (pin) {
+		return (
+			<Static>
+				{output}
+			</Static>
+		);
+	}
+	
+	return (
+		<Frame title={'output'}>
+			{output.length ? output : <NoOutput/>}
+		</Frame>
+	)
+};
+
+type StdoutProps = {
+	readonly stdout: state.Stdout;
+	readonly pin: boolean;
+}
+
 const mapToLast = <T extends {}>(array: T[], f: (t: T) => T): T[] => array.map((x: any, i: number) => (array.length === i + 1) ? f(x) : x);
 
 const trimOutput = (output: state.Output): state.Output => ({...output, text: stripFinalNewline(output.text)});
@@ -26,30 +49,27 @@ const NoOutput = (): React.ReactElement => (
 	</Box>
 );
 
-type StdoutProps = {
-	readonly stdout: state.Stdout;
-	readonly pin: boolean;
-}
 
-export const Stdout: React.FC<StdoutProps> = ({stdout, pin=false}): React.ReactElement => {
-	if (pin) {
-		return <Static>
-			{mapToLast(stdout, trimOutput).map(Output)}
-		</Static>
-	}
-
-	const width = 60;
-	const dividerTop = `┌${new Array(width).fill('─').join('')} output ─┐`;
-	const dividerBottom = `└${new Array(dividerTop.length - 2).fill('─').join('')}┘`;
+const Frame: React.FC<FrameProps> = ({children, title, width=60, borderChar='─'}): React.ReactElement => {
+	const topInner = title.padStart(width - 2 - title.length, borderChar);
+	const top = `┌${topInner}┐`;
+	
+	const bottomInner = new Array(top.length - 2).fill(borderChar).join('');
+	const bottom = `└${bottomInner}┘`;
+	
 	return (
 		<Column>
-			{dividerTop}
-			{'⇣' + ('⇣'.padStart(dividerTop.length - 1, ' '))}
-
-			{(stdout && stdout.length > 0) ? mapToLast(stdout, trimOutput).map(Output) : <NoOutput/>}
-
+			{top}
 			{' '}
-			{dividerBottom}
+			{children}
+			{' '}
+			{bottom}
 		</Column>
 	);
-};
+}
+
+type FrameProps = {
+	title: string;
+	width?: number;
+	borderChar?: string;
+}
