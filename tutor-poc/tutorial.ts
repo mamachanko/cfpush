@@ -1,4 +1,4 @@
-import {Page, Command} from './src/state';
+import {PageConfig} from './src/config';
 
 export default [
 	{
@@ -289,4 +289,4 @@ Let's log you out. Bye bye!
 			args: ['logout']
 		}
 	}
-] as Page<Command>[];
+] as PageConfig[];

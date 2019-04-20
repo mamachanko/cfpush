@@ -130,10 +130,9 @@ a test page
 						}
 					};
 					const {lastFrame} = render(<Page {...runningCommandWithStdout}/>);
-	
+
 					expect(lastFrame()).toMatch(/output.*\s+test command output 1\s+test command output 2/si);
 				});
-				
 			});
 			describe('when it is pinned', () => {
 				it('renders stdout as <Static/>', () => {
@@ -151,12 +150,11 @@ a test page
 						}
 					};
 					const {lastFrame} = render(<Page {...runningCommandWithStdout}/>);
-	
-					// it is not possible to test for <Static/>
+
+					// It is not possible to test for <Static/>
 					// let's at least not require the "output" section title
 					expect(lastFrame()).toMatch(/test command output 1\s*test command output 2/i);
 				});
-				
 			});
 		});
 

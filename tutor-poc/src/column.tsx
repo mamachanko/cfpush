@@ -1,5 +1,5 @@
+import {Box, BoxProps} from 'ink';
 import * as React from 'react';
-import {Box, BoxProps, Static} from 'ink';
 
 export const Column: React.FC<BoxProps> = (props): React.ReactElement => {
 	const boxProps = {

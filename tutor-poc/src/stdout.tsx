@@ -4,9 +4,9 @@ import * as stripFinalNewline from 'strip-final-newline';
 import {Column} from './column';
 import * as state from './state';
 
-export const Stdout: React.FC<StdoutProps> = ({stdout, pin=false}): React.ReactElement => {
+export const Stdout: React.FC<StdoutProps> = ({stdout, pin = false}): React.ReactElement => {
 	const output = mapToLast(stdout, trimOutput).map(Output);
-	
+
 	if (pin) {
 		return (
 			<Static>
@@ -14,12 +14,12 @@ export const Stdout: React.FC<StdoutProps> = ({stdout, pin=false}): React.ReactE
 			</Static>
 		);
 	}
-	
+
 	return (
-		<Frame title={'output'}>
-			{output.length ? output : <NoOutput/>}
+		<Frame title="output">
+			{output.length > 0 ? output : <NoOutput/>}
 		</Frame>
-	)
+	);
 };
 
 type StdoutProps = {
@@ -49,14 +49,13 @@ const NoOutput = (): React.ReactElement => (
 	</Box>
 );
 
-
-const Frame: React.FC<FrameProps> = ({children, title, width=60, borderChar='─'}): React.ReactElement => {
+const Frame: React.FC<FrameProps> = ({children, title, width = 60, borderChar = '─'}): React.ReactElement => {
 	const topInner = title.padStart(width - 2 - title.length, borderChar);
 	const top = `┌${topInner}┐`;
-	
+
 	const bottomInner = new Array(top.length - 2).fill(borderChar).join('');
 	const bottom = `└${bottomInner}┘`;
-	
+
 	return (
 		<Column>
 			{top}
@@ -66,7 +65,7 @@ const Frame: React.FC<FrameProps> = ({children, title, width=60, borderChar='─
 			{bottom}
 		</Column>
 	);
-}
+};
 
 type FrameProps = {
 	title: string;

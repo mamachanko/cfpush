@@ -1,17 +1,22 @@
 import {createCfContextMiddleware} from './cf-context-middleware';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
+import {createDryMiddleware} from './dry-middleware';
 import {loggingMiddleware} from './logging-middleware';
 import {Middleware} from './middleware';
-import {Command, Page, State, CurrentCommand, UNSTARTED} from './state';
-import {createDryMiddleware} from './dry-middleware';
+import {Command, CurrentCommand, Page, State, UNSTARTED} from './state';
 
-export const parse = (pages: Page<Command>[], env: any): Config => {
+export const parse = (pages: PageConfig[], env: any): Config => {
 	const mode = parseMode(env);
 	return ({
 		initialState: createInitialState(pages, mode),
 		middleware: createMiddleware(mode)
 	});
 };
+
+export type PageConfig = Page<Command> & MaybeCi;
+type MaybeCi = {
+	ci?: boolean;
+}
 
 export type Config = {
 	initialState: State;
@@ -52,12 +57,11 @@ type Mode =
 	| typeof Dry
 	| typeof Ci;
 
-const createInitialState = (pages: Page<Command>[], mode: Mode): State => {
-	if (mode === Ci) {
-		pages = pages.map(page => isCfLogin(page.command) ? {...page, command: cfCiLogin()} : page);
-	}
-
-	const [firstPage, ...nextPages] = pages;
+const createInitialState = (pages: PageConfig[], mode: Mode): State => {
+	const [firstPage, ...nextPages] = pages
+		.map(page => (mode === Ci && isCfLogin(page.command)) ? {...page, command: cfCiLogin()} : page)
+		.filter(page => mode === Ci || !page.ci)
+		.map(dropCi);
 
 	const currentPage = firstPage.command ? {
 		...firstPage,
@@ -81,6 +85,11 @@ const createInitialState = (pages: Page<Command>[], mode: Mode): State => {
 			next: nextPages
 		}
 	});
+};
+
+const dropCi = (page: PageConfig): Page<Command> => {
+	const {ci, ...rest} = page;
+	return rest;
 };
 
 const cfCiLogin = (): Command => ({

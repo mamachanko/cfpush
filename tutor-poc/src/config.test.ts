@@ -1,13 +1,12 @@
 import * as config from './config';
-import {Command, Page} from './state';
 
 describe('Config', () => {
-	let pages: Page<Command>[];
+	let pagesConfig: config.PageConfig[];
 	let env: any;
 
 	describe('when given a list of pages', () => {
 		beforeEach(() => {
-			pages = [
+			pagesConfig = [
 				{
 					title: 'Welcome',
 					subtitle: 'welcome indeed',
@@ -16,6 +15,11 @@ describe('Config', () => {
 				{
 					text: 'let us login',
 					command: {filename: 'cf', args: ['login']}
+				},
+				{
+					text: 'this is a ci only page',
+					ci: true,
+					command: {filename: 'echo', args: ['this', 'command', 'only', 'runs', 'on', 'ci']}
 				},
 				{
 					text: 'let us deploy',
@@ -31,7 +35,7 @@ describe('Config', () => {
 
 			it('parses into config', () => {
 				expect(
-					config.parse(pages, env)
+					config.parse(pagesConfig, env)
 				).toStrictEqual({
 					initialState: {
 						app: {
@@ -90,7 +94,7 @@ describe('Config', () => {
 
 			it('parses into config', () => {
 				expect(
-					config.parse(pages, env)
+					config.parse(pagesConfig, env)
 				).toStrictEqual({
 					initialState: {
 						app: {
@@ -112,6 +116,13 @@ describe('Config', () => {
 									command: {
 										filename: 'cf',
 										args: ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']
+									}
+								},
+								{
+									text: 'this is a ci only page',
+									command: {
+										filename: 'echo',
+										args: ['this', 'command', 'only', 'runs', 'on', 'ci']
 									}
 								},
 								{
@@ -137,7 +148,7 @@ describe('Config', () => {
 
 			it('parses into config', () => {
 				expect(
-					config.parse(pages, env)
+					config.parse(pagesConfig, env)
 				).toStrictEqual({
 					initialState: {
 						app: {

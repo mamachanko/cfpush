@@ -2,12 +2,11 @@ import {cleanup, render} from 'ink-testing-library';
 import stripAnsi from 'strip-ansi';
 import {createApp} from './app';
 import * as config from './config';
-import {Command, Page} from './state';
 import {CTRL_C, sleep, SPACE} from './test-utils';
 
 describe('<App />', () => {
 	let appConfig: config.Config;
-	const pages: Page<Command>[] = [
+	const pages: config.PageConfig[] = [
 		{
 			title: 'The Title Page',
 			subtitle: 'a fine subtitle',
@@ -18,6 +17,14 @@ describe('<App />', () => {
 			command: {
 				filename: 'echo',
 				args: ['hi', 'this', 'is', 'the', 'first', 'command']
+			}
+		},
+		{
+			text: 'This page is Ci only',
+			ci: true,
+			command: {
+				filename: 'echo',
+				args: ['ciao', 'this', 'is', 'a', 'ci', 'stealth', 'command']
 			}
 		},
 		{
@@ -156,10 +163,10 @@ describe('<App />', () => {
 		it('runs commands one after another and command output remains', async () => {
 			const {lastFrame} = render(createApp(appConfig));
 
-			await sleep(50);
+			await sleep(100);
 
 			expect(stripAnsi(lastFrame())).toMatch(
-				/hi this is the first command.*hello this is the second command/si
+				/hi this is the first command\s*ciao this is a ci stealth command\s*hello this is the second command/si
 			);
 		});
 	});
