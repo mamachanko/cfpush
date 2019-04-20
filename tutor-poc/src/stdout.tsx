@@ -1,4 +1,4 @@
-import {Box, Color, Text} from 'ink';
+import {Box, Color, Text, Static} from 'ink';
 import * as React from 'react';
 import * as stripFinalNewline from 'strip-final-newline';
 import {Column} from './column';
@@ -28,9 +28,16 @@ const NoOutput = (): React.ReactElement => (
 
 type StdoutProps = {
 	readonly stdout: state.Stdout;
+	readonly pin: boolean;
 }
 
-export const Stdout: React.FC<StdoutProps> = ({stdout}): React.ReactElement => {
+export const Stdout: React.FC<StdoutProps> = ({stdout, pin=false}): React.ReactElement => {
+	if (pin) {
+		return <Static>
+			{mapToLast(stdout, trimOutput).map(Output)}
+		</Static>
+	}
+
 	const width = 60;
 	const dividerTop = `┌${new Array(width).fill('─').join('')} output ─┐`;
 	const dividerBottom = `└${new Array(dividerTop.length - 2).fill('─').join('')}┘`;

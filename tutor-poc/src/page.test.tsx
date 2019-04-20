@@ -25,6 +25,7 @@ a test page
 			stdout: []
 		},
 		waitForTrigger: true,
+		pinOutput: false,
 		run: () => {},
 		complete: () => {},
 		submit: () => {}
@@ -113,23 +114,49 @@ a test page
 		});
 
 		describe('when there is stdout', () => {
-			it('shows stdout', () => {
-				const runningCommandWithStdout: PageProps = {
-					...defaultProps,
-					text: '',
-					command: {
-						filename: 'test',
-						args: ['command'],
-						status: RUNNING,
-						stdout: [
-							{text: 'test command output 1', uid: '1'},
-							{text: 'test command output 2', uid: '2'}
-						]
-					}
-				};
-				const {lastFrame} = render(<Page {...runningCommandWithStdout}/>);
-
-				expect(lastFrame()).toMatch(/test command output 1\s*test command output 2/i);
+			describe('when it is not pinned', () => {
+				it('shows stdout', () => {
+					const runningCommandWithStdout: PageProps = {
+						...defaultProps,
+						text: '',
+						command: {
+							filename: 'test',
+							args: ['command'],
+							status: RUNNING,
+							stdout: [
+								{text: 'test command output 1', uid: '1'},
+								{text: 'test command output 2', uid: '2'}
+							]
+						}
+					};
+					const {lastFrame} = render(<Page {...runningCommandWithStdout}/>);
+	
+					expect(lastFrame()).toMatch(/output.*\s+test command output 1\s+test command output 2/si);
+				});
+				
+			});
+			describe('when it is pinned', () => {
+				it('renders stdout as <Static/>', () => {
+					const runningCommandWithStdout: PageProps = {
+						...defaultProps,
+						pinOutput: true,
+						command: {
+							filename: 'test',
+							args: ['command'],
+							status: RUNNING,
+							stdout: [
+								{text: 'test command output 1', uid: '1'},
+								{text: 'test command output 2', uid: '2'}
+							]
+						}
+					};
+					const {lastFrame} = render(<Page {...runningCommandWithStdout}/>);
+	
+					// it is not possible to test for <Static/>
+					// let's at least not require the "output" section title
+					expect(lastFrame()).toMatch(/test command output 1\s*test command output 2/i);
+				});
+				
 			});
 		});
 

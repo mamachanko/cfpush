@@ -2,8 +2,32 @@ import * as deepmerge from 'deepmerge';
 import {Store} from 'redux';
 import {DeepPartial} from 'ts-essentials';
 import {Action} from './actions';
-import {initialState} from './reducer';
-import {State} from './state';
+import {State, UNSTARTED} from './state';
+
+const initialState: State = {
+	app: {
+		waitForTrigger: true,
+		pinOutput: false,
+		exit: false
+	},
+	cloudFoundryContext: {},
+	pages: {
+		completed: [],
+		current: {
+			text: '',
+			command: {
+				filename: 'date',
+				args: [],
+				status: UNSTARTED,
+				stdout: []
+			}
+		},
+		next: [{
+			text: '',
+			command: {filename: 'date', args: []}
+		}]
+	}
+};
 
 export const createStoreMock = (partialState: DeepPartial<State> = {}): Store<State, Action> => ({
 	dispatch: jest.fn(),

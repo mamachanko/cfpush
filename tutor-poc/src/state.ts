@@ -7,6 +7,7 @@ export type State = {
 
 type App = {
 	waitForTrigger: boolean;
+	pinOutput: boolean;
 	exit: boolean;
 }
 

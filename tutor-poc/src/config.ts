@@ -71,6 +71,7 @@ const createInitialState = (pages: Page<Command>[], mode: Mode): State => {
 	return ({
 		app: {
 			waitForTrigger: mode !== Ci,
+			pinOutput: mode === Ci,
 			exit: false
 		},
 		cloudFoundryContext: {},

@@ -147,4 +147,20 @@ describe('<App />', () => {
 			expect(stripAnsi(lastFrame())).toEqual('');
 		});
 	});
+
+	describe('when in ci mode', () => {
+		beforeEach(() => {
+			appConfig = config.parse(pages, {CI: 'true'});
+		});
+
+		it('runs commands one after another and command output remains', async () => {
+			const {lastFrame} = render(createApp(appConfig));
+
+			await sleep(50);
+
+			expect(stripAnsi(lastFrame())).toMatch(
+				/hi this is the first command.*hello this is the second command/si
+			);
+		});
+	});
 });

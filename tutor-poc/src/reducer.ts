@@ -4,31 +4,7 @@ import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, S
 import {State, UNSTARTED, RUNNING, CurrentCommand, Page} from './state';
 import {CommandUtils} from './command-utils';
 
-export const initialState: State = {
-	app: {
-		waitForTrigger: true,
-		exit: false
-	},
-	cloudFoundryContext: {},
-	pages: {
-		completed: [],
-		current: {
-			text: '',
-			command: {
-				filename: 'date',
-				args: [],
-				status: UNSTARTED,
-				stdout: []
-			}
-		},
-		next: [{
-			text: '',
-			command: {filename: 'date', args: []}
-		}]
-	}
-};
-
-export const reducer: Reducer = (state: State = initialState, action: Action): State => {
+export const reducer: Reducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case (INPUT_RECEIVED):
 		case (STARTED): {

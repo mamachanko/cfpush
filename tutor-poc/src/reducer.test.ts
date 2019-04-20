@@ -7,6 +7,7 @@ import {State, UNSTARTED, RUNNING, FINISHED} from './state';
 const defaultState: State = {
 	app: {
 		waitForTrigger: false,
+		pinOutput: false,
 		exit: false
 	},
 	cloudFoundryContext: {},

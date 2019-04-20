@@ -173,7 +173,7 @@ const CommandPage: React.FC<CommandPageProps> = (props): React.ReactElement => {
 			return (
 				<>
 					<StaticContent {...props}/>
-					<Stdout {...props.command}/>
+					<Stdout {...props.command} pin={props.pinOutput}/>
 					<Command {...props.command}/>
 				</>
 			);
@@ -183,7 +183,7 @@ const CommandPage: React.FC<CommandPageProps> = (props): React.ReactElement => {
 			return (
 				<>
 					<StaticContent {...props}/>
-					<Stdout {...props.command}/>
+					<Stdout {...props.command} pin={props.pinOutput}/>
 					<Command {...props.command}/>
 					<InputPrompt {...props} prompt=">_"/>
 				</>
@@ -194,7 +194,7 @@ const CommandPage: React.FC<CommandPageProps> = (props): React.ReactElement => {
 			return (
 				<>
 					<StaticContent {...props}/>
-					<Stdout {...props.command}/>
+					<Stdout {...props.command} pin={props.pinOutput}/>
 					<Command {...props.command}/>
 					<CompletePrompt {...props}/>
 				</>
@@ -219,6 +219,7 @@ type StateProps = {
 	text: string;
 	command?: CurrentCommand;
 	waitForTrigger: boolean;
+	pinOutput: boolean;
 };
 
 type DispatchProps = {
@@ -241,7 +242,8 @@ export const Page: React.FC<PageProps> = (props): React.ReactElement => (
 
 const mapStateToProps = (state: State): StateProps => ({
 	...state.pages.current,
-	waitForTrigger: state.app.waitForTrigger
+	waitForTrigger: state.app.waitForTrigger,
+	pinOutput: state.app.pinOutput
 });
 
 const mapDispatchToProps = (dispatch: Redux.Dispatch): DispatchProps => ({

@@ -36,6 +36,7 @@ describe('Config', () => {
 					initialState: {
 						app: {
 							waitForTrigger: true,
+							pinOutput: false,
 							exit: false
 						},
 						cloudFoundryContext: {},
@@ -94,6 +95,7 @@ describe('Config', () => {
 					initialState: {
 						app: {
 							waitForTrigger: false,
+							pinOutput: true,
 							exit: false
 						},
 						cloudFoundryContext: {},
@@ -140,6 +142,7 @@ describe('Config', () => {
 					initialState: {
 						app: {
 							waitForTrigger: true,
+							pinOutput: false,
 							exit: false
 						},
 						cloudFoundryContext: {},
