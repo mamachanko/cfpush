@@ -20,8 +20,8 @@ const parseServiceInstanceName = (cfCreateService: Command): string => cfCreateS
 export const createCfContextUpdater = (cloudFoundryApi: CloudFoundryApi = createCloudFoundryApi()): CfContextUpdater => async (command: Command) => {
 	if (isCfPush(command)) {
 		const appName = parseAppName(command);
-		const hostname = await cloudFoundryApi.getHostname(appName);
-		return {[appName]: {hostname}};
+		const routes = await cloudFoundryApi.getRoutes(appName);
+		return {[appName]: {routes}};
 	}
 
 	if (isCfCreateService(command)) {

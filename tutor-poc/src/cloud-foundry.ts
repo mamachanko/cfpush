@@ -1,25 +1,24 @@
 import * as execa from 'execa';
 
-type GetHostname = (appName: string) => Promise<string>;
-type UntilServiceCreated = (serviceInstanceName: string) => Promise<void>;
-
-export interface CloudFoundryApi {
-	getHostname: GetHostname;
-	untilServiceCreated: UntilServiceCreated;
-}
-
-const appStatus = async (appName: string): Promise<string> => (await execa('cf', ['app', appName])).stdout;
-const serviceStatus = async (serviceInstanceName: string): Promise<string> => (await execa('cf', ['service', serviceInstanceName])).stdout;
-const sleep = async (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
-
 export const createCloudFoundryApi = (getAppStatus = appStatus, getServiceStatus = serviceStatus): CloudFoundryApi => ({
-	getHostname: async (appName: string): Promise<string> => {
+
+	getRoutes: async (appName: string): Promise<Route[]> => {
 		const appStatus = await getAppStatus(appName);
 		return appStatus
-			.match(/routes:\s*(?<hostname>[a-z0-1-]+)./i)
+			.match(/routes:\s+(?<routes>[\w.\-, ]+)+/i)
 			.groups
-			.hostname;
+			.routes
+			.split(', ')
+			.map(route => {
+				const [hostname, ...domainParts] = route.split('.');
+				return ({
+					hostname,
+					domain: domainParts.join('.'),
+					url: `https://${route}`
+				});
+			});
 	},
+
 	untilServiceCreated: async (serviceInstanceName: string): Promise<void> => {
 		let serviceStatus = '';
 		do {
@@ -30,4 +29,24 @@ export const createCloudFoundryApi = (getAppStatus = appStatus, getServiceStatus
 		}
 		while (!serviceStatus.match(/create succeeded/i));
 	}
+
 });
+
+export interface CloudFoundryApi {
+	getRoutes: GetRoutes;
+	untilServiceCreated: UntilServiceCreated;
+}
+
+type GetRoutes = (appName: string) => Promise<Route[]>;
+
+type Route = {
+	hostname: string;
+	domain: string;
+	url: string;
+}
+
+type UntilServiceCreated = (serviceInstanceName: string) => Promise<void>;
+
+const appStatus = async (appName: string): Promise<string> => (await execa('cf', ['app', appName])).stdout;
+const serviceStatus = async (serviceInstanceName: string): Promise<string> => (await execa('cf', ['service', serviceInstanceName])).stdout;
+const sleep = async (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));

@@ -4,7 +4,7 @@ import {CloudFoundryApi} from './cloud-foundry';
 describe('CfContextUpdater', () => {
 	let sut: CfContextUpdater;
 	const cloudFoundryApiMock: CloudFoundryApi = {
-		getHostname: jest.fn(),
+		getRoutes: jest.fn(),
 		untilServiceCreated: jest.fn()
 	};
 
@@ -16,15 +16,25 @@ describe('CfContextUpdater', () => {
 
 	describe('when the command is a "cf push"', () => {
 		beforeEach(() => {
-			(cloudFoundryApiMock.getHostname as jest.Mock).mockResolvedValueOnce('test-app-hostname');
+			(cloudFoundryApiMock.getRoutes as jest.Mock).mockResolvedValueOnce([
+				{hostname: 'app-hostname-1', domain: 'app-domain.com', url: 'https://app-hostname-1.app-domain.com'},
+				{hostname: 'app-hostname-2', domain: 'app-domain.com', url: 'https://app-hostname-2.app-domain.com'}
+			]);
 		});
 
-		it('returns the pushed app\'s hostname', async () => {
+		it('returns the pushed app\'s routes', async () => {
 			const update = await sut({filename: 'cf', args: ['push', 'test-app', '--with', 'more', '--args']});
 
-			expect(update).toStrictEqual({'test-app': {hostname: 'test-app-hostname'}});
-			expect(cloudFoundryApiMock.getHostname).toHaveBeenCalledWith('test-app');
-			expect(cloudFoundryApiMock.getHostname).toHaveBeenCalledTimes(1);
+			expect(update).toStrictEqual({
+				'test-app': {
+					routes: [
+						{hostname: 'app-hostname-1', domain: 'app-domain.com', url: 'https://app-hostname-1.app-domain.com'},
+						{hostname: 'app-hostname-2', domain: 'app-domain.com', url: 'https://app-hostname-2.app-domain.com'}
+					]
+				}
+			});
+			expect(cloudFoundryApiMock.getRoutes).toHaveBeenCalledWith('test-app');
+			expect(cloudFoundryApiMock.getRoutes).toHaveBeenCalledTimes(1);
 		});
 	});
 
@@ -42,7 +52,7 @@ describe('CfContextUpdater', () => {
 			const update = await sut({filename: 'some', args: ['command']});
 
 			expect(update).toBeNull();
-			expect(cloudFoundryApiMock.getHostname).not.toHaveBeenCalled();
+			expect(cloudFoundryApiMock.getRoutes).not.toHaveBeenCalled();
 		});
 	});
 });

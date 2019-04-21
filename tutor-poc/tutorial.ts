@@ -1,6 +1,6 @@
 import {PageConfig} from './src/config';
 
-export default [
+const tutorial: PageConfig[] = [
 	{
 		title: 'Welcome to cfpush ☁️ ',
 		subtitle: 'an interactive Cloud Foundry tutorial in your terminal',
@@ -140,7 +140,7 @@ Let's map the route $(underline {{CHAT_APP_URL}}/api) to the $(bold "message-ser
 `,
 		command: {
 			filename: 'cf',
-			args: ['map-route', 'message-service', 'cfapps.io', '--hostname', '{{chat-app.hostname}}', '--path', '/api']
+			args: ['map-route', 'message-service', 'cfapps.io', '--hostname', '{{chat-app.routes.0.hostname}}', '--path', '/api']
 		}
 	},
 	{
@@ -238,9 +238,14 @@ Caveat: In this case it is enough to just restart the application. In other case
 			args: ['restart', 'message-service']
 		}
 	},
-
-	// Smoke test
-
+	{
+		ci: true,
+		text: 'smoke test',
+		command: {
+			filename: '../scripts/smoke-test.sh',
+			args: ['{{{chat-app.routes.0.url}}}']
+		}
+	},
 	{
 		text: `
 As the instances of the $(bold "message-service") have restarted they are all using the database as a backing service. They no longer carry state. We can scale the message-service to our heart's content. The users of the chat will have a consistent experience, whether we have 1 or 100 instances running.
@@ -289,4 +294,6 @@ Let's log you out. Bye bye!
 			args: ['logout']
 		}
 	}
-] as PageConfig[];
+];
+
+export default tutorial;

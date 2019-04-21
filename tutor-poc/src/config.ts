@@ -14,6 +14,7 @@ export const parse = (pages: PageConfig[], env: any): Config => {
 };
 
 export type PageConfig = Page<Command> & MaybeCi;
+
 type MaybeCi = {
 	ci?: boolean;
 }

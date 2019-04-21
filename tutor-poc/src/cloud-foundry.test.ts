@@ -4,7 +4,7 @@ const appStatus = `
 Showing health and status for app chat-app in org cfpush / space cfpush-tutorial as user@example.com...
 name:              test-app
 requested state:   started
-routes:            app-hostname-1.app-domain.com, app-hostname-2.app-domain.com, app.another-domain.io
+routes:            app-hostname-1.app-domain.com, app-hostname-2.app-domain.com, www.another-domain.io
 last uploaded:     Thu 11 Apr 15:53:01 CEST 2019
 stack:             cflinuxfs3
 buildpacks:        staticfile
@@ -64,15 +64,19 @@ describe('CloudFoundry', () => {
 
 	afterEach(jest.resetAllMocks);
 
-	describe('when getting an app\'s hostname', () => {
+	describe('when getting an app\'s routes', () => {
 		beforeEach(() => {
 			getAppStatus
 				.mockResolvedValueOnce(appStatus);
 		});
-		it('returns app\'s first hostname', async () => {
-			const hostname = await cloudFoundry.getHostname('test-app');
+		it('returns the app\'s routes', async () => {
+			const hostname = await cloudFoundry.getRoutes('test-app');
 
-			expect(hostname).toEqual('app-hostname-1');
+			expect(hostname).toStrictEqual([
+				{hostname: 'app-hostname-1', domain: 'app-domain.com', url: 'https://app-hostname-1.app-domain.com'},
+				{hostname: 'app-hostname-2', domain: 'app-domain.com', url: 'https://app-hostname-2.app-domain.com'},
+				{hostname: 'www', domain: 'another-domain.io', url: 'https://www.another-domain.io'}
+			]);
 			expect(getAppStatus).toHaveBeenCalledWith('test-app');
 			expect(getAppStatus).toHaveBeenCalledTimes(1);
 		});
