@@ -17,11 +17,6 @@ type StateProps = {
 	lastCallToExit: boolean;
 }
 
-type Props =
-	& OwnProps
-	& DispatchProps
-	& StateProps;
-
 const mapDispatchToProps = (dispatch): DispatchProps => ({
 	scheduleExit: () => dispatch(exitApp())
 });
