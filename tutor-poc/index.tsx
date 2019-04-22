@@ -12,4 +12,7 @@ const {waitUntilExit} = render(
 
 waitUntilExit()
 	.then(() => console.log('🏁'))
-	.catch(error => console.log('🙅🏽‍♀️', error));
+	.catch(error => {
+		console.log('🙅🏽‍♀️', error);
+		process.exit(1); // eslint-disable-line unicorn/no-process-exit
+	});

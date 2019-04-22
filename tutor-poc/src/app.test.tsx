@@ -85,35 +85,6 @@ describe('<App />', () => {
 			stdin.write(SPACE);
 			expect(stripAnsi(lastFrame())).toEqual('');
 		});
-
-		it('quits on "ctrl-c"', async () => {
-			const {lastFrame, stdin} = render(createApp(appConfig));
-
-			expect(stripAnsi(lastFrame())).toMatch(
-				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to continue\)/si
-			);
-
-			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toMatch(
-				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
-			);
-
-			stdin.write(SPACE);
-			expect(stripAnsi(lastFrame())).toMatch(
-				/Let us run the first command.*no command output yet.*[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] echo hi this is the first command/si
-			);
-
-			await sleep(10);
-			expect(stripAnsi(lastFrame())).toMatch(
-				/Let us run the first command.*output.*hi this is the first command.*✅️ {2}echo hi this is the first command.*\(press <space> to continue\)/si
-			);
-
-			stdin.write(CTRL_C);
-			await sleep(10);
-			expect(stripAnsi(lastFrame())).toMatch(
-				/oh, i am slain.*see you/si
-			);
-		});
 	});
 
 	describe('when in dry mode', () => {
@@ -167,6 +138,103 @@ describe('<App />', () => {
 
 			expect(stripAnsi(lastFrame())).toMatch(
 				/hi this is the first command\s*ciao this is a ci stealth command\s*hello this is the second command/si
+			);
+		});
+	});
+
+	describe('when pressing ctrl-c', () => {
+		beforeEach(() => {
+			appConfig = config.parse(pages, {});
+		});
+
+		it('quits and shows exit message', async () => {
+			const {lastFrame, stdin} = render(createApp(appConfig));
+
+			expect(stripAnsi(lastFrame())).toMatch(
+				/the title page\s+~ a fine subtitle ~\s+This is the title page and it welcomes you\s+\(press <space> to continue\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command.*no command output yet.*[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] echo hi this is the first command/si
+			);
+
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command.*output.*hi this is the first command.*✅️ {2}echo hi this is the first command.*\(press <space> to continue\)/si
+			);
+
+			stdin.write(CTRL_C);
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/oh, i am slain.*see you/si
+			);
+		});
+	});
+
+	describe('when a command fails', () => {
+		beforeEach(() => {
+			const pages: config.PageConfig[] = [
+				{
+					text: 'Let us run the first command',
+					command: {
+						filename: 'echo',
+						args: ['hi', 'this', 'is', 'the', 'first', 'command']
+					}
+				},
+				{
+					text: 'This command is supposed to fail',
+					command: {
+						filename: 'false',
+						args: []
+					}
+				},
+				{
+					text: 'This command is not supposed to be run',
+					command: {
+						filename: 'echo',
+						args: ['hello', 'this', 'command', 'should', 'not', 'be', 'run']
+					}
+				}
+			];
+			appConfig = config.parse(pages, {});
+		});
+
+		it('exits after the failed command and shows message', async () => {
+			const {lastFrame, stdin} = render(createApp(appConfig));
+
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command\s+>_ echo hi this is the first command\s+\(press <space> to run\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command.*no command output yet.*[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] echo hi this is the first command/si
+			);
+
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/Let us run the first command.*output.*hi this is the first command.*✅️ {2}echo hi this is the first command.*\(press <space> to continue\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/This command is supposed to fail\s+>_ false\s+\(press <space> to run\)/si
+			);
+
+			stdin.write(SPACE);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/This command is supposed to fail.*no command output yet.*[⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏] false/si
+			);
+
+			await sleep(10);
+			expect(stripAnsi(lastFrame())).toMatch(
+				/sorry, the command "false" failed with a non-zero exit code/si
 			);
 		});
 	});

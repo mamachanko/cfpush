@@ -7,6 +7,7 @@ import {State} from './state';
 
 type OwnProps = {
 	exitDisplay: React.ReactElement;
+	errorDisplay: React.ReactElement;
 };
 
 type DispatchProps = {
@@ -14,7 +15,8 @@ type DispatchProps = {
 }
 
 type StateProps = {
-	lastCallToExit: boolean;
+	shouldExitNow: boolean;
+	error: boolean;
 }
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
@@ -22,21 +24,26 @@ const mapDispatchToProps = (dispatch): DispatchProps => ({
 });
 
 const mapStateToProps = (state: State): StateProps => ({
-	lastCallToExit: state.app.exit
+	shouldExitNow: state.app.exit,
+	error: state.pages.current.command && state.pages.current.command.error
 });
 
+const isTest = (): boolean => process.env.NODE_ENV === 'test';
+
 export const Quitable = connect<StateProps, DispatchProps, OwnProps>(mapStateToProps, mapDispatchToProps)(
-	({children, exitDisplay, scheduleExit, lastCallToExit}): React.ReactElement => {
+	({children, error, exitDisplay, errorDisplay, scheduleExit, shouldExitNow}): React.ReactElement => {
 		const {exit} = React.useContext(AppContext);
 
 		React.useEffect(() => {
-			if (lastCallToExit) {
-				exit();
+			if (shouldExitNow) {
+				exit((error && !isTest()) ? new Error() : null);
 			}
-		}, [exit, lastCallToExit]);
+		}, [error, exit, shouldExitNow]);
 
 		useOnCtrlC(scheduleExit);
 
-		return lastCallToExit ? exitDisplay : <>{children}</>;
+		const display = error ? errorDisplay : exitDisplay;
+
+		return shouldExitNow ? display : <>{children}</>;
 	}
 );

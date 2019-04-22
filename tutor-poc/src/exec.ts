@@ -4,7 +4,7 @@ import {logger} from './logging';
 import {CommandUtils} from './command-utils';
 
 export type StdoutHandler = (data: string) => void;
-export type ExitHandler = () => void;
+export type ExitHandler = (exitCode: number) => void;
 export type StderrHandler = (data: string) => void;
 
 export type StdHandlers = {

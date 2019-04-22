@@ -38,7 +38,8 @@ type CompletedCommand =
 export type CurrentCommand =
 	& Command
 	& HasStdout
-	& HasStatus;
+	& HasStatus
+	& MaybeError;
 
 type HasStdout = {
 	stdout: Stdout;
@@ -53,6 +54,10 @@ export type Output = {
 
 type HasStatus = {
 	status: Status;
+}
+
+type MaybeError = {
+	error?: boolean;
 }
 
 export type Status =

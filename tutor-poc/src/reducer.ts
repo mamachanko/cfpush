@@ -42,12 +42,14 @@ export const reducer: Reducer = (state: State, action: Action): State => {
 		case (FINISHED): {
 			return {
 				...state,
+				...(action.error ? {app: {...state.app, exit: true}} : {}),
 				pages: {
 					...state.pages,
 					current: {
 						...state.pages.current,
 						command: {
 							...state.pages.current.command,
+							...(action.error ? {error: true} : {}),
 							status: FINISHED
 						}
 					}

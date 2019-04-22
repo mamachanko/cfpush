@@ -32,6 +32,8 @@ export interface InputReceived {
 export const FINISHED = 'FINISHED';
 export interface Finished {
 	type: typeof FINISHED;
+	payload?: {error: Error};
+	error?: boolean;
 }
 
 export const COMPLETED = 'COMPLETED';
@@ -66,7 +68,17 @@ export const started = (): Started => ({type: STARTED});
 export const stdoutReceived = (output: Output): StdoutReceived => ({type: STDOUT_RECEIVED, payload: output});
 export const inputRequired = (): InputRequired => ({type: INPUT_REQUIRED});
 export const inputReceived = (input: string): InputReceived => ({type: INPUT_RECEIVED, payload: {input}});
-export const finished = (): Finished => ({type: FINISHED});
 export const completed = (): Completed => ({type: COMPLETED});
 export const updateCfContext = (contextUpdate: any): UpdateCfContext => ({type: UPDATE_CF_CONTEXT, payload: contextUpdate});
 export const exitApp = (): ExitApp => ({type: EXIT_APP});
+export const finished = (error?: Error): Finished => {
+	if (error) {
+		return {
+			type: FINISHED,
+			error: true,
+			payload: {error}
+		};
+	}
+
+	return {type: FINISHED};
+};

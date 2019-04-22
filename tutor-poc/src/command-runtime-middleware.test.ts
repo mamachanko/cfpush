@@ -12,24 +12,22 @@ describe('CommandRuntimeMiddleware', () => {
 
 	let executeMock: CommandRunner;
 	let stdoutMock: WriteToStdin;
-	let exitCommand: () => void;
+	let exitCommand: (exitCode: number) => void;
 	const writeStub: (input: string) => void = jest.fn();
 	const cancelStub: () => void = jest.fn();
 
 	let storeMock: MiddlewareAPI;
 	const nextMiddlewareMock = jest.fn();
 
-	afterEach(() => {
-		jest.resetAllMocks();
-	});
+	afterEach(jest.resetAllMocks);
 
 	beforeEach(() => {
-		const executeDummy: CommandRunner = (command, handlers): RunningCommand => {
+		const executeDummy: CommandRunner = (_command, handlers): RunningCommand => {
 			stdoutMock = (text: string) =>
 				handlers.stdout.map((stdoutHandler: StdoutHandler) => stdoutHandler(text));
 
-			exitCommand = () =>
-				handlers.exit.map((exitHandler: ExitHandler) => exitHandler());
+			exitCommand = (exitCode: number) =>
+				handlers.exit.map((exitHandler: ExitHandler) => exitHandler(exitCode));
 
 			return {write: writeStub, cancel: cancelStub};
 		};
@@ -115,13 +113,26 @@ describe('CommandRuntimeMiddleware', () => {
 		});
 
 		describe('when command finishes', () => {
-			beforeEach(() => {
-				exitCommand();
+			describe('successfully', () => {
+				beforeEach(() => {
+					exitCommand(0);
+				});
+
+				it('emits command finished', () => {
+					expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
+					expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // Previous calls exist
+				});
 			});
 
-			it('emits command finished', () => {
-				expect(storeMock.dispatch).toHaveBeenCalledWith(finished());
-				expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // Previous calls exist
+			describe('error', () => {
+				beforeEach(() => {
+					exitCommand(123);
+				});
+
+				it('emits command finished with an error', () => {
+					expect(storeMock.dispatch).toHaveBeenCalledWith(finished(new Error()));
+					expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // Previous calls exist
+				});
 			});
 		});
 

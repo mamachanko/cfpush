@@ -19,8 +19,8 @@ export const createCommandRuntimeMiddleware = (run = execute, uid = defaultUid):
 		logger.error(`command stderr: ${data}`);
 	};
 
-	const exitHandler: ExitHandler = (): void => {
-		store.dispatch(finished());
+	const exitHandler: ExitHandler = (exitCode: number): void => {
+		store.dispatch(finished(exitCode ? new Error() : null));
 	};
 
 	const handlers = {

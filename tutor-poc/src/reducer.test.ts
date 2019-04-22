@@ -174,21 +174,48 @@ describe('reducer', () => {
 	});
 
 	describe('when a command finishes', () => {
-		it('changes the current command\'s status to "FINISHED"', () => {
-			const nextState = reducer(defaultState, finished());
+		describe('when there was no error', () => {
+			it('changes the current command\'s status to "FINISHED"', () => {
+				const nextState = reducer(defaultState, finished());
 
-			expect(nextState).toStrictEqual({
-				...defaultState,
-				pages: {
-					...defaultState.pages,
-					current: {
-						...defaultState.pages.current,
-						command: {
-							...defaultState.pages.current.command,
-							status: FINISHED
+				expect(nextState).toStrictEqual({
+					...defaultState,
+					pages: {
+						...defaultState.pages,
+						current: {
+							...defaultState.pages.current,
+							command: {
+								...defaultState.pages.current.command,
+								status: FINISHED
+							}
 						}
 					}
-				}
+				});
+			});
+		});
+
+		describe('when there was an error', () => {
+			it('changes the current command\'s status to "FINISHED", sets error and exit', () => {
+				const nextState = reducer(defaultState, finished(new Error()));
+
+				expect(nextState).toStrictEqual({
+					...defaultState,
+					app: {
+						...defaultState.app,
+						exit: true
+					},
+					pages: {
+						...defaultState.pages,
+						current: {
+							...defaultState.pages.current,
+							command: {
+								...defaultState.pages.current.command,
+								status: FINISHED,
+								error: true
+							}
+						}
+					}
+				});
 			});
 		});
 	});
