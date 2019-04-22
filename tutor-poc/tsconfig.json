@@ -1,5 +1,9 @@
 {
     "compilerOptions": {
-        "jsx": "react"
-    }
+        "jsx": "react",
+        "outDir": "dist"
+    },
+    "exclude": [
+        "src/**/*.test.tsx?",
+    ]
 }

@@ -5,7 +5,7 @@ const tutorial: PageConfig[] = [
 		title: 'Welcome to cfpush ☁️ ',
 		subtitle: 'an interactive Cloud Foundry tutorial in your terminal',
 		text: `
-We will be exploring <Text bold>Cloud Foundry</Text> and cloud-native computing by deploying a real chat application to Cloud Foundry.
+We will be exploring $(bold "Cloud Foundry") and cloud-native computing by deploying a real chat application to Cloud Foundry.
 `
 	},
 	{
@@ -53,7 +53,7 @@ We push the app by pointing the cli at $(underline "./builds/chat-app.zip"), sel
 `,
 		command: {
 			filename: 'cf',
-			args: ['push chat-app', '-p', '../builds/chat-app.zip', '-b', 'staticfile_buildpack', '--random-route']
+			args: ['push chat-app', '-p', './builds/chat-app.zip', '-b', 'staticfile_buildpack', '--random-route']
 		}
 	},
 	{
@@ -102,7 +102,7 @@ Again, we push by letting Cloud Foundry pick a random available route for us and
 `,
 		command: {
 			filename: 'cf',
-			args: ['push', 'message-service', '-p', '../builds/message-service.jar', '--random-route']
+			args: ['push', 'message-service', '-p', './builds/message-service.jar', '--random-route']
 		}
 	},
 	{
@@ -242,7 +242,7 @@ Caveat: In this case it is enough to just restart the application. In other case
 		ci: true,
 		text: 'smoke test',
 		command: {
-			filename: '../scripts/smoke-test.sh',
+			filename: './scripts/smoke-test.sh',
 			args: ['{{{chat-app.routes.0.url}}}']
 		}
 	},
