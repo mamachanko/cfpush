@@ -27,20 +27,19 @@
         }
 
         body {
-            position: relative; 
+            position: relative;
             min-height: 100%;
         }
 
         code,
         h1 {
-            font-family: 'Roboto Mono', monospace;
-            font-weight: 900;
+            font-weight: 700;
         }
 
         .footer {
-            display: flex; 
+            display: flex;
             flex-direction: column;
-            justify-content: center; 
+            justify-content: center;
             align-items: center;
             background-color: lightgrey;
             position: absolute;
@@ -65,7 +64,7 @@
             box-shadow: 0 0 20px 0px rgba(119, 119, 119, 0.38);
 
             background: rgb(53, 53, 53);
-            height: 10em;
+            height: 7em;
 
             margin-bottom: 32px;
         }
@@ -77,7 +76,7 @@
             position: relative;
             left: 0;
             width: 100%;
-            height: 2.4em;
+            height: 2em;
             top: 0;
             background: rgb(44, 44, 44);
         }
@@ -156,11 +155,10 @@
         .copy-to-clipboard {
             z-index: 1;
             position: absolute;
-            top: 72%;
+            top: 61%;
             bottom: 0;
             right: 0;
             color: #fff;
-            background-color: #cccccc;
             padding: 8px 14px;
             border-bottom-right-radius: .3em;
         }
@@ -213,7 +211,6 @@
 
         <script type="application/javascript">
             const commandText = "docker run -it mamachanko/cfpush";
-            const commandOutputText = "💻 ----------> ☁️      😃";
 
             var command = document.getElementById("command");
             var commandOutput = document.getElementById("command-output");
@@ -242,10 +239,6 @@
 
                         setTimeout(function () {
                             show(commandOutput);
-
-                            typewrite(commandOutputText, 0, commandOutput, 200, function () {
-                                setTimeout(resetCommandAnimation, 5000);
-                            })
                         }, 1000);
                     });
                 }, 500);
