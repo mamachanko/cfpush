@@ -4,7 +4,7 @@ set -euxo pipefail
 
 cd $(dirname $0)
 
-cd ../tutor-poc
+cd ../tutor
 
-yarn
-yarn test
+rm -rf dist
+rm -rf node_modules

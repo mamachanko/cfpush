@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+cd $(dirname $0)
+
 docker \
     run \
     --tty \
@@ -13,4 +15,7 @@ docker \
     --env CF_PASSWORD \
     --env CF_ORG \
     --env CF_SPACE \
-    mamachanko/cfpush:latest
+    --volume $(pwd)/cfpush.log:/cfpush/cfpush.log \
+    --volume $(pwd)/builds:/cfpush/builds \
+    --volume $(pwd)/scripts:/cfpush/scripts \
+    mamachanko/cfpush:latest $@

@@ -8,6 +8,4 @@ cd $(dirname $0)
 
 ./build-chat-app.sh
 
-./build-tutorial.sh
-
-./build-tutor-poc.sh
+./build-tutor.sh

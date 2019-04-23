@@ -1,6 +1,6 @@
-FROM alpine:3.9.2
+FROM node:11.14.0-alpine
 
-LABEL description="An interactive Cloud Foundry tutorial in your terminal."
+LABEL description="An interactive Cloud Foundry tutorial in your terminal"
 LABEL version="0.1"
 
 RUN apk --no-cache add \
@@ -16,11 +16,9 @@ RUN mkdir -p /usr/local/bin && \
     cf --version && \
     rm -f /tmp/cf-cli.tgz
 
-COPY builds/ /cfpush/builds
-COPY scripts/post-message.sh /cfpush/scripts/post-message.sh
-COPY scripts/get-messages.sh /cfpush/scripts/get-messages.sh
-COPY tutorial.sh /cfpush/tutorial.sh
-
 WORKDIR /cfpush
 
-CMD [ "bash", "tutorial.sh" ]
+COPY dist .
+COPY node_modules node_modules
+
+CMD ["node", "."]

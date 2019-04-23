@@ -4,7 +4,7 @@ set -euxo pipefail
 
 cd $(dirname $0)
 
-./push-tutorial.sh
+./push-tutor.sh
 
 ./push-site.sh
 
