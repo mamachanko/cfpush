@@ -16,6 +16,4 @@ docker \
     --env CF_ORG \
     --env CF_SPACE \
     --volume $(pwd)/cfpush.log:/cfpush/cfpush.log \
-    --volume $(pwd)/builds:/cfpush/builds \
-    --volume $(pwd)/scripts:/cfpush/scripts \
     mamachanko/cfpush:latest $@
