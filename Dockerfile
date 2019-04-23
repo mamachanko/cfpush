@@ -18,7 +18,10 @@ RUN mkdir -p /usr/local/bin && \
 
 WORKDIR /cfpush
 
-COPY dist .
-COPY node_modules node_modules
+COPY tutor/dist .
+COPY tutor/node_modules node_modules
+
+COPY builds builds
+COPY scripts scripts
 
 CMD ["node", "."]

@@ -13,6 +13,6 @@ npx tsc --skipLibCheck
 
 docker \
     build \
-    . \
-    --file ./Dockerfile \
+    .. \
+    --file ../Dockerfile \
     --tag mamachanko/cfpush:latest
