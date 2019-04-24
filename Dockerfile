@@ -6,7 +6,6 @@ LABEL version="0.1"
 RUN apk --no-cache add \
     ca-certificates \
     bash \
-    ncurses \
     curl \
     jq
 
