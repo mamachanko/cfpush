@@ -3,6 +3,8 @@ import {createApp} from './src/app';
 import {parse} from './src/config';
 import tutorial from './tutorial';
 
+console.clear();
+
 const config = parse(tutorial, process.env);
 
 const {waitUntilExit} = render(
