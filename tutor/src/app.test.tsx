@@ -42,7 +42,7 @@ describe('<App />', () => {
 
 	describe('when in tutorial mode', () => {
 		beforeEach(() => {
-			appConfig = config.parse(pages, {});
+			appConfig = config.createConfig(pages, config.Tutorial);
 		});
 
 		it('pages and runs commands one after another by pressing <space>', async () => {
@@ -89,7 +89,7 @@ describe('<App />', () => {
 
 	describe('when in dry mode', () => {
 		beforeEach(() => {
-			appConfig = config.parse(pages, {DRY: 'true'});
+			appConfig = config.createConfig(pages, config.Dry);
 		});
 
 		it('pages and pretends to run commands on <space>', async () => {
@@ -128,7 +128,7 @@ describe('<App />', () => {
 
 	describe('when in ci mode', () => {
 		beforeEach(() => {
-			appConfig = config.parse(pages, {CI: 'true'});
+			appConfig = config.createConfig(pages, config.Ci);
 		});
 
 		it('runs commands one after another and command output remains', async () => {
@@ -144,7 +144,7 @@ describe('<App />', () => {
 
 	describe('when pressing ctrl-c', () => {
 		beforeEach(() => {
-			appConfig = config.parse(pages, {});
+			appConfig = config.createConfig(pages, config.Tutorial);
 		});
 
 		it('quits and shows exit message', async () => {
@@ -202,7 +202,7 @@ describe('<App />', () => {
 					}
 				}
 			];
-			appConfig = config.parse(pages, {});
+			appConfig = config.createConfig(pages, config.Tutorial);
 		});
 
 		it('exits after the failed command and shows message', async () => {

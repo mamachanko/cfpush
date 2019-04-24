@@ -1,33 +1,11 @@
+import * as path from 'path';
 import * as config from './config';
 
 describe('Config', () => {
-	let pagesConfig: config.PageConfig[];
+	const configFile = path.resolve(__dirname, 'test-config.yaml');
 	let env: any;
 
 	describe('when given a list of pages', () => {
-		beforeEach(() => {
-			pagesConfig = [
-				{
-					title: 'Welcome',
-					subtitle: 'welcome indeed',
-					text: 'welcome. welcome. welcome.'
-				},
-				{
-					text: 'let us login',
-					command: {filename: 'cf', args: ['login']}
-				},
-				{
-					text: 'this is a ci only page',
-					ci: true,
-					command: {filename: 'echo', args: ['this', 'command', 'only', 'runs', 'on', 'ci']}
-				},
-				{
-					text: 'let us deploy',
-					command: {filename: 'cf', args: ['push']}
-				}
-			];
-		});
-
 		describe('when in Tutorial mode', () => {
 			beforeEach(() => {
 				env = {};
@@ -35,7 +13,7 @@ describe('Config', () => {
 
 			it('parses into config', () => {
 				expect(
-					config.parse(pagesConfig, env)
+					config.parse(configFile, env)
 				).toStrictEqual({
 					initialState: {
 						app: {
@@ -49,7 +27,10 @@ describe('Config', () => {
 							current: {
 								title: 'Welcome',
 								subtitle: 'welcome indeed',
-								text: 'welcome. welcome. welcome.'
+								text: `welcome. welcome. welcome.
+
+really. you are welcome.
+`
 							},
 							next: [
 								{
@@ -94,7 +75,7 @@ describe('Config', () => {
 
 			it('parses into config', () => {
 				expect(
-					config.parse(pagesConfig, env)
+					config.parse(configFile, env)
 				).toStrictEqual({
 					initialState: {
 						app: {
@@ -108,7 +89,10 @@ describe('Config', () => {
 							current: {
 								title: 'Welcome',
 								subtitle: 'welcome indeed',
-								text: 'welcome. welcome. welcome.'
+								text: `welcome. welcome. welcome.
+
+really. you are welcome.
+`
 							},
 							next: [
 								{
@@ -148,7 +132,7 @@ describe('Config', () => {
 
 			it('parses into config', () => {
 				expect(
-					config.parse(pagesConfig, env)
+					config.parse(configFile, env)
 				).toStrictEqual({
 					initialState: {
 						app: {
@@ -162,7 +146,10 @@ describe('Config', () => {
 							current: {
 								title: 'Welcome',
 								subtitle: 'welcome indeed',
-								text: 'welcome. welcome. welcome.'
+								text: `welcome. welcome. welcome.
+
+really. you are welcome.
+`
 							},
 							next: [
 								{

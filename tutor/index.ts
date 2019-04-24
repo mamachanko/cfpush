@@ -1,11 +1,21 @@
 import {render} from 'ink';
 import {createApp} from './src/app';
-import {parse} from './src/config';
-import tutorial from './tutorial';
+import {parse, Config} from './src/config';
+
+const createConfig = (): Config => {
+	const configFile = process.argv[2];
+
+	if (!configFile) {
+		console.log('config file missing');
+		process.exit(1); // eslint-disable-line unicorn/no-process-exit
+	}
+
+	return parse(configFile, process.env);
+};
+
+const config = createConfig();
 
 console.clear();
-
-const config = parse(tutorial, process.env);
 
 const {waitUntilExit} = render(
 	createApp(config),

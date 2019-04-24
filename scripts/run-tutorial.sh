@@ -6,4 +6,4 @@ cd $(dirname $0)
 
 cd ../tutor
 
-npx ts-node .
+npx ts-node . ../cfpush.yaml

@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as yaml from 'js-yaml';
 import {createCfContextMiddleware} from './cf-context-middleware';
 import {createCommandRuntimeMiddleware} from './command-runtime-middleware';
 import {createDryMiddleware} from './dry-middleware';
@@ -5,12 +7,10 @@ import {loggingMiddleware} from './logging-middleware';
 import {Middleware} from './middleware';
 import {Command, CurrentCommand, Page, State, UNSTARTED} from './state';
 
-export const parse = (pages: PageConfig[], env: any): Config => {
+export const parse = (configFile: string, env: any): Config => {
+	const pages = parsePages(configFile);
 	const mode = parseMode(env);
-	return ({
-		initialState: createInitialState(pages, mode),
-		middleware: createMiddleware(mode)
-	});
+	return createConfig(pages, mode);
 };
 
 export type PageConfig = Page<Command> & MaybeCi;
@@ -35,6 +35,10 @@ export const dryMiddleware = [
 	loggingMiddleware
 ];
 
+const parsePages = (filename: string): PageConfig[] => {
+	return yaml.safeLoad(fs.readFileSync(filename, 'utf8'));
+};
+
 const parseMode = (env: any): Mode => {
 	const ci = env.CI === 'true';
 	const dry = env.DRY === 'true';
@@ -50,9 +54,14 @@ const parseMode = (env: any): Mode => {
 	}
 };
 
-const Tutorial = 'TUTORIAL';
-const Dry = 'DRY';
-const Ci = 'CI';
+export const createConfig = (pages: PageConfig[], mode: Mode): Config => ({
+	initialState: createInitialState(pages, mode),
+	middleware: createMiddleware(mode)
+});
+
+export const Tutorial = 'TUTORIAL';
+export const Dry = 'DRY';
+export const Ci = 'CI';
 type Mode =
 	| typeof Tutorial
 	| typeof Dry

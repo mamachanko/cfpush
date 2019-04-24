@@ -2,6 +2,7 @@ import * as execa from 'execa';
 import {Command} from './state';
 import {logger} from './logging';
 import {CommandUtils} from './command-utils';
+import {REPOSITORY_ROOT} from './utils';
 
 export type StdoutHandler = (data: string) => void;
 export type ExitHandler = (exitCode: number) => void;
@@ -24,7 +25,8 @@ export type RunningCommand = {
 export type CommandRunner = (command: Command, handlers: StdHandlers) => RunningCommand;
 
 const executionOptions: execa.Options = {
-	cleanup: true
+	cleanup: true,
+	cwd: REPOSITORY_ROOT
 };
 
 export const execute: CommandRunner = (command: Command, handlers: StdHandlers): RunningCommand => {

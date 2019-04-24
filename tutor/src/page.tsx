@@ -142,6 +142,7 @@ const StaticContent: React.FC<PageContentProps> = ({title, subtitle, text}): Rea
 		<Box
 			flexDirection="column"
 			alignItems="center"
+			marginBottom={1}
 		>
 			<Title title={title}/>
 			<Subtitle subtitle={subtitle}/>

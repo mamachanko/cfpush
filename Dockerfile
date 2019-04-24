@@ -17,10 +17,12 @@ RUN mkdir -p /usr/local/bin && \
 
 WORKDIR /cfpush
 
-COPY tutor/dist .
+COPY tutor/dist dist
 COPY tutor/node_modules node_modules
 
 COPY builds builds
 COPY scripts scripts
 
-CMD ["node", "."]
+COPY cfpush.yaml cfpush.yaml
+
+CMD ["node", "dist", "cfpush.yaml"]
