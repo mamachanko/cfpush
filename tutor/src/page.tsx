@@ -5,12 +5,13 @@ import {connect} from 'react-redux';
 import * as Redux from 'redux';
 import {completed, inputReceived, runCommand} from './actions';
 import {Column} from './column';
+import {CommandUtils} from './command-utils';
 import {useOnSpace} from './input';
 import {InputPrompt} from './input-prompt';
+import {Markdown} from './markdown';
 import {CurrentCommand, FINISHED, INPUT_REQUIRED, RUNNING, State} from './state';
 import {Stdout} from './stdout';
 import {isBlank} from './utils';
-import {CommandUtils} from './command-utils';
 
 const CommandPrompt = ({run, waitForTrigger}): React.ReactElement => {
 	React.useLayoutEffect(() => {
@@ -22,7 +23,7 @@ const CommandPrompt = ({run, waitForTrigger}): React.ReactElement => {
 	useOnSpace(run);
 
 	return (
-		<Column>
+		<Column marginTop={1}>
 			<Text>
 				<Color gray>
 					{'(press <space> to run)'}
@@ -42,7 +43,7 @@ const CompletePrompt = ({complete, waitForTrigger}): React.ReactElement => {
 	useOnSpace(complete);
 
 	return (
-		<Column>
+		<Column marginTop={1}>
 			<Text>
 				<Color gray>
 					{'(press <space> to continue)'}
@@ -147,7 +148,7 @@ const StaticContent: React.FC<PageContentProps> = ({title, subtitle, text}): Rea
 			<Title title={title}/>
 			<Subtitle subtitle={subtitle}/>
 		</Box>
-		<Text>{text}</Text>
+		<Markdown markdown={text}/>
 	</Column>
 );
 
