@@ -20,6 +20,7 @@
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
     "redux-starter-kit": "^0.4.3",
+    "string.prototype.matchall": "^3.0.1",
     "strip-final-newline": "^2.0.0",
     "ts-essentials": "^2.0.4",
     "ts-node": "^8.0.3",

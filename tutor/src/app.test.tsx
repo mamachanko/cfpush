@@ -10,7 +10,7 @@ describe('<App />', () => {
 		{
 			title: 'The Title Page',
 			subtitle: 'a fine subtitle',
-			text: 'This is the title page and it welcomes you'
+			text: 'This is the **title** page and it _welcomes you_'
 		},
 		{
 			text: 'Let us run the first command',
