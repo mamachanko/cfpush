@@ -11,7 +11,10 @@ export const Markdown: React.FC<{markdown: string} & BoxProps> = ({markdown, ...
 			.map(paragraph => paragraph.trim())
 			.filter(paragraph => paragraph !== '')
 			.map((paragraph, index, paragraphs) => (
-				<Box key={index} marginBottom={(index + 1 < paragraphs.length) ? 1 : 0}>
+				<Box
+					key={index}
+					marginBottom={((index + 1) < paragraphs.length) ? 1 : 0}
+				>
 					{parseMarkdown(paragraph)
 						.map(renderMarkdownElement)
 						.map((element, key) => React.cloneElement(element, {key}))}

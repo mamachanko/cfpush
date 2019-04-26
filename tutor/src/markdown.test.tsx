@@ -43,51 +43,45 @@ describe('<Markdown>', () => {
 	});
 
 	it('renders markdown multiline string', () => {
-		const multilineMarkdown = `
-The **chat-app**.
+		const multilineMarkdown = `The **chat-app**.
 
 A **message-service**. It expects **message-service** on _/api_.
 
 The **chat-app**; a "_bundle_". At _./builds/chat-app.zip_.
 
-Push _./builds/chat-app.zip_. Done.
-`.trim();
+Push _./builds/chat-app.zip_. Done.`;
 
 		const {lastFrame} = render(<Markdown markdown={multilineMarkdown}/>);
 
-		expect(lastFrame()).toEqual(`
-The ${ansiBold('chat-app')}.
+		expect(lastFrame()).toEqual(
+			`The ${ansiBold('chat-app')}.
 
 A ${ansiBold('message-service')}. It expects ${ansiBold('message-service')} on ${ansiItalic('/api')}.
 
 The ${ansiBold('chat-app')}; a "${ansiItalic('bundle')}". At ${ansiItalic('./builds/chat-app.zip')}.
 
-Push ${ansiItalic('./builds/chat-app.zip')}. Done.
-`.trim());
+Push ${ansiItalic('./builds/chat-app.zip')}. Done.`);
 	});
 
 	it('renders plain mutiline string', () => {
-		const multilineMarkdown = `
-The chat-app.
+		const multilineMarkdown = `The chat-app.
 
 A message-service. It expects message-service on /api.
 
 The chat-app; a "bundle". At ./builds/chat-app.zip.
 
-Push ./builds/chat-app.zip. Done.
-`.trim();
+Push ./builds/chat-app.zip. Done.`;
 
 		const {lastFrame} = render(<Markdown markdown={multilineMarkdown}/>);
 
-		expect(lastFrame()).toEqual(`
-The chat-app.
+		expect(lastFrame()).toEqual(
+			`The chat-app.
 
 A message-service. It expects message-service on /api.
 
 The chat-app; a "bundle". At ./builds/chat-app.zip.
 
-Push ./builds/chat-app.zip. Done.
-`.trim());
+Push ./builds/chat-app.zip. Done.`);
 	});
 
 	it('renders empty string', () => {
@@ -99,22 +93,22 @@ Push ./builds/chat-app.zip. Done.
 
 test('layout reference', () => {
 	const {lastFrame} = render(
-		<Box flexDirection="column" width={16}>
-			<Box marginBottom={1} textWrap="wrap">
+		<Box flexDirection="column">
+			<Box marginBottom={1}>
 				<Text>Paragraph 1 has </Text><Text bold>bold</Text><Text>{'\ntext.'}</Text>
 			</Box>
-			<Box marginBottom={1} textWrap="wrap">
+			<Box marginBottom={1}>
 				<Text>Paragraph 2</Text>
 			</Box>
-			<Box textWrap="wrap">
+			<Box>
 				<Text>Paragraph 3</Text>
 			</Box>
 		</Box>
 	);
 
 	expect(lastFrame()).toEqual(`
-Paragraph 1 has
-${ansiBold('bold')} text.
+Paragraph 1 has ${ansiBold('bold')}
+text.
 
 Paragraph 2
 
