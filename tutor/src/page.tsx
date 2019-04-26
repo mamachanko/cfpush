@@ -148,7 +148,7 @@ const StaticContent: React.FC<PageContentProps> = ({title, subtitle, text}): Rea
 			<Title title={title}/>
 			<Subtitle subtitle={subtitle}/>
 		</Box>
-		<Markdown textWrap="wrap" markdown={text}/>
+		<Markdown markdown={text}/>
 	</Column>
 );
 

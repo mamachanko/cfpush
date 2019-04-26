@@ -3,17 +3,23 @@ import * as Link from 'ink-link';
 import * as React from 'react';
 import * as matchAll from 'string.prototype.matchall';
 
-export const Markdown: React.FC<{markdown: string} & BoxProps> = ({markdown, ...boxProps}): React.ReactElement => {
-	const renderedMarkdown = parseMarkdown(markdown)
-		.map(renderMarkdownElement)
-		.map((element, key) => React.cloneElement(element, {key})); // eslint-disable-line react/no-array-index-key
-
-	return (
-		<Box {...boxProps}>
-			{renderedMarkdown}
-		</Box>
-	);
-};
+export const Markdown: React.FC<{markdown: string} & BoxProps> = ({markdown, ...boxProps}): React.ReactElement => (
+	/* eslint-disable react/no-array-index-key */
+	<Box {...{...boxProps, flexDirection: 'column'}}>
+		{markdown
+			.split('\n\n')
+			.map(paragraph => paragraph.trim())
+			.filter(paragraph => paragraph !== '')
+			.map((paragraph, index, paragraphs) => (
+				<Box key={index} marginBottom={(index + 1 < paragraphs.length) ? 1 : 0}>
+					{parseMarkdown(paragraph)
+						.map(renderMarkdownElement)
+						.map((element, key) => React.cloneElement(element, {key}))}
+				</Box>
+			))}
+	</Box>
+	/* eslint-enable react/no-array-index-key */
+);
 
 Markdown.displayName = 'Markdown';
 
