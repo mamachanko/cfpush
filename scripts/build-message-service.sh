@@ -8,4 +8,4 @@ cd ../message-service
 
 ./mvnw clean verify package
 
-cp target/message-service.jar ../builds
+cp target/message-service.jar ../builds/message-service.jar

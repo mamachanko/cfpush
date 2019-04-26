@@ -15,4 +15,5 @@ cp Staticfile build
 pushd build
     zip -r chat-app.zip *
 popd
-mv build/chat-app.zip ../builds/
+
+mv build/chat-app.zip ../builds/chat-app.zip
