@@ -46,7 +46,7 @@
 
     The **chat-app** is served at
 
-    	[https://{{CHAT_APP_URL}}](https://{{CHAT_APP_URL}})
+        [{{{chat-app.routes.0.url}}}]({{{chat-app.routes.0.url}}})
 
     Before we start to use it, let's inspect the app.
   command:
@@ -64,7 +64,7 @@
 - body: |
     Now let's open the application at
 
-      	[https://{{CHAT_APP_URL}}](https://{{CHAT_APP_URL}})
+        [{{{chat-app.routes.0.url}}}]({{{chat-app.routes.0.url}}})
 
     You should see that the app "failed to load any messages". Oh dear! That's because its backend - the **message-service** - isn't running yet. But the **chat-app** is a good Cloud-citizen and handles issues with its downstream dependencies gracefully. That's an essential property of any cloud-native application.
 
@@ -83,11 +83,11 @@
 - body: |
     The **message-service** is deployed and served at
 
-      	[https://{{MESSAGE_SERVICE_URL}}](https://{{MESSAGE_SERVICE_URL}})
+        [{{{message-service.routes.0.url}}}]({{{message-service.routes.0.url}}})
 
     We have both the **chat-app** and the **message-service** deployed now. However, when we visit
 
-      	[https://{{CHAT_APP_URL}}](https://{{CHAT_APP_URL}})
+        [{{{chat-app.routes.0.url}}}]({{{chat-app.routes.0.url}}})
 
     it still fails to load any messages. See for yourself.
 
@@ -99,15 +99,15 @@
     args: [routes]
 
 - body: |
-    The **chat-app** is served at [https://{{CHAT_APP_URL}}](https://{{CHAT_APP_URL}})
-    The **message-service** is served at [https://{{MESSAGE_SERVICE_URL}}](https://{{MESSAGE_SERVICE_URL}})
+    The **chat-app** is served at [{{{chat-app.routes.0.url}}}]({{{chat-app.routes.0.url}}})
+    The **message-service** is served at [{{{message-service.routes.0.url}}}]({{{message-service.routes.0.url}}})
 
-    The **chat-app** expects to reach the **message-service** at [https://{{CHAT_APP_URL}}](https://{{CHAT_APP_URL}}/api).
+    The **chat-app** expects to reach the **message-service** at [{{{chat-app.routes.0.url}}}/api]({{{chat-app.routes.0.url}}}/api).
     Mind the path _/api_. That's the problem!
 
     Cloud Foundry's path-based routing to the rescue.
 
-    Let's map the route [{{CHAT_APP_URL}}]({{CHAT_APP_URL}}/api) to the **message-service**.
+    Let's map the route [{{{chat-app.routes.0.url}}}/api]({{{chat-app.routes.0.url}}}/api) to the **message-service**.
   command:
     filename: cf
     args: [map-route, message-service, cfapps.io, --hostname, '{{chat-app.routes.0.hostname}}', --path, /api]
@@ -117,7 +117,7 @@
 
     It's time to take out your phone. Go to
 
-      	[https://{{CHAT_APP_URL}}](https://{{CHAT_APP_URL}})
+        [{{{chat-app.routes.0.url}}}]({{{chat-app.routes.0.url}}})
 
     and chat away!
 
