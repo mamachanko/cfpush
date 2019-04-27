@@ -38,7 +38,7 @@ describe('CommandRuntimeMiddleware', () => {
 			pages: {
 				completed: [],
 				current: {
-					text: 'Let us run a test command.',
+					body: 'Let us run a test command.',
 					command: {
 						filename: 'test-command',
 						args: ['--flag', '--positional', 'arg'],

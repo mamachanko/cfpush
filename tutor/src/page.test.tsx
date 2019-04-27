@@ -13,7 +13,7 @@ describe('<Page/>', () => {
 	const defaultProps: PageProps = {
 		title: 'The Test Page',
 		subtitle: 'a test page it is',
-		text: `
+		body: `
 This is
 
 a test page
@@ -48,7 +48,7 @@ a test page
 			expect(lastFrame()).toMatch(/~ a test page it is ~/);
 		});
 
-		it('shows the page text', () => {
+		it('shows the page body', () => {
 			const {lastFrame} = render(<Page {...defaultProps}/>);
 
 			expect(lastFrame()).toMatch(/this is\s+a test page/i);
@@ -83,7 +83,7 @@ a test page
 	});
 
 	describe('when command is running', () => {
-		it('shows text', () => {
+		it('shows the page body', () => {
 			const runningCommand: PageProps = {
 				...defaultProps,
 				command: {
@@ -118,7 +118,7 @@ a test page
 				it('shows stdout', () => {
 					const runningCommandWithStdout: PageProps = {
 						...defaultProps,
-						text: '',
+						body: '',
 						command: {
 							filename: 'test',
 							args: ['command'],
@@ -162,7 +162,7 @@ a test page
 			it('shows no stdout', () => {
 				const runningCommandWithoutStdout: PageProps = {
 					...defaultProps,
-					text: '',
+					body: '',
 					command: {
 						filename: 'test',
 						args: ['command'],
@@ -187,7 +187,7 @@ a test page
 				}
 			};
 
-			it('shows text', () => {
+			it('shows the page body', () => {
 				const {lastFrame} = render(<Page {...commandWaitingForInput}/>);
 
 				expect(lastFrame()).toMatch(/this is\s+a test page/i);
@@ -238,7 +238,7 @@ a test page
 			}
 		};
 
-		it('shows text', () => {
+		it('shows the page body', () => {
 			const {lastFrame} = render(<Page {...finishedCommand}/>);
 
 			expect(lastFrame()).toMatch(/this is\s+a test page/i);
@@ -275,9 +275,9 @@ a test page
 	});
 
 	describe('when there is no command', () => {
-		const {command, ...commandLessPage}: PageProps = {...defaultProps, text: 'there is no command here. just text.'};
+		const {command, ...commandLessPage}: PageProps = {...defaultProps, body: 'there is no command here. just text.'};
 
-		it('shows text', () => {
+		it('shows the page body', () => {
 			const {lastFrame} = render(<Page {...commandLessPage}/>);
 
 			expect(stripAnsi(lastFrame())).toMatch(/the test page\s+~ a test page it is ~\s+there is no command here\. just text\./si);

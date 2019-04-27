@@ -27,21 +27,21 @@ describe('Config', () => {
 							current: {
 								title: 'Welcome',
 								subtitle: 'welcome indeed',
-								text: `welcome. welcome. welcome.
+								body: `welcome. welcome. welcome.
 
 really. you are welcome.
 `
 							},
 							next: [
 								{
-									text: 'let us login',
+									body: 'let us login',
 									command: {
 										filename: 'cf',
 										args: ['login']
 									}
 								},
 								{
-									text: 'let us deploy',
+									body: 'let us deploy',
 									command: {
 										filename: 'cf',
 										args: ['push']
@@ -89,28 +89,28 @@ really. you are welcome.
 							current: {
 								title: 'Welcome',
 								subtitle: 'welcome indeed',
-								text: `welcome. welcome. welcome.
+								body: `welcome. welcome. welcome.
 
 really. you are welcome.
 `
 							},
 							next: [
 								{
-									text: 'let us login',
+									body: 'let us login',
 									command: {
 										filename: 'cf',
 										args: ['login', '-a', 'api.run.pivotal.io', '-u', 'cf-user', '-p', 'cf-password', '-o', 'cf-org', '-s', 'cf-space']
 									}
 								},
 								{
-									text: 'this is a ci only page',
+									body: 'this is a ci only page',
 									command: {
 										filename: 'echo',
 										args: ['this', 'command', 'only', 'runs', 'on', 'ci']
 									}
 								},
 								{
-									text: 'let us deploy',
+									body: 'let us deploy',
 									command: {
 										filename: 'cf',
 										args: ['push']
@@ -146,21 +146,21 @@ really. you are welcome.
 							current: {
 								title: 'Welcome',
 								subtitle: 'welcome indeed',
-								text: `welcome. welcome. welcome.
+								body: `welcome. welcome. welcome.
 
 really. you are welcome.
 `
 							},
 							next: [
 								{
-									text: 'let us login',
+									body: 'let us login',
 									command: {
 										filename: 'cf',
 										args: ['login']
 									}
 								},
 								{
-									text: 'let us deploy',
+									body: 'let us deploy',
 									command: {
 										filename: 'cf',
 										args: ['push']

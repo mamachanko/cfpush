@@ -1,9 +1,9 @@
 - title: 'Welcome to cfpush ☁️ '
   subtitle: an interactive Cloud Foundry tutorial in your terminal
-  text: |
+  body: |
     We will be exploring **Cloud Foundry** and cloud-native computing by deploying a real chat application to Cloud Foundry.
 
-- text: |
+- body: |
     To begin, we should login.
 
     When logging in we must identify the specific Cloud Foundry that we want to target. All the commands we run after that will run against that Cloud Foundry.
@@ -13,7 +13,7 @@
     filename: cf
     args: [login, -a, api.run.pivotal.io, --sso]
 
-- text: |
+- body: |
     We need somewhere to deploy our apps to.
 
     Let's create a new space for this tutorial.
@@ -23,13 +23,13 @@
       - create-space
       - cfpush-tutorial
 
-- text: |
+- body: |
     We have created a new space. But we still have to set it as our current target.
   command: 
     filename: cf
     args: [target, -s, cfpush-tutorial]
 
-- text: |
+- body: |
     We are ready for deployment. Let's start with the frontend, the **chat-app**.
     
     It is a Javascript React application that continuously polls a **message-service** for messages and allows to send new ones. It expects the **message-service** on its own host at _/api_.
@@ -41,7 +41,7 @@
     filename: cf
     args: [push chat-app, -p, ./builds/chat-app.zip, -b, staticfile_buildpack, --random-route]
     
-- text: |
+- body: |
     Congratulations you have successfully deployed an application to Cloud Foundry!
 
     The **chat-app** is served at
@@ -53,7 +53,7 @@
     filename: cf
     args: [app, chat-app]
 
-- text: |
+- body: |
     You can see that 1 instance of the app is running. It has the default _1GB_ of memory and _1GB_ of disk. That is more than we need for a staticfile app. Let's scale things down. Memory should be _64M_ and disk _128M_.
 
     This is called vertical scaling. Whenever scaling an app vertically Cloud Foundry has to restart it. This involves downtime. For now we're ok with that, so we add '-f'.
@@ -61,7 +61,7 @@
     filename: cf
     args: [scale, chat-app, -m, 64M, -k, 128M, -f]
 
-- text: |
+- body: |
     Now let's open the application at
 
       	[https://{{CHAT_APP_URL}}](https://{{CHAT_APP_URL}})
@@ -80,7 +80,7 @@
     filename: cf
     args: [push, message-service, -p, ./builds/message-service.jar, --random-route]
 
-- text: |
+- body: |
     The **message-service** is deployed and served at
 
       	[https://{{MESSAGE_SERVICE_URL}}](https://{{MESSAGE_SERVICE_URL}})
@@ -98,7 +98,7 @@
     filename: cf
     args: [routes]
 
-- text: |
+- body: |
     The **chat-app** is served at [https://{{CHAT_APP_URL}}](https://{{CHAT_APP_URL}})
     The **message-service** is served at [https://{{MESSAGE_SERVICE_URL}}](https://{{MESSAGE_SERVICE_URL}})
 
@@ -112,7 +112,7 @@
     filename: cf
     args: [map-route, message-service, cfapps.io, --hostname, '{{chat-app.routes.0.hostname}}', --path, /api]
 
-- text: |
+- body: |
     Hooray! The error is gone. The **chat-app** says there are no messages.
 
     It's time to take out your phone. Go to
@@ -130,7 +130,7 @@
     filename: cf
     args: [scale, message-service, -i, 3]
 
-- text: |
+- body: |
     This is weird. As we're using the **chat-app** and sending messages, the message list keeps changing.
 
     Why is that? As we haven't provided the **message-service** with a database, it is running with an in-memory database. That means each instance has its own state. And every time we post or get messages we hit another instance, hence the inconsistency.
@@ -144,7 +144,7 @@
     filename: cf
     args: [marketplace]
 
-- text: |
+- body: |
     We can see there are plenty of services on offer, e.g.
 
         * Redis
@@ -161,7 +161,7 @@
     filename: cf
     args: [marketplace, -s, elephantsql]
 
-- text: |
+- body: |
     The smallest plan "_turtle_" provides 4 concurrent connections, 20MB Storage and is free. Just what we need!
 
     Let's create an _elephantsql_ instance using the _turtle_ plan and name it "**database**".
@@ -169,7 +169,7 @@
     filename: cf
     args: [create-service, elephantsql, turtle, database]
 
-- text: |
+- body: |
     The Postgres instance is ready.
 
     We still need to connect it to the **message-service**. In Cloud Foundry terms this called binding.
@@ -179,7 +179,7 @@
     filename: cf
     args: [bind-service, message-service, database]
 
-- text: |
+- body: |
     But that's not all. We have to restart the **message-service**.
 
     Since we're using Spring Boot it will will automatically pick up the database.
@@ -190,12 +190,12 @@
     args: [restart, message-service]
     
 - ci: true
-  text: 'smoke test'
+  body: 'smoke test'
   command:
     filename: './scripts/smoke-test.sh'
     args: ['{{{chat-app.routes.0.url}}}']
 
-- text: |
+- body: |
     As the instances of the **message-service** have restarted they are all using the database as a backing service. They no longer carry state. We can scale the message-service to our heart's content. The users of the chat will have a consistent experience, whether we have 1 or 100 instances running.
 
     ["May I present to you: the internet!"](https://youtu.be/iDbyYGrswtg)
@@ -209,7 +209,7 @@
     filename: cf
     args: [logs, --recent, message-service] # | grep GET | grep '\[APP\/PROC\/WEB\/\d\+\]''
 
-- text: |
+- body: |
     Once you're finished playing with the **chat-app**, let's clean up. If we don't want incur further cost against our PWS quota, we should decommission all apps and services.
 
     The easiest way to achieve that is to delete the entire space.
@@ -217,7 +217,7 @@
     filename: cf
     args: [delete-space, cfpush-tutorial, -f]
 
-- text: |
+- body: |
     🏁 That's all for now. 🏁
 
     Expect updates to this tutorial. Thank you for coming this far!

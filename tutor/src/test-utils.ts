@@ -14,7 +14,7 @@ const initialState: State = {
 	pages: {
 		completed: [],
 		current: {
-			text: '',
+			body: '',
 			command: {
 				filename: 'date',
 				args: [],
@@ -23,7 +23,7 @@ const initialState: State = {
 			}
 		},
 		next: [{
-			text: '',
+			body: '',
 			command: {filename: 'date', args: []}
 		}]
 	}

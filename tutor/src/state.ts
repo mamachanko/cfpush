@@ -22,7 +22,7 @@ export type Pages = {
 export type Page<T = Command | CurrentCommand | CompletedCommand> = {
 	title?: string;
 	subtitle?: string;
-	text: string;
+	body: string;
 	command?: T;
 }
 

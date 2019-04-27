@@ -1,22 +1,22 @@
 - title: Welcome
   subtitle: welcome indeed
-  text: |
+  body: |
     welcome. welcome. welcome.
 
     really. you are welcome.
 
-- text: let us login
+- body: let us login
   command:
     filename: cf
     args: [login]
 
-- text: this is a ci only page
+- body: this is a ci only page
   ci: true
   command:
     filename: echo
     args: [this, command, only, runs, on, ci]
 
-- text: let us deploy
+- body: let us deploy
   command:
     filename: cf
     args: [push]

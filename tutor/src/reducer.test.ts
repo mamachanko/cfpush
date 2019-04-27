@@ -14,7 +14,7 @@ const defaultState: State = {
 	pages: {
 		completed: [],
 		current: {
-			text: 'The first page',
+			body: 'The first page',
 			command: {
 				filename: 'command',
 				args: ['one'],
@@ -23,8 +23,8 @@ const defaultState: State = {
 			}
 		},
 		next: [
-			{text: 'The second page', command: {filename: 'command', args: ['two']}},
-			{text: 'The third page', command: {filename: 'command', args: ['three']}}
+			{body: 'The second page', command: {filename: 'command', args: ['two']}},
+			{body: 'The third page', command: {filename: 'command', args: ['three']}}
 		]
 	}
 };
@@ -228,7 +228,7 @@ describe('reducer', () => {
 					pages: {
 						...defaultState.pages,
 						completed: [{
-							text: 'The zeroth page',
+							body: 'The zeroth page',
 							command: {
 								command: 'command zero',
 								stdout: [
@@ -256,7 +256,7 @@ describe('reducer', () => {
 					pages: {
 						...defaultState.pages,
 						completed: [{
-							text: 'The zeroth page',
+							body: 'The zeroth page',
 							command: {
 								command: 'command zero',
 								stdout: [
@@ -265,7 +265,7 @@ describe('reducer', () => {
 								]
 							}
 						}, {
-							text: 'The first page',
+							body: 'The first page',
 							command: {
 								filename: 'command',
 								args: ['one'],
@@ -277,7 +277,7 @@ describe('reducer', () => {
 						}],
 						current: {
 							...defaultState.pages.current,
-							text: 'The second page',
+							body: 'The second page',
 							command: {
 								...defaultState.pages.current.command,
 								filename: 'command',
@@ -286,7 +286,7 @@ describe('reducer', () => {
 								status: UNSTARTED
 							}
 						},
-						next: [{text: 'The third page', command: {filename: 'command', args: ['three']}}]
+						next: [{body: 'The third page', command: {filename: 'command', args: ['three']}}]
 					}
 				});
 			});
@@ -316,7 +316,7 @@ describe('reducer', () => {
 						pages: {
 							...defaultState.pages,
 							completed: [{
-								text: 'The first page',
+								body: 'The first page',
 								command: {
 									filename: 'command',
 									args: ['one'],
@@ -328,7 +328,7 @@ describe('reducer', () => {
 							}],
 							current: {
 								...defaultState.pages.current,
-								text: 'The second page',
+								body: 'The second page',
 								command: {
 									filename: 'command',
 									args: ['two'],
@@ -336,7 +336,7 @@ describe('reducer', () => {
 									status: UNSTARTED
 								}
 							},
-							next: [{text: 'The third page', command: {filename: 'command', args: ['three']}}]
+							next: [{body: 'The third page', command: {filename: 'command', args: ['three']}}]
 						}
 					});
 				});
@@ -368,7 +368,7 @@ describe('reducer', () => {
 						pages: {
 							...defaultState.pages,
 							completed: [{
-								text: 'The first page',
+								body: 'The first page',
 								command: {
 									filename: 'command',
 									args: ['one'],
@@ -399,7 +399,7 @@ describe('reducer', () => {
 						pages: {
 							...defaultState.pages,
 							next: [{
-								text: 'This page\'s command needs rendering',
+								body: 'This page\'s command needs rendering',
 								command: {filename: 'this', args: ['command', 'needs', '{{here.is.some}}', 'to', 'be rendered']}
 							}]
 						}
@@ -416,7 +416,7 @@ describe('reducer', () => {
 						},
 						pages: {
 							completed: [{
-								text: 'The first page',
+								body: 'The first page',
 								command: {
 									filename: 'command',
 									args: ['one'],
@@ -424,7 +424,7 @@ describe('reducer', () => {
 								}
 							}],
 							current: {
-								text: 'This page\'s command needs rendering',
+								body: 'This page\'s command needs rendering',
 								command: {
 									filename: 'this',
 									args: ['command', 'needs', 'context', 'to', 'be', 'rendered'],
@@ -447,11 +447,11 @@ describe('reducer', () => {
 						completed: [],
 						current: {
 							title: 'current title',
-							text: 'current text'
+							body: 'current text'
 						},
 						next: [{
 							title: 'next title',
-							text: 'next text'
+							body: 'next text'
 						}]
 					}
 				}, completed());
@@ -461,11 +461,11 @@ describe('reducer', () => {
 					pages: {
 						completed: [{
 							title: 'current title',
-							text: 'current text'
+							body: 'current text'
 						}],
 						current: {
 							title: 'next title',
-							text: 'next text'
+							body: 'next text'
 						},
 						next: []
 					}

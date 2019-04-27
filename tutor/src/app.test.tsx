@@ -10,17 +10,17 @@ describe('<App />', () => {
 		{
 			title: 'The Title Page',
 			subtitle: 'a fine subtitle',
-			text: 'This is the **title** page and it _welcomes you_'
+			body: 'This is the **title** page and it _welcomes you_'
 		},
 		{
-			text: 'Let us run the first command',
+			body: 'Let us run the first command',
 			command: {
 				filename: 'echo',
 				args: ['hi', 'this', 'is', 'the', 'first', 'command']
 			}
 		},
 		{
-			text: 'This page is Ci only',
+			body: 'This page is Ci only',
 			ci: true,
 			command: {
 				filename: 'echo',
@@ -28,7 +28,7 @@ describe('<App />', () => {
 			}
 		},
 		{
-			text: 'Now, let us run the second command',
+			body: 'Now, let us run the second command',
 			command: {
 				filename: 'echo',
 				args: ['hello', 'this', 'is', 'the', 'second', 'command']
@@ -181,21 +181,21 @@ describe('<App />', () => {
 		beforeEach(() => {
 			const pages: config.PageConfig[] = [
 				{
-					text: 'Let us run the first command',
+					body: 'Let us run the first command',
 					command: {
 						filename: 'echo',
 						args: ['hi', 'this', 'is', 'the', 'first', 'command']
 					}
 				},
 				{
-					text: 'This command is supposed to fail',
+					body: 'This command is supposed to fail',
 					command: {
 						filename: 'false',
 						args: []
 					}
 				},
 				{
-					text: 'This command is not supposed to be run',
+					body: 'This command is not supposed to be run',
 					command: {
 						filename: 'echo',
 						args: ['hello', 'this', 'command', 'should', 'not', 'be', 'run']

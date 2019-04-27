@@ -135,10 +135,10 @@ const Subtitle: React.FC<SubtitleProps> = ({subtitle}): React.ReactElement =>
 type PageContentProps = {
 	readonly title?: string;
 	readonly subtitle?: string;
-	readonly text: string;
+	readonly body: string;
 }
 
-const StaticContent: React.FC<PageContentProps> = ({title, subtitle, text}): React.ReactElement => (
+const StaticContent: React.FC<PageContentProps> = ({title, subtitle, body}): React.ReactElement => (
 	<Column marginLeft={0}>
 		<Box
 			flexDirection="column"
@@ -148,14 +148,14 @@ const StaticContent: React.FC<PageContentProps> = ({title, subtitle, text}): Rea
 			<Title title={title}/>
 			<Subtitle subtitle={subtitle}/>
 		</Box>
-		<Markdown markdown={text}/>
+		<Markdown markdown={body}/>
 	</Column>
 );
 
 type StaticPageProps = {
 	title?: string;
 	subtitle?: string;
-	text: string;
+	body: string;
 	waitForTrigger: boolean;
 	complete: () => void;
 }
@@ -218,7 +218,7 @@ const CommandPage: React.FC<CommandPageProps> = (props): React.ReactElement => {
 type StateProps = {
 	title?: string;
 	subtitle?: string;
-	text: string;
+	body: string;
 	command?: CurrentCommand;
 	waitForTrigger: boolean;
 	pinOutput: boolean;

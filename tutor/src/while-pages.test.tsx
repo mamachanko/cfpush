@@ -15,7 +15,7 @@ describe('<WhilePages>', () => {
 		const store = createStoreMock({
 			pages: {
 				current: {
-					text: 'Let us run a test command',
+					body: 'Let us run a test command',
 					command: {
 						filename: 'test',
 						args: ['command'],

@@ -12,7 +12,7 @@ describe('Dry Middleware', () => {
 		storeMock = createStoreMock({
 			pages: {
 				current: {
-					text: 'Let us pretend run a real command',
+					body: 'Let us pretend run a real command',
 					command: {
 						filename: 'a',
 						args: ['real command'],
