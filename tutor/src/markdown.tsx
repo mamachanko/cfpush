@@ -1,32 +1,24 @@
-import {Box, Text, BoxProps} from 'ink';
+import chalk from 'chalk';
+import {Text} from 'ink';
 import * as Link from 'ink-link';
 import * as React from 'react';
 import * as matchAll from 'string.prototype.matchall';
+import * as terminalLink from 'terminal-link';
 
-export const Markdown: React.FC<{markdown: string} & BoxProps> = ({markdown, ...boxProps}): React.ReactElement => (
-	/* eslint-disable react/no-array-index-key */
-	<Box {...{...boxProps, flexDirection: 'column'}}>
-		{markdown
-			.split('\n\n')
-			.map(paragraph => paragraph.trim())
-			.filter(paragraph => paragraph !== '')
-			.map((paragraph, index, paragraphs) => (
-				<Box
-					key={index}
-					marginBottom={((index + 1) < paragraphs.length) ? 1 : 0}
-				>
-					{parseMarkdown(paragraph)
-						.map(renderMarkdownElement)
-						.map((element, key) => React.cloneElement(element, {key}))}
-				</Box>
-			))}
-	</Box>
-	/* eslint-enable react/no-array-index-key */
+export const Markdown: React.FC<{markdown: string}> = ({markdown}): React.ReactElement => (
+	<Text>
+		{render(markdown)}
+	</Text>
 );
 
 Markdown.displayName = 'Markdown';
 
-export const parseMarkdown = (markdown: string): MarkdownElement[] => {
+const render = (markdown: string): string =>
+	parse(markdown)
+		.map(renderMarkdownElement)
+		.join('');
+
+export const parse = (markdown: string): MarkdownElement[] => {
 	// eslint-disable-next-line unicorn/prefer-spread
 	const matches = Array.from(matchAll(markdown, markdownRegex));
 
@@ -71,19 +63,19 @@ export const bold = (value: string): Bold => ({value, style: BOLD});
 export const italic = (value: string): Italic => ({value, style: ITALIC});
 export const link = (name: string, url: string): Link => ({name, url, style: LINK});
 
-const renderMarkdownElement = (element: MarkdownElement): React.ReactElement => {
+const renderMarkdownElement = (element: MarkdownElement): string => {
 	switch (element.style) {
 		case (BOLD):
-			return <Text bold>{element.value}</Text>;
+			return chalk.bold(element.value);
 
 		case (ITALIC):
-			return <Text italic>{element.value}</Text>;
+			return chalk.italic(element.value);
 
 		case (LINK):
-			return <Link url={element.url}>{element.name}</Link>;
+			return terminalLink(element.name, element.url);
 
 		default:
-			return <Text>{element.value}</Text>;
+			return element.value;
 	}
 };
 
