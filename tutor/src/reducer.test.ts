@@ -385,7 +385,7 @@ describe('reducer', () => {
 				});
 			});
 
-			describe('when the next page\'s command contains a placeholder', () => {
+			describe('when the next page\'s command and body contain placeholders', () => {
 				it('completes the current command, renders the next command it using the cf context and sets it as current', () => {
 					const nextState = reducer({
 						...defaultState,
@@ -399,7 +399,7 @@ describe('reducer', () => {
 						pages: {
 							...defaultState.pages,
 							next: [{
-								body: 'This page\'s command needs rendering',
+								body: 'This page\'s command needs some {{here.is.some}}',
 								command: {filename: 'this', args: ['command', 'needs', '{{here.is.some}}', 'to', 'be rendered']}
 							}]
 						}
@@ -424,7 +424,7 @@ describe('reducer', () => {
 								}
 							}],
 							current: {
-								body: 'This page\'s command needs rendering',
+								body: 'This page\'s command needs some context',
 								command: {
 									filename: 'this',
 									args: ['command', 'needs', 'context', 'to', 'be', 'rendered'],
@@ -469,6 +469,42 @@ describe('reducer', () => {
 						},
 						next: []
 					}
+				});
+			});
+
+			describe('when the next page\'s body contains placeholders', () => {
+				it('completes the current page and sets the next current page, rendering its body from cf context', () => {
+					const nextState = reducer({
+						...defaultState,
+						cloudFoundryContext: {context: {to: {render: {from: ['love']}}}},
+						pages: {
+							completed: [],
+							current: {
+								title: 'current title',
+								body: 'current text'
+							},
+							next: [{
+								title: 'next title',
+								body: 'this page body needs some {{context.to.render.from.0}}'
+							}]
+						}
+					}, completed());
+
+					expect(nextState).toStrictEqual({
+						...defaultState,
+						cloudFoundryContext: {context: {to: {render: {from: ['love']}}}},
+						pages: {
+							completed: [{
+								title: 'current title',
+								body: 'current text'
+							}],
+							current: {
+								title: 'next title',
+								body: 'this page body needs some love'
+							},
+							next: []
+						}
+					});
 				});
 			});
 		});

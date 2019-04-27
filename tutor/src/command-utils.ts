@@ -1,8 +1,8 @@
-import * as Mustache from 'mustache';
 import {Command} from './state';
+import {renderTemplate} from './utils';
 
 const render = (command: Command, context: any): Command =>
-	fromString(Mustache.render(toString(command), context));
+	fromString(renderTemplate(toString(command), context));
 
 const toString = (command: Command): string =>
 	[command.filename, ...command.args].join(' ');

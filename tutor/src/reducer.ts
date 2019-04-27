@@ -1,8 +1,8 @@
 import * as deepmerge from 'deepmerge';
 import {Reducer} from 'redux';
-import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, STDOUT_RECEIVED, STARTED, UPDATE_CF_CONTEXT} from './actions';
-import {State, UNSTARTED, RUNNING, CurrentCommand, Page} from './state';
-import {CommandUtils} from './command-utils';
+import {Action, COMPLETED, EXIT_APP, FINISHED, INPUT_RECEIVED, INPUT_REQUIRED, STARTED, STDOUT_RECEIVED, UPDATE_CF_CONTEXT} from './actions';
+import {renderPage} from './page-utils';
+import {CurrentCommand, Page, RUNNING, State} from './state';
 
 export const reducer: Reducer = (state: State, action: Action): State => {
 	switch (action.type) {
@@ -78,17 +78,12 @@ export const reducer: Reducer = (state: State, action: Action): State => {
 		case (COMPLETED): {
 			let current: Page<CurrentCommand>;
 			if (state.pages.next[0]) {
-				if (state.pages.next[0].command) {
-					current = {
-						...state.pages.next[0],
-						command: {
-							...CommandUtils.render(state.pages.next[0].command, state.cloudFoundryContext),
-							status: UNSTARTED,
-							stdout: []
-						}
-					};
+				const next = renderPage(state.pages.next[0], state.cloudFoundryContext);
+
+				if (next.command) {
+					current = next as Page<CurrentCommand>;
 				} else {
-					current = (state.pages.next[0] as Page<null>);
+					current = next as Page<null>;
 				}
 			} else {
 				current = null;
