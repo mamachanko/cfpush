@@ -54,7 +54,7 @@
     args: [app, chat-app]
 
 - text: |
-    You can see that 1 instance of the app is running. It has the default 1GB of memory and 1GB of disk. That is more than we need for a staticfile app. Let's scale things down. Memory should be 64M and disk 128M.
+    You can see that 1 instance of the app is running. It has the default _1GB_ of memory and _1GB_ of disk. That is more than we need for a staticfile app. Let's scale things down. Memory should be _64M_ and disk _128M_.
 
     This is called vertical scaling. Whenever scaling an app vertically Cloud Foundry has to restart it. This involves downtime. For now we're ok with that, so we add '-f'.
   command: 
@@ -70,11 +70,10 @@
 
     Let's avert this misery and deploy the **message-service**. It's a Java Spring Boot web application that exposes two endpoints:
     
-        _GET  /api/messages"_ : returns the list of messages
-        _POST /api/messages"_ : creates a new message
+        _GET  /api/messages_ : returns the list of messages
+        _POST /api/messages_ : creates a new message
     
-    If it does not have a database attached it will run with an in-memory database.
-    It is packaged into a JAR file located at _./builds/message-service_.
+    If it does not have a database attached it will run with an in-memory database. It is packaged into a JAR file located at _./builds/message-service_.
     
     Again, we push by letting Cloud Foundry pick a random available route for us and pointing at the **message-service** JAR.
   command:
