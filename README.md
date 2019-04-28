@@ -2,6 +2,8 @@
 
 >an interactive Cloud Foundry tutorial in your terminal
 
+<img src="cfpush.svg" width="600">
+
 The tutorial will walk and talk you through the deployment of a simple chat application to Cloud Foundry while exploring cloud-native apps.
 
 Just run:
