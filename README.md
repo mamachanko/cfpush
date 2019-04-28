@@ -1,6 +1,10 @@
 # cfpush
-> An interactive Cloud Foundry tutorial in your terminal
 
+>an interactive Cloud Foundry tutorial in your terminal
+
+The tutorial will walk and talk you through the deployment of a simple chat application to Cloud Foundry while exploring cloud-native apps.
+
+Just run:
 ```bash
 docker run -it mamachanko/cfpush
 ```
@@ -9,8 +13,6 @@ or clone this repository and run:
 ```bash
 ./run.sh
 ```
-
-The tutorial will walk and talk you through the deployment of a simple chat application to Cloud Foundry while exploring cloud-native apps.
 
 You're feedback is very welcome. Feel free to raise an issue if anything should be unclear or you run into any problems.
 
