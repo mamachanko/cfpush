@@ -1,18 +1,16 @@
-# An interactive Cloud Foundry tutorial in your terminal
-Clone and run:
+# cfpush
+> An interactive Cloud Foundry tutorial in your terminal
+
+```bash
+docker run -it mamachanko/cfpush
+```
+
+or clone this repository and run:
 ```bash
 ./run.sh
 ```
-The script will walk and talk you through the deployment of a simple chat application to Cloud Foundry while exploring cloud-native apps.
 
-[![asciicast](https://asciinema.org/a/229675.svg)](https://asciinema.org/a/229675)
-
-![chat-app](chat-app.png?raw=true)
-
-If you want to start from scratch or recover from a failure:
-```bash
-./scripts/clean-tutorial.sh
-```
+The tutorial will walk and talk you through the deployment of a simple chat application to Cloud Foundry while exploring cloud-native apps.
 
 You're feedback is very welcome. Feel free to raise an issue if anything should be unclear or you run into any problems.
 
@@ -22,11 +20,9 @@ We manage our backlog [here](https://pivotaltracker.com/n/projects/2315492).
 
 This tutorial currently assumes you're using [run.pivotal.io](https://run.pivotal.io). If you sign up you will get some free quota to play around with. (might as well spend it on this tutorial)
 
-You will need the `cf` cli. If you don't have it installed yet, go [here](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html).
+## Development affordances
 
-## Affordances
-
-The tutorial comes in different flavours:
+You can run the tutorial with different flavours:
 ```bash
 # For the tutee. With prompts and real commands. It's the tutorial as it's meant to be run.
 ./run.sh
