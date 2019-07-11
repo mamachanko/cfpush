@@ -37,3 +37,7 @@ assertGitClean
 assertGitClean
 
 ./push.sh
+
+./release.sh
+
+echo 'you can now create a new release on GitHub'
