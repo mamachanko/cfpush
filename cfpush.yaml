@@ -75,10 +75,10 @@
     
     If it does not have a database attached it will run with an in-memory database. It is packaged into a JAR file located at _./builds/message-service_.
     
-    Again, we push by letting Cloud Foundry pick a random available route for us and pointing at the **message-service** JAR.
+    Again, we push by letting Cloud Foundry by pointing at the **message-service** JAR, picking a random route and configuring 650M of memory.
   command:
     filename: cf
-    args: [push, message-service, -p, ./builds/message-service.jar, --random-route]
+    args: [push, message-service, -p, ./builds/message-service.jar, --random-route, -m, 650M]
 
 - body: |
     The **message-service** is deployed and served at
