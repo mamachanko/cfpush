@@ -137,7 +137,7 @@ describe('<App />', () => {
 			await sleep(100);
 
 			expect(stripAnsi(lastFrame())).toMatch(
-				/hi this is the first command\s*ciao this is a ci stealth command\s*hello this is the second command/si
+				/hi this is the first command.*ciao this is a ci stealth command.*hello this is the second command/si
 			);
 		});
 	});
