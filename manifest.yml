@@ -1,0 +1,24 @@
+applications:
+
+  - name: chat-app
+    path: builds/chat-app.zip
+    memory: 64M
+    disk_quota: 128M
+    instances: 1
+    buildpacks:
+      - staticfile_buildpack
+    routes:
+      - route: ((chat-app-hostname)).cfapps.io
+
+  - name: message-service
+    path: builds/message-service.jar
+    memory: 650M
+    disk_quota: 1G
+    instances: 3
+    buildpacks:
+      - java_buildpack
+    routes:
+      - route: ((chat-app-hostname)).cfapps.io/api
+    services:
+      - database
+    

@@ -9,6 +9,7 @@ rm -rf ../builds/cfpush.zip
 zip \
     --recurse-paths \
     ../builds/cfpush.zip \
-    ../builds
+    ../builds \
+    ../manifest.yml
 
 zipinfo ../builds/cfpush.zip
