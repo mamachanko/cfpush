@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#cfpush:usage builds chat app bundle
 
 set -euxo pipefail
 

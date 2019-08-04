@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#cfpush:usage creates release as ZIP file
 
 set -euxo pipefail
 

@@ -1,0 +1,4 @@
+CWD=$( dirname "${BASH_SOURCE[0]}" )
+SCRIPTS_DIR=$(cd "${CWD}/scripts" >/dev/null 2>&1 && pwd)
+
+alias cfpush="$SCRIPTS_DIR/cfpush.sh"
