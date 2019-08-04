@@ -10,6 +10,6 @@ zip \
     --recurse-paths \
     ../builds/cfpush.zip \
     ../builds \
-    ../manifest.yml
+    ../manifest-cfpush.yml
 
 zipinfo ../builds/cfpush.zip
